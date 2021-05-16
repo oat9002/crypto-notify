@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "com.typesafe" % "config" % typesafeConfig,
   "org.jobrunr" % "jobrunr" % jobrunr,
   "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabind,
+  "com.fasterxml.jackson.module" % "jackson-module-scala" % jacksonModule,
   "com.softwaremill.macwire" %% "macros" % macWire % "provided",
   "com.softwaremill.macwire" %% "macrosakka" % macWire % "provided",
   "com.softwaremill.macwire" %% "util" % macWire,
