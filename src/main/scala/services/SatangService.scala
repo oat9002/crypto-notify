@@ -7,7 +7,7 @@ import com.softwaremill.macwire.wire
 import commons.{Configuration, ConfigurationImpl, JsonUtil, JsonUtilImpl}
 import models.GetBalanceResponse
 
-import scala.concurrent.duration.{DurationInt}
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SatangService {
