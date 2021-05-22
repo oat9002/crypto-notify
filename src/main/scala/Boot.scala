@@ -1,19 +1,23 @@
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
+import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
-import services.{JobRunrService, JobRunrServiceImpl}
+import commons.{Configuration, ConfigurationImpl}
+import services.{JobRunrService, JobRunrServiceImpl, SatangService, SatangServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
 
 object Boot extends App {
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "my-system")
+  implicit val system: ActorSystem = ActorSystem()
   // needed for the future flatMap/onComplete in the end
-  implicit val executionContext: ExecutionContextExecutor = system.executionContext
+  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
 
   lazy val jobRunrService: JobRunrService = wire[JobRunrServiceImpl]
+  lazy val satangService: SatangService = wire[SatangServiceImpl]
+  lazy val configuration: Configuration = wire[ConfigurationImpl]
+
+  val res = satangService.getBalance(configuration.satangConfig.userId)
 
   val route =
     path("") {

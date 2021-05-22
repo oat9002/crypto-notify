@@ -12,7 +12,7 @@ trait JobRunrService {
 }
 
 class JobRunrServiceImpl extends JobRunrService {
-  private val storateProvider: StorageProvider = new InMemoryStorageProvider()
+  private val storageProvider: StorageProvider = new InMemoryStorageProvider()
   private val jobScheduler: JobScheduler = wire[JobScheduler]
 
   def enqueue(execute: Unit => Unit): Unit = {
@@ -25,7 +25,7 @@ class JobRunrServiceImpl extends JobRunrService {
 
   def initialize(): Unit = {
     JobRunr.configure()
-      .useStorageProvider(storateProvider)
+      .useStorageProvider(storageProvider)
       .useDefaultBackgroundJobServer()
       .useDashboard(8080)
       .initialize()
