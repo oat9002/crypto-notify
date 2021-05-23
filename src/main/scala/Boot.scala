@@ -4,7 +4,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
 import commons.{Configuration, ConfigurationImpl}
-import services.{JobRunrService, JobRunrServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import services.{JobRunrService, JobRunrServiceImpl, LineService, LineServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -17,8 +17,11 @@ object Boot extends App {
   lazy val satangService: SatangService = wire[SatangServiceImpl]
   lazy val configuration: Configuration = wire[ConfigurationImpl]
   lazy val userService: UserService = wire[UserServiceImpl]
+  lazy val lineService: LineService = wire[LineServiceImpl]
 
   val res = userService.getBalanceMessageForLine(configuration.satangConfig.userId)
+
+  res.map(x => lineService.notify(x.get))
 
   val route =
     path("") {

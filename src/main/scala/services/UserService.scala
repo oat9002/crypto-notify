@@ -42,10 +42,10 @@ class UserServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) ex
     val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
     val dateFormatter = DateTimeFormatter.ofPattern("EEEE dd MMM YYYY HH:mm", new Locale("th", "TH")).withChronology(ThaiBuddhistChronology.INSTANCE)
     val date = localDatetime.format(dateFormatter) + "\n"
-    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum}\n"
-    val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2}").mkString("\n")
+    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum} บาท\n"
+    val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2} บาท").mkString("\n")
     val balance = cryptoBalance.map(x => s"${x._1}: ${x._2}").mkString("\n")
 
-    date.concat(sumCurrentBalanceThb).concat(balanceThb).concat("\n\n").concat(balance)
+    "\n".concat(date).concat(sumCurrentBalanceThb).concat(balanceThb).concat("\n\n").concat(balance)
   }
 }
