@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import com.softwaremill.macwire.wire
-import commons.{Configuration, ConfigurationImpl, EncryptionUtil, EncryptionUtilImpl, JsonUtil, JsonUtilImpl}
+import commons.{Configuration, ConfigurationImpl, EncryptionUtil, EncryptionUtilImpl}
 import models.GetBalanceResponse
 
 import scala.concurrent.duration.DurationInt
@@ -16,8 +16,10 @@ trait SatangService {
 }
 
 class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) extends SatangService {
+  import commons.JsonUtil._
+  import commons.HttpResponseUtil._
+
   lazy val configuration: Configuration = wire[ConfigurationImpl]
-  lazy val jsonUtil: JsonUtil = wire[JsonUtilImpl]
   lazy val encriptionUtil: EncryptionUtil = wire[EncryptionUtilImpl]
   val url: String = configuration.satangConfig.url
   val userUrl: String = url + "users/"
@@ -32,10 +34,10 @@ class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) 
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toStrict(5.seconds).map(e => e.getData()).map(data => Some(data.utf8String))
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case _ => Future.successful(None)
     }.map {
-      case Some(x) => Some(jsonUtil.deserialize[GetBalanceResponse](x, classOf[GetBalanceResponse]))
+      case Some(x) => Some(x.toObject(classOf[GetBalanceResponse]))
       case _ => None
     }
   }
