@@ -9,7 +9,7 @@ case class Address(address: String,
 case class Wallet(addresses: List[Address],
                   @JsonProperty("available_balance") availableBalance: BigDecimal)
 
-case class GetBalanceResponse(id: Int,
-                              email: String,
-                              @JsonProperty("identity_verification_level") identityVerificationLevel: String,
-                              wallets: Map[String, Wallet])
+case class User(id: Int,
+                email: String,
+                @JsonProperty("identity_verification_level") identityVerificationLevel: String,
+                wallets: Map[String, Wallet])

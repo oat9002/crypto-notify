@@ -6,13 +6,14 @@ import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import com.softwaremill.macwire.wire
 import commons.{Configuration, ConfigurationImpl, EncryptionUtil, EncryptionUtilImpl}
-import models.GetBalanceResponse
+import models.{Ticker, User}
 
-import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SatangService {
-  def getBalance(userId: String): Future[Option[GetBalanceResponse]]
+  def getBalance(userId: String): Future[Option[User]]
+  def getCryptoPrice(pair: String): Future[Option[Ticker]]
+  def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
 class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) extends SatangService {
@@ -22,9 +23,9 @@ class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) 
   lazy val configuration: Configuration = wire[ConfigurationImpl]
   lazy val encriptionUtil: EncryptionUtil = wire[EncryptionUtilImpl]
   val url: String = configuration.satangConfig.url
-  val userUrl: String = url + "users/"
 
-  def getBalance(userId: String): Future[Option[GetBalanceResponse]] = {
+  override def getBalance(userId: String): Future[Option[User]] = {
+    val userUrl: String = url + "users/"
     val signature = encriptionUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
     val response = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
@@ -37,7 +38,25 @@ class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) 
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case _ => Future.successful(None)
     }.map {
-      case Some(x) => Some(x.toObject(classOf[GetBalanceResponse]))
+      case Some(x) => Some(x.toObject(classOf[User]))
+      case _ => None
+    }
+  }
+
+  override def getCryptoPrice(pair: String): Future[Option[Ticker]] = ???
+
+  override def getCryptoPrices: Future[Option[Array[Ticker]]] = {
+    val tickerUrl = url + "v3/ticker/24hr"
+    val response = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = tickerUrl,
+    ))
+
+    response.flatMap {
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case _ => Future.successful(None)
+    }.map {
+      case Some(x) => Some(x.toObject(classOf[Array[Ticker]]))
       case _ => None
     }
   }

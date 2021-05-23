@@ -17,7 +17,7 @@ object Boot extends App {
   lazy val satangService: SatangService = wire[SatangServiceImpl]
   lazy val configuration: Configuration = wire[ConfigurationImpl]
 
-  val res = satangService.getBalance(configuration.satangConfig.userId)
+  val res = satangService.getCryptoPrices
 
   val route =
     path("") {
