@@ -11,7 +11,7 @@ import models.{Ticker, User}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SatangService {
-  def getBalance(userId: String): Future[Option[User]]
+  def getUser(userId: String): Future[Option[User]]
   def getCryptoPrice(pair: String): Future[Option[Ticker]]
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
@@ -24,7 +24,7 @@ class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) 
   lazy val encriptionUtil: EncryptionUtil = wire[EncryptionUtilImpl]
   val url: String = configuration.satangConfig.url
 
-  override def getBalance(userId: String): Future[Option[User]] = {
+  override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
     val signature = encriptionUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
     val response = Http().singleRequest(HttpRequest(
@@ -43,7 +43,21 @@ class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) 
     }
   }
 
-  override def getCryptoPrice(pair: String): Future[Option[Ticker]] = ???
+  override def getCryptoPrice(pair: String): Future[Option[Ticker]] = {
+    val tickerUrl = url + s"v3/ticker/24hr?symbol=$pair"
+    val response = Http().singleRequest(HttpRequest(
+      method = HttpMethods.GET,
+      uri = tickerUrl,
+    ))
+
+    response.flatMap {
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case _ => Future.successful(None)
+    }.map {
+      case Some(x) => Some(x.toObject(classOf[Ticker]))
+      case _ => None
+    }
+  }
 
   override def getCryptoPrices: Future[Option[Array[Ticker]]] = {
     val tickerUrl = url + "v3/ticker/24hr"
