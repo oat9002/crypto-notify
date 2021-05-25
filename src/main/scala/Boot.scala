@@ -1,27 +1,18 @@
-import akka.actor.ActorSystem
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
-import commons.{Configuration, ConfigurationImpl}
-import services.{JobRunrService, JobRunrServiceImpl, LineService, LineServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import processors.{Executor, ExecutorImpl}
 
 import scala.concurrent.ExecutionContextExecutor
 
 object Boot extends App {
-  implicit val system: ActorSystem = ActorSystem()
+  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "crypto-notify")
   // needed for the future flatMap/onComplete in the end
-  implicit val executionContext: ExecutionContextExecutor = system.dispatcher
-
-  lazy val jobRunrService: JobRunrService = wire[JobRunrServiceImpl]
-  lazy val satangService: SatangService = wire[SatangServiceImpl]
-  lazy val configuration: Configuration = wire[ConfigurationImpl]
-  lazy val userService: UserService = wire[UserServiceImpl]
-  lazy val lineService: LineService = wire[LineServiceImpl]
-
-  val res = userService.getBalanceMessageForLine(configuration.satangConfig.userId)
-
-  res.map(x => lineService.notify(x.get))
+  implicit val executionContext: ExecutionContextExecutor = system.executionContext
+//  lazy val executor: Executor = wire[ExecutorImpl]
 
   val route =
     path("") {
@@ -30,7 +21,7 @@ object Boot extends App {
       }
     }
 
-  jobRunrService.initialize()
+//  executor.execute()
   Http().newServerAt("localhost", 8080).bind(route)
 
   println(s"Server online at http://localhost:8080/")

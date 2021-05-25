@@ -1,6 +1,6 @@
 package services
 
-import akka.actor.ActorSystem
+import akka.actor.typed.ActorSystem
 import com.softwaremill.macwire.wire
 
 import java.time.chrono.ThaiBuddhistChronology
@@ -14,7 +14,7 @@ trait UserService {
   def getBalanceMessageForLine(userId: String): Future[Option[String]]
 }
 
-class UserServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) extends UserService {
+class UserServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   lazy val satangService: SatangService = wire[SatangServiceImpl]
 
   override def getBalanceMessageForLine(userId: String): Future[Option[String]] = {
@@ -40,7 +40,7 @@ class UserServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) ex
 
   private def generateMessage(cryptoBalanceThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
     val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
-    val dateFormatter = DateTimeFormatter.ofPattern("EEEE dd MMM YYYY HH:mm", new Locale("th", "TH")).withChronology(ThaiBuddhistChronology.INSTANCE)
+    val dateFormatter = DateTimeFormatter.ofPattern("E dd MMM YYYY เวลา HH:mm น.", new Locale("th", "TH")).withChronology(ThaiBuddhistChronology.INSTANCE)
     val date = localDatetime.format(dateFormatter) + "\n"
     val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum} บาท\n"
     val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2} บาท").mkString("\n")

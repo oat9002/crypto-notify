@@ -1,6 +1,6 @@
 package services
 
-import akka.actor.ActorSystem
+import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{ContentTypes, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
@@ -16,7 +16,7 @@ trait SatangService {
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
-class SatangServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) extends SatangService {
+class SatangServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
   import commons.JsonUtil._
   import commons.HttpResponseUtil._
 

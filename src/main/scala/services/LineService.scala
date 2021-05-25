@@ -1,6 +1,6 @@
 package services
 
-import akka.actor.ActorSystem
+import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{FormData, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.headers.RawHeader
@@ -13,7 +13,7 @@ trait LineService {
   def notify(message: String): Future[Boolean]
 }
 
-class LineServiceImpl(implicit actor: ActorSystem, context: ExecutionContext) extends LineService {
+class LineServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends LineService {
   lazy val configuration: Configuration = wire[ConfigurationImpl]
 
   override def notify(message: String): Future[Boolean] = {
