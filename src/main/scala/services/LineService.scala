@@ -13,7 +13,7 @@ trait LineService {
   def notify(message: String): Future[Boolean]
 }
 
-class LineServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends LineService {
+class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends LineService {
   lazy val configuration: Configuration = wire[ConfigurationImpl]
 
   override def notify(message: String): Future[Boolean] = {

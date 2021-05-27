@@ -16,7 +16,7 @@ trait SatangService {
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
-class SatangServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
+class SatangServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
   import commons.JsonUtil._
   import commons.HttpResponseUtil._
 

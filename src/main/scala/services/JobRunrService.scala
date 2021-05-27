@@ -8,6 +8,7 @@ import org.jobrunr.jobs.lambdas.JobLambda
 import org.jobrunr.scheduling.BackgroundJob
 import org.jobrunr.server.{BackgroundJobServer, JobActivator}
 import org.jobrunr.storage.{InMemoryStorageProvider, StorageProvider}
+import processors.{Executor, ExecutorImpl}
 
 import scala.concurrent.ExecutionContext
 
@@ -16,20 +17,19 @@ trait JobRunrService {
   def recurring(cronTime: String)(job: JobLambda): Unit
 }
 
-class JobRunrServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends JobRunrService {
+object JobRunrService {
   private val storageProvider: StorageProvider = new InMemoryStorageProvider()
-  val jobActivator = new MyJobActivator(Map(classOf[JobRunrServiceImpl] -> this))
 
-  JobRunr.configure()
-    .useStorageProvider(storageProvider)
-    .useBackgroundJobServer({
-      val b = new BackgroundJobServer(storageProvider, jobActivator)
-      b.start()
-      b
-    })
-    .useDashboard(8080)
-    .initialize()
+  def initialize(implicit actor: ActorSystem[Nothing], context: ExecutionContext): Unit = {
+    JobRunr.configure()
+      .useStorageProvider(storageProvider)
+      .useDefaultBackgroundJobServer()
+      .useDashboard(8080)
+      .initialize()
+  }
+}
 
+class JobRunrServiceImpl extends JobRunrService {
   def enqueue(job: JobLambda): Unit = {
     BackgroundJob.enqueue(job)
   }
@@ -39,14 +39,18 @@ class JobRunrServiceImpl(implicit actor: ActorSystem[Nothing], context: Executio
   }
 }
 
-class MyJobActivator(extra: Map[Class[_], _])(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends JobActivator {
-  lazy val configuraiton: Configuration = wire[ConfigurationImpl]
-  lazy val userService: UserService = wire[UserServiceImpl]
-  lazy val lineService: LineService = wire[LineServiceImpl]
+class MyJobActivator(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends JobActivator {
+  lazy val configuration: ConfigurationImpl = wire[ConfigurationImpl]
+  lazy val satangService: SatangServiceImpl = wire[SatangServiceImpl]
+  lazy val userService: UserServiceImpl = wire[UserServiceImpl]
+  lazy val lineService: LineServiceImpl = wire[LineServiceImpl]
+  lazy val executor: ExecutorImpl = wire[ExecutorImpl]
 
-  val usedServices: Map[Class[_], _] = (Map(classOf[ConfigurationImpl] -> configuraiton,
+  val usedServices: Map[Class[_], _] = Map(classOf[ConfigurationImpl] -> configuration,
+    classOf[SatangServiceImpl] -> satangService,
     classOf[UserServiceImpl] -> userService,
-    classOf[LineServiceImpl] -> lineService) ++ extra).toMap
+    classOf[LineServiceImpl] -> lineService,
+    classOf[ExecutorImpl] -> executor)
 
   override def activateJob[T](`type`: Class[T]): T = {
         usedServices.get(`type`.asInstanceOf[Class[_]]) match {

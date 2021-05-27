@@ -14,7 +14,7 @@ trait UserService {
   def getBalanceMessageForLine(userId: String): Future[Option[String]]
 }
 
-class UserServiceImpl(implicit actor: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
+class UserServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   lazy val satangService: SatangService = wire[SatangServiceImpl]
 
   override def getBalanceMessageForLine(userId: String): Future[Option[String]] = {

@@ -1,8 +1,8 @@
 package processors
 
-import akka.actor.typed.ActorSystem
+import actors.NotifyJob
+import akka.actor.typed.{ActorRef, ActorSystem, Props}
 import com.softwaremill.macwire.wire
-import commons.{Configuration, ConfigurationImpl}
 import services._
 
 import scala.concurrent.ExecutionContext
@@ -11,28 +11,12 @@ trait Executor {
   def execute(): Unit
 }
 
-class ExecutorImpl(implicit val actor: ActorSystem[Nothing], context: ExecutionContext) extends Executor {
-  lazy val configuraiton: Configuration = wire[ConfigurationImpl]
-  lazy val userService: UserService = wire[UserServiceImpl]
-  lazy val lineService: LineService = wire[LineServiceImpl]
-  lazy val jobRunrService: JobRunrService = wire[JobRunrServiceImpl]
+class ExecutorImpl(implicit val system: ActorSystem[Nothing], context: ExecutionContext) {
+  val quartzService: QuartzService = wire[QuartzService]
 
   def execute(): Unit = {
-    jobRunrService.enqueue(() => {
-      val message = userService.getBalanceMessageForLine(configuraiton.satangConfig.userId)
 
-      message.foreach {
-        case Some(m) => lineService.notify(m)
-        case _ =>
-      }
-    })
-//    jobRunrService.recuring(Cron.minutely())(() => {
-//      val message = userService.getBalanceMessageForLine(configuraiton.satangConfig.userId)
-//
-//      message.foreach {
-//        case Some(m) => lineService.notify(m)
-//        case _ =>
-//      }
-//    })
+    val receiver = system.
+    quartzService.schedule(SchedulerName.Every12And18Hours, receiver, NotifyJob.ExecuteTask)
   }
 }

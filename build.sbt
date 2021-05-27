@@ -13,6 +13,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-jackson" % akkaHttp,
   "com.typesafe" % "config" % typesafeConfig,
   "org.jobrunr" % "jobrunr" % jobrunr,
+  "com.enragedginger" %% "akka-quartz-scheduler" % akkaQuartz,
   "com.fasterxml.jackson.core" % "jackson-databind" % jackson,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jackson,
   "com.softwaremill.macwire" %% "macros" % macWire % "provided",
