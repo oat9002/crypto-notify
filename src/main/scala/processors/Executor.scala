@@ -15,7 +15,7 @@ trait Executor {
 class ExecutorImpl {
   implicit val system: ActorSystem[ExecuteTask] = ActorSystem(NotifyJob(), "notify")
   implicit val context: ExecutionContextExecutor = system.executionContext
-  val quartzService: QuartzService[ExecuteTask] = wire[QuartzService[ExecuteTask]]
+  val quartzService: QuartzService[ExecuteTask] = wire[QuartzServiceImpl[ExecuteTask]]
 
   def execute(): Unit = {
     quartzService.schedule(SchedulerName.Every12And18Hours, system, ExecuteTask())

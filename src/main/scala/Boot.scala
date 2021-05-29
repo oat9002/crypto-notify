@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
+import commons.ConfigurationImpl
 import processors.{Executor, ExecutorImpl}
 import services.JobRunrService
 
@@ -14,18 +15,25 @@ object Boot extends App {
   implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "crypto-notify")
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
-
+  lazy val configuration = wire[ConfigurationImpl]
   lazy val executor = wire[ExecutorImpl]
 
   val route =
-    path("") {
-      get {
-        complete(HttpEntity(ContentTypes.`application/json`, "Say hello to crypto-notify"))
+    concat(
+      pathEndOrSingleSlash {
+        get {
+          complete(HttpEntity(ContentTypes.`application/json`, "Say hello to crypto-notify"))
+        }
+      },
+      path("healthCheck") {
+        get {
+          complete(HttpEntity(ContentTypes.`application/json`, "alive"))
+        }
       }
-    }
+    )
 
   executor.execute()
-  Http().newServerAt("localhost", 8080).bind(route)
+  Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
 
   println(s"Server online at http://localhost:8080/")
 }

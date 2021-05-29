@@ -22,6 +22,9 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire" %% "proxy" % macWire
 )
 
-enablePlugins(JavaAppPackaging)
-enablePlugins(DockerPlugin)
+enablePlugins(JavaAppPackaging, DockerPlugin)
+
+dockerRepository := Some("oat9002")
+dockerExposedPorts := Seq(8080)
+dockerUpdateLatest := true
 
