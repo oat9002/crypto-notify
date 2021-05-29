@@ -6,10 +6,10 @@ import services.SchedulerName.SchedulerName
 
 import scala.concurrent.ExecutionContext
 
-class QuartzService(implicit system: ActorSystem[Nothing], context: ExecutionContext) {
+class QuartzService[T](implicit system: ActorSystem[T], context: ExecutionContext) {
   val scheduler: QuartzSchedulerTypedExtension = QuartzSchedulerTypedExtension(system)
 
-  def schedule[T](name: SchedulerName, receiver: ActorRef[T], msg: T): Unit = {
+  def schedule(name: SchedulerName, receiver: ActorRef[T], msg: T): Unit = {
     val startDate = scheduler.scheduleTyped(name.toString, receiver, msg)
 
     println(s"start date: ${startDate.toString}")

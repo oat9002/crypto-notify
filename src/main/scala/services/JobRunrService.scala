@@ -39,23 +39,23 @@ class JobRunrServiceImpl extends JobRunrService {
   }
 }
 
-class MyJobActivator(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends JobActivator {
-  lazy val configuration: ConfigurationImpl = wire[ConfigurationImpl]
-  lazy val satangService: SatangServiceImpl = wire[SatangServiceImpl]
-  lazy val userService: UserServiceImpl = wire[UserServiceImpl]
-  lazy val lineService: LineServiceImpl = wire[LineServiceImpl]
-  lazy val executor: ExecutorImpl = wire[ExecutorImpl]
-
-  val usedServices: Map[Class[_], _] = Map(classOf[ConfigurationImpl] -> configuration,
-    classOf[SatangServiceImpl] -> satangService,
-    classOf[UserServiceImpl] -> userService,
-    classOf[LineServiceImpl] -> lineService,
-    classOf[ExecutorImpl] -> executor)
-
-  override def activateJob[T](`type`: Class[T]): T = {
-        usedServices.get(`type`.asInstanceOf[Class[_]]) match {
-          case Some(o) => o.asInstanceOf[T]
-          case _ => throw new Exception("Cannot not find class for jobactivator")
-        }
-    }
-}
+//class MyJobActivator(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends JobActivator {
+//  lazy val configuration: ConfigurationImpl = wire[ConfigurationImpl]
+//  lazy val satangService: SatangServiceImpl = wire[SatangServiceImpl]
+//  lazy val userService: UserServiceImpl = wire[UserServiceImpl]
+//  lazy val lineService: LineServiceImpl = wire[LineServiceImpl]
+//  lazy val executor: ExecutorImpl = wire[ExecutorImpl]
+//
+//  val usedServices: Map[Class[_], _] = Map(classOf[ConfigurationImpl] -> configuration,
+//    classOf[SatangServiceImpl] -> satangService,
+//    classOf[UserServiceImpl] -> userService,
+//    classOf[LineServiceImpl] -> lineService,
+//    classOf[ExecutorImpl] -> executor)
+//
+//  override def activateJob[T](`type`: Class[T]): T = {
+//        usedServices.get(`type`.asInstanceOf[Class[_]]) match {
+//          case Some(o) => o.asInstanceOf[T]
+//          case _ => throw new Exception("Cannot not find class for jobactivator")
+//        }
+//    }
+//}

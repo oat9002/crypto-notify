@@ -1,0 +1,20 @@
+satang {
+    apiKey = ""
+    apiSecret = ""
+    userId = ""
+    url = ""
+}
+line {
+    lineNotifyToken = ""
+    url = ""
+}
+akka {
+  quartz {
+    schedules {
+      Every12And18Hours {
+        description = "A cron job that fires off every day at noon and 6 p.m."
+        expression = "0 0 12,18 ? * * *"
+      }
+    }
+  }
+}

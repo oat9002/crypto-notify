@@ -11,10 +11,7 @@ import services.JobRunrService
 import scala.concurrent.ExecutionContextExecutor
 
 object Boot extends App {
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.setup[Nothing](c => {
-    c.spawn(NotifyJob(), "notify")
-    Behaviors.empty
-  }), "crypto-notify")
+  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "crypto-notify")
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
