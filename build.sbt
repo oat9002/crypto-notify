@@ -2,7 +2,7 @@ import Dependencies._
 
 name := "crypto-notify"
 
-version := "0.1"
+version := "1.0"
 
 scalaVersion := "2.13.5"
 
@@ -21,3 +21,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire" %% "util" % macWire,
   "com.softwaremill.macwire" %% "proxy" % macWire
 )
+
+enablePlugins(JavaAppPackaging)
+enablePlugins(DockerPlugin)
+

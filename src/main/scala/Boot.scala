@@ -15,7 +15,6 @@ object Boot extends App {
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
 
-  JobRunrService.initialize
   lazy val executor = wire[ExecutorImpl]
 
   val route =
