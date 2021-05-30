@@ -39,12 +39,14 @@ class UserServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionC
   }
 
   private def generateMessage(cryptoBalanceThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
+    import commons.CommonUtil._
+
     val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
     val dateFormatter = DateTimeFormatter.ofPattern("E dd MMM YYYY เวลา HH:mm น.", new Locale("th", "TH")).withChronology(ThaiBuddhistChronology.INSTANCE)
     val date = localDatetime.format(dateFormatter) + "\n"
-    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum} บาท\n"
-    val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2} บาท").mkString("\n")
-    val balance = cryptoBalance.map(x => s"${x._1}: ${x._2}").mkString("\n")
+    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum.format} บาท\n"
+    val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2.format} บาท").mkString("\n")
+    val balance = cryptoBalance.map(x => s"${x._1}: ${x._2.format}").mkString("\n")
 
     "\n".concat(date).concat(sumCurrentBalanceThb).concat(balanceThb).concat("\n\n").concat(balance)
   }
