@@ -1,6 +1,6 @@
 version: "3.3"
 services:
-  gold-price-tracking-server:
+  crypto-notify:
     image: oat9002/crypto-notify:latest
     ports:
       - 8081:8080
