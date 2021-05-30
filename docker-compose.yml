@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  gold-price-tracking-server:
+    image: oat9002/crypto-notify:latest
+    ports:
+      - 8081:8080
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthCheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - .env
