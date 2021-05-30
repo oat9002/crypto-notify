@@ -9,7 +9,17 @@ trait Configuration {
 }
 
 class ConfigurationImpl extends Configuration {
-  private val conf: Config = ConfigFactory.load()
+  private val conf: Config = {
+    val c = ConfigFactory.load()
+    val env = c.getConfig("app").getString("env").toLowerCase.trim
+    if ("development".equals(env)) {
+      val toReturn = ConfigFactory.load("application.local")
+      ConfigFactory.invalidateCaches()
+      toReturn
+    } else {
+      c
+    }
+  }
   private val appSection = conf.getConfig("app")
   private val lineSection = conf.getConfig("line")
   private val satangSection = conf.getConfig("satang")
