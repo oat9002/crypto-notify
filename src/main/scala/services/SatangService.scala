@@ -3,9 +3,8 @@ package services
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
-import akka.http.scaladsl.model.{ContentTypes, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
-import com.softwaremill.macwire.wire
-import commons.{Configuration, ConfigurationImpl, EncryptionUtil, EncryptionUtilImpl}
+import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
+import commons.{CommonUtil, Configuration}
 import models.{Ticker, User}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,17 +15,15 @@ trait SatangService {
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
-class SatangServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
-  import commons.JsonUtil._
+class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
   import commons.HttpResponseUtil._
+  import commons.JsonUtil._
 
-  lazy val configuration: Configuration = wire[ConfigurationImpl]
-  lazy val encriptionUtil: EncryptionUtil = wire[EncryptionUtilImpl]
   val url: String = configuration.satangConfig.url
 
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
-    val signature = encriptionUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
+    val signature = CommonUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
     val response = Http().singleRequest(HttpRequest(
       method = HttpMethods.GET,
       uri = userUrl + s"/$userId",
