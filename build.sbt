@@ -25,6 +25,6 @@ libraryDependencies ++= Seq(
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
 dockerRepository := Some("oat9002")
-dockerExposedPorts := Seq(8080)
+dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 

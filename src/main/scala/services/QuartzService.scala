@@ -23,5 +23,5 @@ class QuartzServiceImpl[T](implicit system: ActorSystem[T], context: ExecutionCo
 object SchedulerName extends Enumeration {
   type SchedulerName = Value
 
-  val Every10And18Hours = Value
+  val Every10And18Hours, Every10Second = Value
 }
