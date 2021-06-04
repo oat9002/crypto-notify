@@ -33,6 +33,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
 
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(_, _, entity, _) =>
+        println(entity.toJsonString)
+        Future.successful(None)
       case _ => Future.successful(None)
     }.map {
       case Some(x) => Some(x.toObject(classOf[User]))
@@ -49,6 +52,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
 
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(_, _, entity, _) =>
+        println(entity.toJsonString)
+        Future.successful(None)
       case _ => Future.successful(None)
     }.map {
       case Some(x) => Some(x.toObject(classOf[Ticker]))
@@ -65,6 +71,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
 
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(_, _, entity, _) =>
+        println(entity.toJsonString)
+        Future.successful(None)
       case _ => Future.successful(None)
     }.map {
       case Some(x) => Some(x.toObject(classOf[Array[Ticker]]))

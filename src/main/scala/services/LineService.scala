@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{FormData, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.headers.RawHeader
 import com.softwaremill.macwire.wire
+import commons.HttpResponseUtil.ToJsonString
 import commons.{Configuration, ConfigurationImpl}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,6 +27,9 @@ class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionC
 
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.discardBytes().future().map(_ => true)
+      case HttpResponse(_, _, entity, _) =>
+        println(entity.toJsonString)
+        Future.successful(false)
       case _ => Future.successful(false)
     }
   }
