@@ -39,9 +39,7 @@ class UserServiceImpl(satangService: SatangService)(implicit system: ActorSystem
   private def generateMessage(cryptoBalanceThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
     import commons.CommonUtil._
 
-    val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
-    val dateFormatter = DateTimeFormatter.ofPattern("E dd MMM YYYY เวลา HH:mm น.", new Locale("th", "TH")).withChronology(ThaiBuddhistChronology.INSTANCE)
-    val date = localDatetime.format(dateFormatter) + "\n"
+    val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum.format} บาท\n"
     val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2.format} บาท").mkString("\n")
     val balance = cryptoBalance.map(x => s"${x._1}: ${x._2.format}").mkString("\n")

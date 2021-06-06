@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 import java.text.NumberFormat
+import java.time.{LocalDateTime, ZoneId}
+import java.time.chrono.ThaiBuddhistChronology
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
@@ -38,6 +41,13 @@ object CommonUtil {
     val digest = mac.doFinal(message.getBytes())
 
     digest.map(d => String.format("%02x", d)).mkString("")
+  }
+
+  def getFormattedNowDate(pattern: String = "E dd MMM YYYY เวลา HH:mm น.", isThai: Boolean = true): String = {
+    val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
+    val dateFormatter = if (isThai) DateTimeFormatter.ofPattern(pattern, new Locale("th", "TH")) else DateTimeFormatter.ofPattern(pattern)
+
+    localDatetime.format(if (isThai) dateFormatter.withChronology(ThaiBuddhistChronology.INSTANCE) else dateFormatter)
   }
 }
 

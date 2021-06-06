@@ -18,6 +18,6 @@ class ExecutorImpl {
   val quartzService: QuartzService[ExecuteTask] = wire[QuartzServiceImpl[ExecuteTask]]
 
   def execute(): Unit = {
-    quartzService.schedule(SchedulerName.Every3hours, system, ExecuteTask())
+    quartzService.schedule(SchedulerName.Custom, system, ExecuteTask())
   }
 }
