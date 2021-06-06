@@ -9,6 +9,7 @@ import commons.HttpResponseUtil.ToJsonString
 import commons.{Configuration, ConfigurationImpl}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 trait LineService {
   def notify(message: String): Future[Boolean]
@@ -28,7 +29,10 @@ class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionC
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.discardBytes().future().map(_ => true)
       case HttpResponse(_, _, entity, _) =>
-        println(entity.toJsonString)
+        entity.toJsonString.onComplete {
+          case Success(Some(v)) => println(s"line notify: $v")
+          case _ => println("Line notify unexpected error")
+        }
         Future.successful(false)
       case _ => Future.successful(false)
     }

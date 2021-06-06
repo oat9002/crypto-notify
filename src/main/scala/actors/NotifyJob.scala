@@ -20,13 +20,16 @@ class NotifyJob(actorContext: ActorContext[ExecuteTask]) extends AbstractBehavio
   private lazy val userService: UserService = wire[UserServiceImpl]
 
   override def onMessage(msg: ExecuteTask): Behavior[ExecuteTask] = {
+    val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
     val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId)
+
+    println(s"run at $now")
 
     message.flatMap {
       case Some(m) => lineService.notify(m)
       case _ => Future.successful(false)
     }.foreach {
-      case false => println(s"${getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)} -> There is some problem with cronjob")
+      case false => println(s"$now -> There is some problem with cronjob")
       case _ =>
     }
 

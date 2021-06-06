@@ -28,7 +28,6 @@ class UserServiceImpl(satangService: SatangService)(implicit system: ActorSystem
           val noneZeroCryptoBalance =  a.wallets.filter(_._1 != "thb").filter(_._2.availableBalance != 0).map(x => x._1 -> x._2.availableBalance)
           val cryptoBalanceInThb = noneZeroCryptoBalance
             .map(x => x._1 -> (b.find(_.symbol == s"${x._1}_thb").get.lastPrice * x._2).setScale(2, RoundingMode.HALF_UP))
-          val f = generateMessage(cryptoBalanceInThb, noneZeroCryptoBalance)
 
           Some(generateMessage(cryptoBalanceInThb, noneZeroCryptoBalance))
         case _ => None

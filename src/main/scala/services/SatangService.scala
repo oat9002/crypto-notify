@@ -8,6 +8,7 @@ import commons.{CommonUtil, Configuration}
 import models.{Ticker, User}
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 trait SatangService {
   def getUser(userId: String): Future[Option[User]]
@@ -34,7 +35,10 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
-        println(entity.toJsonString)
+        entity.toJsonString.onComplete {
+          case Success(Some(v)) => println(s"getUser: $v")
+          case _ => println("getUser unexpected error")
+        }
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
@@ -53,7 +57,10 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
-        println(entity.toJsonString)
+        entity.toJsonString.onComplete {
+          case Success(Some(v)) => println(s"getCryptoPrice: $v")
+          case _ => println("getCryptoPrice unexpected error")
+        }
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
@@ -72,7 +79,10 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
-        println(entity.toJsonString)
+        entity.toJsonString.onComplete {
+          case Success(Some(v)) => println(s"getCryptoPrices: v")
+          case _ => println("getCryptoPrices unexpected error")
+        }
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
