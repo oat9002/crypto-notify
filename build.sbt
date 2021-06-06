@@ -28,7 +28,8 @@ enablePlugins(JavaAppPackaging, DockerPlugin)
 dockerRepository := Some("oat9002")
 dockerBaseImage := "openjdk:16-alpine"
 dockerCommands ++= Seq(Cmd("USER", "root"),
-  ExecCmd("RUN", "apk", "--no-cache", "add", "bash")
+  ExecCmd("RUN", "apk", "--no-cache", "add", "bash"),
+  ExecCmd("RUN", "apk", "--no-cache", "add", "curl")
 )
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
