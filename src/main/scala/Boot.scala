@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
 import commons.ConfigurationImpl
 import processors.{Executor, ExecutorImpl}
-import services.JobRunrService
+import services.{FirebaseService, JobRunrService}
 
 import scala.concurrent.ExecutionContextExecutor
 
@@ -17,6 +17,8 @@ object Boot extends App {
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   lazy val configuration = wire[ConfigurationImpl]
   lazy val executor = wire[ExecutorImpl]
+
+  FirebaseService.initializeApp(configuration.firebaseConfig)
 
   val route =
     concat(
