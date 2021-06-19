@@ -26,4 +26,4 @@ jobs:
     - name: Publist to Docker Hub
       run: sbt "Docker / publish"
     - name: Deploy to server
-      run: curl -X POST ${{ secrets.SERVER_URL }}
+      run: curl ${{ secrets.SERVER_URL }}
