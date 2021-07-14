@@ -1,5 +1,6 @@
 import Dependencies._
 import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
+import sbtrelease.ReleaseStateTransformations.{checkSnapshotDependencies, commitNextVersion, commitReleaseVersion, inquireVersions, pushChanges, runClean, runTest, setNextVersion, setReleaseVersion, tagRelease}
 
 name := "crypto-notify"
 
@@ -33,3 +34,15 @@ dockerCommands ++= Seq(Cmd("USER", "root"),
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,              // : ReleaseStep
+  inquireVersions,                        // : ReleaseStep
+  setReleaseVersion,                      // : ReleaseStep
+  commitReleaseVersion,                   // : ReleaseStep, performs the initial git checks
+  tagRelease,                             // : ReleaseStep
+  setNextVersion,                         // : ReleaseStep
+  commitNextVersion,                      // : ReleaseStep
+  //pushChanges
+)
+
+releaseUseGlobalVersion := false
