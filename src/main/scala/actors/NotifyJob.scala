@@ -6,7 +6,7 @@ import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 import com.softwaremill.macwire.wire
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl}
-import services.{LineService, LineServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import services.{BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
 
 import scala.concurrent.Future
 
@@ -17,11 +17,12 @@ class NotifyJob(actorContext: ActorContext[ExecuteTask]) extends AbstractBehavio
   private lazy val configuration: Configuration = wire[ConfigurationImpl]
   private lazy val lineService: LineService = wire[LineServiceImpl]
   private lazy val satangService: SatangService = wire[SatangServiceImpl]
+  private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
   private lazy val userService: UserService = wire[UserServiceImpl]
 
   override def onMessage(msg: ExecuteTask): Behavior[ExecuteTask] = {
     val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
-    val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId)
+    val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address)
 
     println(s"run at $now")
 

@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import commons.{CommonUtil, Configuration}
-import models.{Ticker, User}
+import models.satang.{Ticker, User}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Success
