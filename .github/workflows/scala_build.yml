@@ -1,4 +1,4 @@
-name: Scala Deploy
+name: Scala Build
 
 on:
   pull_request:
