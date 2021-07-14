@@ -12,7 +12,7 @@ trait Executor {
   def execute(): Unit
 }
 
-class ExecutorImpl {
+class ExecutorImpl extends Executor {
   implicit val system: ActorSystem[ExecuteTask] = ActorSystem(NotifyJob(), "notify")
   implicit val context: ExecutionContextExecutor = system.executionContext
   val quartzService: QuartzService[ExecuteTask] = wire[QuartzServiceImpl[ExecuteTask]]

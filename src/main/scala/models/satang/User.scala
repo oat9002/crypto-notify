@@ -1,4 +1,4 @@
-package models
+package models.satang
 
 import com.fasterxml.jackson.annotation.JsonProperty
 

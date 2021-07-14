@@ -1,33 +1,43 @@
 package services
 
 import akka.actor.typed.ActorSystem
-import com.softwaremill.macwire.wire
+import commons.Constant
+import models.satang.Wallet
 
-import java.time.chrono.ThaiBuddhistChronology
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
-import java.util.Locale
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 
 trait UserService {
-  def getBalanceMessageForLine(userId: String): Future[Option[String]]
+  def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]]
 }
 
-class UserServiceImpl(satangService: SatangService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
-  override def getBalanceMessageForLine(userId: String): Future[Option[String]] = {
-    val user = satangService.getUser(userId)
-    val currentPrices = satangService.getCryptoPrices
+class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
+  override def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]] = {
+    val userFuture = satangService.getUser(userId)
+    val currentPricesFuture = satangService.getCryptoPrices
+    val extBnbAmountFuture = bscScanService.getBnbBalance(extWalletAddress)
+    val extCakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
+    val extCakeStakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
 
     for {
-      u <- user
-      currentPrice <- currentPrices
+      user <- userFuture
+      currentPrices <- currentPricesFuture
+      extBnbAmount <- extBnbAmountFuture
+      extCakeAmount <- extCakeAmountFuture
+      extCakeStakeAmount <- extCakeStakeAmountFuture
     } yield {
-      (u, currentPrice) match {
-        case (Some(a), Some(b)) =>
-          val noneZeroCryptoBalance =  a.wallets.filter(_._1 != "thb").filter(_._2.availableBalance != 0).map(x => x._1 -> x._2.availableBalance)
+      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount) match {
+        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake)) =>
+          val noneZeroCryptoBalance = u.wallets.map(x => x._1 -> x._2.availableBalance)
+            .map(x => x match {
+              case ("bnb", availableBalance) => ("bnb", availableBalance + eBnB)
+              case ("cake", availableBalance) => ("cake", availableBalance + eCake + eCakeStake)
+              case (pair, availableBalance) => (pair, availableBalance)
+            })
+            .filter(x => x._1 != "thb" && x._2 != 0)
+
           val cryptoBalanceInThb = noneZeroCryptoBalance
-            .map(x => x._1 -> (b.find(_.symbol == s"${x._1}_thb").get.lastPrice * x._2).setScale(2, RoundingMode.HALF_UP))
+            .map(x => x._1 -> (cp.find(_.symbol == s"${x._1}_thb").get.lastPrice * x._2).setScale(2, RoundingMode.HALF_UP))
 
           Some(generateMessage(cryptoBalanceInThb, noneZeroCryptoBalance))
         case _ => None

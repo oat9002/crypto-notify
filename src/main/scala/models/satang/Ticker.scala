@@ -1,4 +1,4 @@
-package models
+package models.satang
 
 case class Ticker(askPrice: BigDecimal,
                   bidPrice: BigDecimal,
