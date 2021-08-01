@@ -4,6 +4,7 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
+import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration}
 import models.satang.{Ticker, User}
 
@@ -16,7 +17,7 @@ trait SatangService {
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
-class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService {
+class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService with LazyLogging {
   import commons.HttpResponseUtil._
   import commons.JsonUtil._
 
@@ -36,8 +37,8 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
         entity.toJsonString.onComplete {
-          case Success(Some(v)) => println(s"getUser: $v")
-          case _ => println("getUser unexpected error")
+          case Success(Some(v)) => logger.error(s"getUser: $v")
+          case _ => logger.error("getUser unexpected error")
         }
         Future.successful(None)
       case _ => Future.successful(None)
@@ -58,8 +59,8 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
         entity.toJsonString.onComplete {
-          case Success(Some(v)) => println(s"getCryptoPrice: $v")
-          case _ => println("getCryptoPrice unexpected error")
+          case Success(Some(v)) => logger.error(s"getCryptoPrice: $v")
+          case _ => logger.error("getCryptoPrice unexpected error")
         }
         Future.successful(None)
       case _ => Future.successful(None)
@@ -80,8 +81,8 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
       case HttpResponse(_, _, entity, _) =>
         entity.toJsonString.onComplete {
-          case Success(Some(v)) => println(s"getCryptoPrices: v")
-          case _ => println("getCryptoPrices unexpected error")
+          case Success(Some(v)) => logger.error(s"getCryptoPrices: v")
+          case _ => logger.error("getCryptoPrices unexpected error")
         }
         Future.successful(None)
       case _ => Future.successful(None)

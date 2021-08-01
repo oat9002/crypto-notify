@@ -6,4 +6,6 @@ object Dependencies {
   val akkaQuartz = "1.9.1-akka-2.6.x"
   val jackson = "2.12.3"
   val macWire = "2.3.7"
+  val scalaLogging = "3.9.4"
+  val slf4j = "1.7.9"
 }

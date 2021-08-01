@@ -3,7 +3,7 @@ import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 
 name := "crypto-notify"
 
-version := "1.0"
+version := "1.1"
 
 scalaVersion := "2.13.5"
 
@@ -13,14 +13,15 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http" % akkaHttp,
   "com.typesafe.akka" %% "akka-http-jackson" % akkaHttp,
   "com.typesafe" % "config" % typesafeConfig,
-  "org.jobrunr" % "jobrunr" % jobrunr,
   "com.enragedginger" %% "akka-quartz-scheduler" % akkaQuartz,
   "com.fasterxml.jackson.core" % "jackson-databind" % jackson,
   "com.fasterxml.jackson.module" %% "jackson-module-scala" % jackson,
   "com.softwaremill.macwire" %% "macros" % macWire % "provided",
   "com.softwaremill.macwire" %% "macrosakka" % macWire % "provided",
   "com.softwaremill.macwire" %% "util" % macWire,
-  "com.softwaremill.macwire" %% "proxy" % macWire
+  "com.softwaremill.macwire" %% "proxy" % macWire,
+  "org.slf4j" % "slf4j-simple" % slf4j,
+  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging
 )
 
 enablePlugins(JavaAppPackaging, DockerPlugin)
