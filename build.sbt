@@ -20,7 +20,8 @@ libraryDependencies ++= Seq(
   "com.softwaremill.macwire" %% "macros" % macWire % "provided",
   "com.softwaremill.macwire" %% "macrosakka" % macWire % "provided",
   "com.softwaremill.macwire" %% "util" % macWire,
-  "com.softwaremill.macwire" %% "proxy" % macWire
+  "com.softwaremill.macwire" %% "proxy" % macWire,
+  "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging
 )
 
 enablePlugins(JavaAppPackaging, DockerPlugin)

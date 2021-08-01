@@ -5,6 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{FormData, HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.headers.RawHeader
 import com.softwaremill.macwire.wire
+import com.typesafe.scalalogging.LazyLogging
 import commons.HttpResponseUtil.ToJsonString
 import commons.{Configuration, ConfigurationImpl}
 
@@ -15,7 +16,7 @@ trait LineService {
   def notify(message: String): Future[Boolean]
 }
 
-class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends LineService {
+class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends LineService with LazyLogging {
   lazy val configuration: Configuration = wire[ConfigurationImpl]
 
   override def notify(message: String): Future[Boolean] = {
@@ -30,8 +31,8 @@ class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionC
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.discardBytes().future().map(_ => true)
       case HttpResponse(_, _, entity, _) =>
         entity.toJsonString.onComplete {
-          case Success(Some(v)) => println(s"line notify: $v")
-          case _ => println("Line notify unexpected error")
+          case Success(Some(v)) => logger.error(s"line notify: $v")
+          case _ => logger.error("Line notify unexpected error")
         }
         Future.successful(false)
       case _ => Future.successful(false)

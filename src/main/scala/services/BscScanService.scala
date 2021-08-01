@@ -3,6 +3,7 @@ package services
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, StatusCodes}
+import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
 import commons.HttpResponseUtil.ToJsonString
 import commons.JsonUtil.JsonDeserialize
@@ -17,7 +18,7 @@ trait BscScanService {
   def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService {
+class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService with LazyLogging {
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
     val url = s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
     val response = Http().singleRequest(HttpRequest(
@@ -35,7 +36,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
         if (res.message == "OK") {
           Some(convertFromWei(res.result))
         } else {
-          println(s"getBnbBalance failed: ${res.message}")
+          logger.error(s"getBnbBalance failed: ${res.message}")
           None
         }
       case _ => None
@@ -59,7 +60,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
         if (res.message == "OK") {
           Some(convertFromWei(res.result))
         } else {
-          println(s"getTokenBalance failed: ${res.message}")
+          logger.error(s"getTokenBalance failed: ${res.message}")
           None
         }
       case _ => None
