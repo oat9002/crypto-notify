@@ -3,7 +3,7 @@ import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 
 name := "crypto-notify"
 
-version := "1.0"
+version := "1.1"
 
 scalaVersion := "2.13.5"
 
