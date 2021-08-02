@@ -5,6 +5,20 @@ on:
     branches: [ main ]
 
 jobs:
+  updateVersion:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 16
+        uses: actions/setup-java@v2
+        with:
+          java-version: '16'
+          distribution: 'adopt'
+      - name: Release
+        run: sbt "release"
+
   deploy:
 
     runs-on: ubuntu-latest
