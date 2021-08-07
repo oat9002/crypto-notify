@@ -1,7 +1,7 @@
 package commons
 
 import com.typesafe.config.{Config, ConfigFactory}
-import models.configuration.{AkkaConfig, AppConfig, BscScanConfig, LineConfig, Quartz, SatangConfig, Schedule}
+import models.configuration.{AkkaConfig, AppConfig, BscScanConfig, LineConfig, MackerelConfig, Quartz, SatangConfig, Schedule}
 
 
 trait Configuration {
@@ -10,6 +10,7 @@ trait Configuration {
   val satangConfig: SatangConfig
   val bscScanConfig: BscScanConfig
   val akkaConfig: AkkaConfig
+  val mackerelConfig: MackerelConfig
 }
 
 class ConfigurationImpl extends Configuration {
@@ -29,12 +30,13 @@ class ConfigurationImpl extends Configuration {
   private val satangSection = conf.getConfig("satang")
   private val bscScanSection = conf.getConfig("bscScan")
   private val akkaSection = conf.getConfig("akka")
+  private val mackerelSection = conf.getConfig("mackerel")
   lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
   lazy val lineConfig: LineConfig = LineConfig(lineSection.getString("lineNotifyToken"), lineSection.getString("url"))
   lazy val satangConfig: SatangConfig = SatangConfig(satangSection.getString("apiKey"), satangSection.getString("apiSecret"), satangSection.getString("userId"), satangSection.getString("url"))
   lazy val bscScanConfig: BscScanConfig = BscScanConfig(bscScanSection.getString("url"), bscScanSection.getString("apiKey"), bscScanSection.getString("address"))
   lazy val akkaConfig: AkkaConfig = AkkaConfig(Quartz(akkaSection.getConfig("quartz").getString("defaultTimezone"),{
-    val sch = akkaSection.getConfig("quartz")getConfig("schedules")
+    val sch = akkaSection.getConfig("quartz").getConfig("schedules")
     val every3hours = sch.getConfig("Every3hours")
     val every10Secs = sch.getConfig("Every10Seconds")
     val custom = sch.getConfig("Custom")
@@ -42,4 +44,5 @@ class ConfigurationImpl extends Configuration {
       "Every10Seconds" -> Schedule(every10Secs.getString("description"), every10Secs.getString("expression")),
       "Custom" -> Schedule(custom.getString("description"), custom.getString("expression")))
   }))
+  lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"))
 }

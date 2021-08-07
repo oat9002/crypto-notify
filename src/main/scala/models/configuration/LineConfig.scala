@@ -1,4 +1,4 @@
 package models.configuration
 
-case class LineConfig(lineNotifyToken: String,
+final case class LineConfig(lineNotifyToken: String,
                       url: String)

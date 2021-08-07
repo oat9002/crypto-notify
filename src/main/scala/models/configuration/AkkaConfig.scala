@@ -1,11 +1,11 @@
 package models.configuration
 
-case class AkkaConfig(quartz: Quartz)
+final case class AkkaConfig(quartz: Quartz)
 
-case class Quartz(defaultTimezone: String,
+final case class Quartz(defaultTimezone: String,
                   schedules: Map[String, Schedule])
 
-case class Schedule(description: String,
+final case class Schedule(description: String,
                     expression: String)
 
 
