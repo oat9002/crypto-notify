@@ -30,7 +30,7 @@ class LineServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionC
     response.flatMap {
       case HttpResponse(StatusCodes.OK, _, entity, _) => entity.discardBytes().future().map(_ => true)
       case HttpResponse(_, _, entity, _) =>
-        entity.toJsonString.onComplete {
+        entity.toJson.onComplete {
           case Success(Some(v)) => logger.error(s"line notify: $v")
           case _ => logger.error("Line notify unexpected error")
         }

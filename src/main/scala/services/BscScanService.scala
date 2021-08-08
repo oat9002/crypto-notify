@@ -27,7 +27,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
       case HttpResponse(_, _, entity, _) => Future.successful(None)
       case _ => Future.successful(None)
     }.map {
@@ -51,7 +51,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
       case HttpResponse(_, _, entity, _) => Future.successful(None)
       case _ => Future.successful(None)
     }.map {

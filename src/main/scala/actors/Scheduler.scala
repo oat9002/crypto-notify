@@ -6,10 +6,12 @@ import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl}
-import services.{BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import models.mackerel.MackerelRequest
+import services.{BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
 
+import scala.concurrent.Future
 
-class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Command](actorContext) with LazyLogging {  import context.executionContext
+class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Command](actorContext) with LazyLogging {
   import context.executionContext
 
   implicit val nothingSystem: ActorSystem[Nothing] = actorContext.system
@@ -18,24 +20,25 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   private lazy val satangService: SatangService = wire[SatangServiceImpl]
   private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
   private lazy val userService: UserService = wire[UserServiceImpl]
+  private lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
 
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>
       val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
-//      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address)
+      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address)
 
       logger.info(s"NotifyTask run at $now")
 
-//      message.flatMap {
-//        case Some(m) => lineService.notify(m)
-//        case _ => Future.successful(false)
-//      }.foreach {
-//        case false => logger.error(s"$now -> There is some problem with cronjob")
-//        case _ =>
-//      }
+      message.flatMap {
+        case Some(m) => lineService.notify(m)
+        case _ => Future.successful(false)
+      }.foreach {
+        case false => logger.error(s"$now -> There is some problem with cronjob")
+        case _ =>
+      }
       this
     case HealthCheckTask =>
-      logger.info("HealthCheckTask run")
+      mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
       this
     case _ => this
   }

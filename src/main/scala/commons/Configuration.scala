@@ -49,5 +49,5 @@ class ConfigurationImpl extends Configuration {
       "HealthCheck" -> Schedule(healthCheck.getString("description"), healthCheck.getString("expression"))
     )
   }))
-  lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"))
+  lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"), mackerelSection.getString("serviceName"))
 }
