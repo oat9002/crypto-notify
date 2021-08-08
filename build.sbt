@@ -48,3 +48,4 @@ releaseProcess := Seq[ReleaseStep](
   pushChanges                             // : ReleaseStep, also checks that an upstream branch is properly configured
 )
 releaseUseGlobalVersion := false
+releaseIgnoreUntrackedFiles := true
