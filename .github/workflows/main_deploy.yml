@@ -2,13 +2,12 @@ name: deploy
 
 on:
   push:
-    branches: [ main ]
+    tags: ["v*"]
 
 jobs:
   deploy:
-
+    if: github.event.base.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 16

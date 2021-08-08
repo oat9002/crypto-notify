@@ -1,28 +1,28 @@
 package processors
 
-import actors.NotifyJob
-import actors.NotifyJob.ExecuteTask
+import actors.{Command, HealthCheckTask, NotifyTask, Scheduler}
 import akka.actor.typed.ActorSystem
 import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
 import services._
 
-import scala.concurrent.ExecutionContextExecutor
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
 trait Executor {
   def execute(): Unit
 }
 
-class ExecutorImpl(val configuration: Configuration) extends Executor with LazyLogging {
-  implicit val system: ActorSystem[ExecuteTask] = ActorSystem(NotifyJob(), "notify")
-  implicit val context: ExecutionContextExecutor = system.executionContext
-  lazy val quartzService: QuartzService[ExecuteTask] = wire[QuartzServiceImpl[ExecuteTask]]
+class ExecutorImpl(configuration: Configuration)(implicit val system: ActorSystem[Command], context: ExecutionContext) extends Executor with LazyLogging {
+  private lazy val quartzService: QuartzService[Command] = wire[QuartzServiceImpl[Command]]
 
   def execute(): Unit = {
-    val selectedScheduler = SchedulerName.Custom
+    val notifyCron = SchedulerName.Notify
+    val healthCheckCron = SchedulerName.HealthCheck
 
-    logger.info(s"Cron name: ${selectedScheduler.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(selectedScheduler.toString).map(_.expression).getOrElse("")}")
-    quartzService.schedule(selectedScheduler, system, ExecuteTask())
+    logger.info(s"Cron name: ${notifyCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(notifyCron.toString).map(_.expression).getOrElse("")}")
+    quartzService.schedule(notifyCron, system, NotifyTask)
+    logger.info(s"Cron name: ${healthCheckCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(healthCheckCron.toString).map(_.expression).getOrElse("")}")
+    quartzService.schedule(healthCheckCron, system, HealthCheckTask)
   }
 }

@@ -34,9 +34,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
       case HttpResponse(_, _, entity, _) =>
-        entity.toJsonString.onComplete {
+        entity.toJson.onComplete {
           case Success(Some(v)) => logger.error(s"getUser: $v")
           case _ => logger.error("getUser unexpected error")
         }
@@ -56,9 +56,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
       case HttpResponse(_, _, entity, _) =>
-        entity.toJsonString.onComplete {
+        entity.toJson.onComplete {
           case Success(Some(v)) => logger.error(s"getCryptoPrice: $v")
           case _ => logger.error("getCryptoPrice unexpected error")
         }
@@ -78,9 +78,9 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
     ))
 
     response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJsonString
+      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
       case HttpResponse(_, _, entity, _) =>
-        entity.toJsonString.onComplete {
+        entity.toJson.onComplete {
           case Success(Some(v)) => logger.error(s"getCryptoPrices: v")
           case _ => logger.error("getCryptoPrices unexpected error")
         }
