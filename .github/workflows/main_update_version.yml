@@ -22,4 +22,7 @@ jobs:
           git config --global user.email 'oat9002@hotmail.com'
       - name: Release
         run: sbt "release with-defaults"
+        env: 
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+
 
