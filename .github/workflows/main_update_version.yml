@@ -17,7 +17,7 @@ jobs:
           java-version: '16'
           distribution: 'adopt'
       - name: Set GitHub user
-      - run: |
+        run: |
           git config --global user.name 'oat9002'
           git config --global user.email 'oat9002@hotmail.com'
       - name: Release
