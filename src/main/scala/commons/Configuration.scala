@@ -38,11 +38,16 @@ class ConfigurationImpl extends Configuration {
   lazy val akkaConfig: AkkaConfig = AkkaConfig(Quartz(akkaSection.getConfig("quartz").getString("defaultTimezone"),{
     val sch = akkaSection.getConfig("quartz").getConfig("schedules")
     val every3hours = sch.getConfig("Every3hours")
+    val every1Minute = sch.getConfig("Every1Minute")
     val every10Secs = sch.getConfig("Every10Seconds")
-    val custom = sch.getConfig("Custom")
-    Map("Every3hours" -> Schedule(every3hours.getString("description"),every3hours.getString("expression")),
+    val notify = sch.getConfig("Notify")
+    val healthCheck = sch.getConfig("HealthCheck")
+    Map("Every3hours" -> Schedule(every3hours.getString("description"), every3hours.getString("expression")),
+      "Every1Minute" -> Schedule(every1Minute.getString("description"), every1Minute.getString("expression")),
       "Every10Seconds" -> Schedule(every10Secs.getString("description"), every10Secs.getString("expression")),
-      "Custom" -> Schedule(custom.getString("description"), custom.getString("expression")))
+      "Notify" -> Schedule(notify.getString("description"), notify.getString("expression")),
+      "HealthCheck" -> Schedule(healthCheck.getString("description"), healthCheck.getString("expression"))
+    )
   }))
   lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"))
 }

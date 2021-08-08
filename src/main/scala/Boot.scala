@@ -1,4 +1,5 @@
-import akka.actor.typed.ActorSystem
+import actors.{Command, Scheduler}
+import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
@@ -11,7 +12,8 @@ import processors.{Executor, ExecutorImpl}
 import scala.concurrent.ExecutionContextExecutor
 
 object Boot extends App with LazyLogging {
-  implicit val system: ActorSystem[Nothing] = ActorSystem(Behaviors.empty, "crypto-notify")
+  implicit val system: ActorSystem[Command] = ActorSystem(Scheduler(), "crypto-notify")
+  implicit val nothingActorRef: ActorRef[Nothing] = system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
   // needed for the future flatMap/onComplete in the end
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
   lazy val configuration: Configuration = wire[ConfigurationImpl]
