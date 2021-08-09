@@ -1,4 +1,4 @@
-name: manual-deploy
+name: deploy
 
 on:
   push:
