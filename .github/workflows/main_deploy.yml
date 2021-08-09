@@ -6,7 +6,7 @@ on:
 
 jobs:
   deploy:
-    if: github.event.base.ref == 'refs/heads/master'
+    if: github.event.base.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
