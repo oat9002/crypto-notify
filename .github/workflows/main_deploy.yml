@@ -22,4 +22,5 @@ jobs:
     - name: Publist to Docker Hub
       run: sbt "Docker / publish"
     - name: Deploy to server
-      run: curl ${{ secrets.SERVER_URL }}
+      run: |
+        curl ${{ secrets.SERVER_URL }} -H "X-Api-Key: ${{ secrets.DEPLOY_API_KEY }}"
