@@ -2,7 +2,6 @@ package services
 
 import akka.actor.typed.ActorSystem
 import commons.Constant
-import models.satang.Wallet
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
