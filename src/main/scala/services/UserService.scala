@@ -27,18 +27,22 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
     } yield {
       (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount) match {
         case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake)) =>
-          val noneZeroCryptoBalance = u.wallets.map(x => x._1 -> x._2.availableBalance)
-            .map(x => x match {
+          val pairMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
+          val noneZeroCryptoBalance = pairMap
+            .map {
               case ("bnb", availableBalance) => ("bnb", availableBalance + eBnB)
               case ("cake", availableBalance) => ("cake", availableBalance + eCake + eCakeStake)
               case (pair, availableBalance) => (pair, availableBalance)
-            })
+            }
             .filter(x => x._1 != "thb" && x._2 != 0)
 
           val cryptoBalanceInThb = noneZeroCryptoBalance
             .map(x => x._1 -> (cp.find(_.symbol == s"${x._1}_thb").get.lastPrice * x._2).setScale(2, RoundingMode.HALF_UP))
+          val allBalanceIntThb = pairMap.filter(_._1 == "thb")
+            .map("fiat money" -> _._2)
+            .concat(cryptoBalanceInThb)
 
-          Some(generateMessage(cryptoBalanceInThb, noneZeroCryptoBalance))
+          Some(generateMessage(allBalanceIntThb, noneZeroCryptoBalance))
         case _ => None
       }
     }
