@@ -48,12 +48,12 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
     }
   }
 
-  private def generateMessage(cryptoBalanceThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
+  private def generateMessage(allBalanceInThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
     import commons.CommonUtil._
 
     val date = getFormattedNowDate() + "\n"
-    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${cryptoBalanceThb.values.sum.format} บาท\n"
-    val balanceThb = cryptoBalanceThb.map(x => s"${x._1}: ${x._2.format} บาท").mkString("\n")
+    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${allBalanceInThb.values.sum.format} บาท\n"
+    val balanceThb = allBalanceInThb.map(x => s"${x._1}: ${x._2.format} บาท").mkString("\n")
     val balance = cryptoBalance.map(x => s"${x._1}: ${x._2.format}").mkString("\n")
 
     "\n".concat(date).concat(sumCurrentBalanceThb).concat(balanceThb).concat("\n\n").concat(balance)
