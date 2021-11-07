@@ -32,7 +32,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
       case _ => Future.successful(None)
     }.map {
       case Some(x) =>
-        val res = x.toObject(classOf[BscScanResponse])
+        val res = x.toObject[BscScanResponse]
         if (res.message == "OK") {
           Some(convertFromWei(res.result))
         } else {
@@ -56,7 +56,7 @@ class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSys
       case _ => Future.successful(None)
     }.map {
       case Some(x) =>
-        val res = x.toObject(classOf[BscScanResponse])
+        val res = x.toObject[BscScanResponse]
         if (res.message == "OK") {
           Some(convertFromWei(res.result))
         } else {

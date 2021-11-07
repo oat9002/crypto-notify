@@ -43,7 +43,7 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
-      case Some(x) => Some(x.toObject(classOf[User]))
+      case Some(x) => Some(x.toObject[User])
       case _ => None
     }
   }
@@ -65,7 +65,7 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
-      case Some(x) => Some(x.toObject(classOf[Ticker]))
+      case Some(x) => Some(x.toObject[Ticker])
       case _ => None
     }
   }
@@ -87,7 +87,7 @@ class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSyst
         Future.successful(None)
       case _ => Future.successful(None)
     }.map {
-      case Some(x) => Some(x.toObject(classOf[Array[Ticker]]))
+      case Some(x) => Some(x.toObject[Array[Ticker]])
       case _ => None
     }
   }
