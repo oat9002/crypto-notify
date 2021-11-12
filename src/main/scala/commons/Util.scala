@@ -58,7 +58,7 @@ object JsonUtil {
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .build()
 
-  implicit class JsonSerialized(obj: Any) {
+  implicit class JsonSerialize(obj: Any) {
     def toJson: String = mapper.writeValueAsString(obj)
   }
 

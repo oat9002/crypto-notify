@@ -7,7 +7,7 @@ import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpHeader, HttpMetho
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
 import commons.HttpResponseUtil.ToJsonString
-import commons.JsonUtil.JsonSerialized
+import commons.JsonUtil.JsonSerialize
 import models.mackerel.MackerelRequest
 
 import scala.concurrent.{ExecutionContext, Future}
