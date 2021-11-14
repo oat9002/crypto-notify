@@ -11,6 +11,7 @@ object Dependencies {
   val scalaLogging = "3.9.4"
   val slf4j = "1.7.9"
   val scalaTest = "3.2.10"
+  val sttp = "3.3.16"
 
   lazy val dependencies = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % akka,
@@ -27,6 +28,8 @@ object Dependencies {
     "com.softwaremill.macwire" %% "proxy" % macWire,
     "org.slf4j" % "slf4j-simple" % slf4j,
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging,
+    "com.softwaremill.sttp.client3" %% "core" % sttp,
+    "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttp,
   )
 
   lazy val testDependencies = Seq(
