@@ -1,12 +1,8 @@
 package services
 
 import akka.actor.typed.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import com.typesafe.scalalogging.LazyLogging
-import commons.Configuration
-import commons.HttpResponseUtil.ToJsonString
-import commons.JsonUtil.JsonDeserialize
+import commons.{Configuration, HttpClient}
 import models.bscScan.BscScanResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,52 +14,40 @@ trait BscScanService {
   def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService with LazyLogging {
+class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService with LazyLogging {
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
     val url = s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
-    val response = Http().singleRequest(HttpRequest(
-      method = HttpMethods.GET,
-      uri = url
-    ))
+    val response = httpClient.get[_, BscScanResponse](url)
 
-    response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
-      case HttpResponse(_, _, entity, _) => Future.successful(None)
-      case _ => Future.successful(None)
-    }.map {
-      case Some(x) =>
-        val res = x.toObject[BscScanResponse]
-        if (res.message == "OK") {
-          Some(convertFromWei(res.result))
+    response.map {
+      case Left(err) =>
+        logger.error(s"getBnbBalance failed: $err")
+        None
+      case Right(x) =>
+        if (x.message == "OK") {
+          Some(convertFromWei(x.result))
         } else {
-          logger.error(s"getBnbBalance failed: ${res.message}")
+          logger.error(s"getBnbBalance failed: ${x.message}")
           None
         }
-      case _ => None
     }
   }
 
   override def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]] = {
     val url = s"${configuration.bscScanConfig.url}?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=${configuration.bscScanConfig.apiKey}"
-    val response = Http().singleRequest(HttpRequest(
-      method = HttpMethods.GET,
-      uri = url
-    ))
+    val response = httpClient.get[_, BscScanResponse](url)
 
-    response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
-      case HttpResponse(_, _, entity, _) => Future.successful(None)
-      case _ => Future.successful(None)
-    }.map {
-      case Some(x) =>
-        val res = x.toObject[BscScanResponse]
-        if (res.message == "OK") {
-          Some(convertFromWei(res.result))
+    response.map {
+      case Left(err) =>
+        logger.error(s"getTokenBalance failed: $err")
+        None
+      case Right(x) =>
+        if (x.message == "OK") {
+          Some(convertFromWei(x.result))
         } else {
-          logger.error(s"getTokenBalance failed: ${res.message}")
+          logger.error(s"getTokenBalance failed: ${x.message}")
           None
         }
-      case _ => None
     }
   }
 
