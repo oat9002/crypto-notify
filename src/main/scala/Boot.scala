@@ -6,7 +6,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl}
+import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
 import processors.{Executor, ExecutorImpl}
 import services.{MackerelService, MackerelServiceImpl}
@@ -17,6 +17,7 @@ object Boot extends App with LazyLogging {
   implicit val system: ActorSystem[Command] = ActorSystem(Scheduler(), "crypto-notify")
   implicit val nothingActorRef: ActorRef[Nothing] = system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
   implicit val executionContext: ExecutionContextExecutor = system.executionContext
+  lazy val httpClient: HttpClient = wire[HttpClientImpl]
   lazy val configuration: Configuration = wire[ConfigurationImpl]
   lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
   lazy val executor: Executor = wire[ExecutorImpl]
