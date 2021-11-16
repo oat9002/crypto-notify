@@ -1,15 +1,14 @@
 import sbt._
 
 object Dependencies {
-  val akka = "2.6.14"
-  val akkaHttp = "10.2.4"
-  val typesafeConfig = "1.4.0"
-  val jobrunr = "2.0.1"
+  val akka = "2.6.17"
+  val akkaHttp = "10.2.6"
+  val typesafeConfig = "1.4.1"
   val akkaQuartz = "1.9.1-akka-2.6.x"
   val jackson = "2.13.0"
-  val macWire = "2.3.7"
+  val macWire = "2.5.0"
   val scalaLogging = "3.9.4"
-  val slf4j = "1.7.9"
+  val slf4j = "1.7.32"
   val scalaTest = "3.2.10"
   val sttp = "3.3.16"
 

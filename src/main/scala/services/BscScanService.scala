@@ -17,7 +17,7 @@ trait BscScanService {
 class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService with LazyLogging {
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
     val url = s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
-    val response = httpClient.get[_, BscScanResponse](url)
+    val response = httpClient.get[Any, BscScanResponse](url)
 
     response.map {
       case Left(err) =>
@@ -35,7 +35,7 @@ class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
 
   override def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]] = {
     val url = s"${configuration.bscScanConfig.url}?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=${configuration.bscScanConfig.apiKey}"
-    val response = httpClient.get[_, BscScanResponse](url)
+    val response = httpClient.get[Any, BscScanResponse](url)
 
     response.map {
       case Left(err) =>
