@@ -14,8 +14,8 @@ jobs:
       with:
         java-version: '16'
         distribution: 'adopt'
-    - name: Compile and Test
-      run: sbt clean && sbt compile && sbt test
+    - name: Clean and Compile
+      run: sbt clean && sbt compile
 
   test:
     needs: build
@@ -27,6 +27,6 @@ jobs:
       with:
         java-version: '16'
         distribution: 'adopt'
-    - name: Compile and Test
+    - name: Test
       run: sbt test
 
