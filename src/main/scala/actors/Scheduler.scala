@@ -5,7 +5,7 @@ import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
 import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
-import commons.{Configuration, ConfigurationImpl}
+import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import models.mackerel.MackerelRequest
 import services.{BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
 
@@ -16,6 +16,7 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
 
   implicit val nothingSystem: ActorSystem[Nothing] = actorContext.system
   private lazy val configuration: Configuration = wire[ConfigurationImpl]
+  private lazy val httpclient: HttpClient = wire[HttpClientImpl]
   private lazy val lineService: LineService = wire[LineServiceImpl]
   private lazy val satangService: SatangService = wire[SatangServiceImpl]
   private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]

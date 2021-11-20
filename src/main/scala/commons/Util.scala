@@ -15,6 +15,7 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import scala.reflect.{ClassTag, classTag}
 
 trait Format {
   val numberFormatter: NumberFormat = NumberFormat.getInstance(new Locale("th", "TH"))
@@ -57,12 +58,12 @@ object JsonUtil {
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .build()
 
-  implicit class JsonSerialized(obj: Any) {
+  implicit class JsonSerialize(obj: Any) {
     def toJson: String = mapper.writeValueAsString(obj)
   }
 
   implicit class JsonDeserialize(content: String) {
-    def toObject[T](clazz: Class[T]): T = mapper.readValue(content, clazz)
+    def toObject[T: ClassTag]: T = mapper.readValue(content, classTag[T].runtimeClass.asInstanceOf[Class[T]])
   }
 }
 

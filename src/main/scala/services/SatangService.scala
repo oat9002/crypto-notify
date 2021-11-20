@@ -1,15 +1,11 @@
 package services
 
 import akka.actor.typed.ActorSystem
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.headers.RawHeader
-import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest, HttpResponse, StatusCodes}
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration}
+import commons.{CommonUtil, Configuration, HttpClient}
 import models.satang.{Ticker, User}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 trait SatangService {
   def getUser(userId: String): Future[Option[User]]
@@ -17,78 +13,44 @@ trait SatangService {
   def getCryptoPrices: Future[Option[Array[Ticker]]]
 }
 
-class SatangServiceImpl(configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService with LazyLogging {
-  import commons.HttpResponseUtil._
-  import commons.JsonUtil._
+class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService with LazyLogging {
 
   val url: String = configuration.satangConfig.url
 
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
     val signature = CommonUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
-    val response = Http().singleRequest(HttpRequest(
-      method = HttpMethods.GET,
-      uri = userUrl + s"/$userId",
-      headers = Seq[HttpHeader](RawHeader("Authorization", s"TDAX-API ${configuration.satangConfig.apiKey}"),
-        RawHeader("Signature", s"$signature"))
-    ))
+    val response = httpClient.get[Any, User](userUrl + s"/$userId", None, Map("Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}", "Signature" -> s"$signature"))
 
-    response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
-      case HttpResponse(_, _, entity, _) =>
-        entity.toJson.onComplete {
-          case Success(Some(v)) => logger.error(s"getUser: $v")
-          case _ => logger.error("getUser unexpected error")
-        }
-        Future.successful(None)
-      case _ => Future.successful(None)
-    }.map {
-      case Some(x) => Some(x.toObject(classOf[User]))
-      case _ => None
+    response.map {
+      case Left(err) =>
+        logger.error(s"getUser unexpected error, $err")
+        None
+      case Right(x) => Some(x)
     }
   }
 
   override def getCryptoPrice(pair: String): Future[Option[Ticker]] = {
     val tickerUrl = url + s"v3/ticker/24hr?symbol=$pair"
-    val response = Http().singleRequest(HttpRequest(
-      method = HttpMethods.GET,
-      uri = tickerUrl,
-    ))
+    val response = httpClient.get[Any, Ticker](tickerUrl)
 
-    response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
-      case HttpResponse(_, _, entity, _) =>
-        entity.toJson.onComplete {
-          case Success(Some(v)) => logger.error(s"getCryptoPrice: $v")
-          case _ => logger.error("getCryptoPrice unexpected error")
-        }
-        Future.successful(None)
-      case _ => Future.successful(None)
-    }.map {
-      case Some(x) => Some(x.toObject(classOf[Ticker]))
-      case _ => None
+    response.map {
+      case Left(err) =>
+        logger.error(s"getCryptoPrice unexpected error, $err")
+        None
+      case Right(x) => Some(x)
     }
   }
 
   override def getCryptoPrices: Future[Option[Array[Ticker]]] = {
     val tickerUrl = url + "v3/ticker/24hr"
-    val response = Http().singleRequest(HttpRequest(
-      method = HttpMethods.GET,
-      uri = tickerUrl,
-    ))
+    val response = httpClient.get[Any, Array[Ticker]](tickerUrl)
 
-    response.flatMap {
-      case HttpResponse(StatusCodes.OK, _, entity, _) => entity.toJson
-      case HttpResponse(_, _, entity, _) =>
-        entity.toJson.onComplete {
-          case Success(Some(v)) => logger.error(s"getCryptoPrices: v")
-          case _ => logger.error("getCryptoPrices unexpected error")
-        }
-        Future.successful(None)
-      case _ => Future.successful(None)
-    }.map {
-      case Some(x) => Some(x.toObject(classOf[Array[Ticker]]))
-      case _ => None
+    response.map {
+      case Left(err) =>
+        logger.error(s"getCryptoPrices unexpected error, $err")
+        None
+      case Right(x) => Some(x)
     }
   }
 }
