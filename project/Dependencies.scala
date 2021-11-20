@@ -10,6 +10,7 @@ object Dependencies {
   val scalaLogging = "3.9.4"
   val slf4j = "1.7.32"
   val scalaTest = "3.2.10"
+  val scalaMock = "5.1.0"
   val sttp = "3.3.16"
 
   lazy val dependencies = Seq(
@@ -34,6 +35,8 @@ object Dependencies {
   lazy val testDependencies = Seq(
     "org.scalatest" %% "scalatest" % scalaTest % "test",
     "org.scalatest" %% "scalatest-shouldmatchers" % scalaTest % "test",
+    "org.scalamock" %% "scalamock" % scalaMock % "test",
+    "com.typesafe.akka" %% "akka-actor-testkit-typed" % akka % "test"
   )
 
   lazy val allDependencies: Seq[ModuleID] = dependencies ++ testDependencies
