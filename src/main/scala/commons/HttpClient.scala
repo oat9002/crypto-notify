@@ -22,11 +22,13 @@ class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext
   override def get[Req : ClassTag, Res : ClassTag](url: String, request: Option[Req] = None, header: Map[String, String]): Future[Either[String, Res]] = {
     val response = request match {
       case Some(req) => basicRequest
+        .contentType("application/json")
         .body(req.toJson)
         .headers(header)
         .get(uri"$url")
         .send(backend)
       case _ => basicRequest
+        .contentType("application/json")
         .headers(header)
         .get(uri"$url")
         .send(backend)
@@ -42,6 +44,7 @@ class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext
 
   override def post[Req : ClassTag, Res : ClassTag](url: String, request: Req, header: Map[String, String] = Map()): Future[Either[String, Res]] = {
     val response = basicRequest
+      .contentType("application/json")
       .body(request.toJson)
       .headers(header)
       .post(uri"$url")
@@ -55,9 +58,10 @@ class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext
     }
   }
 
-  override def postFormData[Res: ClassTag](url: String, request: Map[String, String], header: Map[String, String]): Future[Either[String, Res]] = {
+  override def postFormData[Res: ClassTag](url: String, request: Map[String, String], header: Map[String, String] = Map()): Future[Either[String, Res]] = {
+    val body = request.map(x => multipart(x._1, x._2)).to(Seq)
     val response = basicRequest
-      .multipartBody(multipart("form_part", request))
+      .multipartBody(body)
       .headers(header)
       .post(uri"$url")
       .send(backend)
