@@ -3,6 +3,15 @@ name: deploy
 on:
   workflow_dispatch:
   workflow_call:
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+      SERVER_URL:
+        required: true
+      DEPLOY_API_KEY:
+        required: true
 
 jobs:
   deploy:

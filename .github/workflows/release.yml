@@ -50,5 +50,10 @@ jobs:
   deploy:
     needs: release
     uses: oat9002/crypto-notify/.github/workflows/deploy.yml@main
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+      SERVER_URL: ${{ secrets.SERVER_URL }}
+      DEPLOY_API_KEY: ${{ secrets.DEPLOY_API_KEY }}
 
 
