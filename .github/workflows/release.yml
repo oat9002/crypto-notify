@@ -49,6 +49,6 @@ jobs:
 
   deploy:
     needs: release
-    uses: ./.github/workflows/deploy.yml@main
+    uses: oat9002/crypto-notify/.github/workflows/deploy.yml@main
 
 
