@@ -1,4 +1,3 @@
-import Dependencies._
 import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 import sbtrelease.ReleaseStateTransformations.{checkSnapshotDependencies, commitNextVersion, commitReleaseVersion, inquireVersions, pushChanges, runClean, runTest, setNextVersion, setReleaseVersion, tagRelease}
 
@@ -18,6 +17,7 @@ dockerCommands ++= Seq(Cmd("USER", "root"),
 )
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
+
 
 releaseVersionBump := sbtrelease.Version.Bump.Minor
 releaseProcess := Seq[ReleaseStep](
