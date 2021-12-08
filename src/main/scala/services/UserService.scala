@@ -17,6 +17,7 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
     val extBnbAmountFuture = bscScanService.getBnbBalance(extWalletAddress)
     val extCakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
     val extCakeStakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
+    val extBetaAmountFuture = bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
 
     for {
       user <- userFuture
@@ -24,14 +25,16 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       extBnbAmount <- extBnbAmountFuture
       extCakeAmount <- extCakeAmountFuture
       extCakeStakeAmount <- extCakeStakeAmountFuture
+      extBetaAmount <- extBetaAmountFuture
     } yield {
-      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount) match {
-        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake)) =>
+      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount) match {
+        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount)) =>
           val pairMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
           val noneZeroCryptoBalance = pairMap
             .map {
               case ("bnb", availableBalance) => ("bnb", availableBalance + eBnB)
               case ("cake", availableBalance) => ("cake", availableBalance + eCake + eCakeStake)
+              case ("beta", availableBalance) => ("beta", availableBalance + eBetaAmount)
               case (pair, availableBalance) => (pair, availableBalance)
             }
             .filter(x => x._1 != "thb" && x._2 != 0)
