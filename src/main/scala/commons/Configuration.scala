@@ -1,7 +1,7 @@
 package commons
 
 import com.typesafe.config.{Config, ConfigFactory}
-import models.configuration.{AkkaConfig, AppConfig, BscScanConfig, LineConfig, MackerelConfig, Quartz, SatangConfig, Schedule}
+import models.configuration.{AkkaConfig, AppConfig, BinanceConfig, BscScanConfig, LineConfig, MackerelConfig, Quartz, SatangConfig, Schedule}
 
 
 trait Configuration {
@@ -11,6 +11,7 @@ trait Configuration {
   val bscScanConfig: BscScanConfig
   val akkaConfig: AkkaConfig
   val mackerelConfig: MackerelConfig
+  val binanceConfig: BinanceConfig
 }
 
 class ConfigurationImpl extends Configuration {
@@ -31,6 +32,7 @@ class ConfigurationImpl extends Configuration {
   private val bscScanSection = conf.getConfig("bscScan")
   private val akkaSection = conf.getConfig("akka")
   private val mackerelSection = conf.getConfig("mackerel")
+  private val binanceSection = conf.getConfig("binance")
   lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
   lazy val lineConfig: LineConfig = LineConfig(lineSection.getString("lineNotifyToken"), lineSection.getString("url"))
   lazy val satangConfig: SatangConfig = SatangConfig(satangSection.getString("apiKey"), satangSection.getString("apiSecret"), satangSection.getString("userId"), satangSection.getString("url"))
@@ -50,4 +52,5 @@ class ConfigurationImpl extends Configuration {
     )
   }))
   lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"), mackerelSection.getString("serviceName"))
+  lazy val binanceConfig: BinanceConfig = BinanceConfig(binanceSection.getString("apiKey"), binanceSection.getString("secretKey"))
 }
