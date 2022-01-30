@@ -19,7 +19,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
 
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
-    val signature = CommonUtil.generateHMAC512("", configuration.satangConfig.apiSecret)
+    val signature = CommonUtil.generateHMAC("", configuration.satangConfig.apiSecret)
     val response = httpClient.get[Any, User](userUrl + s"/$userId", None, Map("Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}", "Signature" -> s"$signature"))
 
     response.map {

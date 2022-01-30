@@ -1,5 +1,6 @@
 import commons.JsonUtil.{JsonDeserialize, JsonSerialize}
 import commons.CommonUtil._
+import commons.HmacAlgorithm
 import models.configuration.AppConfig
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
@@ -22,11 +23,16 @@ class UtilsSpec extends AnyFunSpec with Matchers {
       }
     }
 
-    describe("generateHMAC512") {
-      it("should return correct result") {
-        val result = generateHMAC512("test", "test")
+    describe("generateHMAC") {
+      it("Hmac512 should return correct result") {
+        val result = generateHMAC("test", "test")
 
         result shouldBe "9ba1f63365a6caf66e46348f43cdef956015bea997adeb06e69007ee3ff517df10fc5eb860da3d43b82c2a040c931119d2dfc6d08e253742293a868cc2d82015"
+      }
+      it("Hmac256 should return correct result") {
+        val result = generateHMAC("test", "test", HmacAlgorithm.HmacSHA256)
+
+        result shouldBe "88cd2108b5347d973cf39cdf9053d7dd42704876d8c9a9bd8e2d168259d3ddf7"
       }
     }
 

@@ -5,6 +5,7 @@ import akka.http.scaladsl.model.ResponseEntity
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import commons.HmacAlgorithm.HmacAlgorithm
 
 import java.text.NumberFormat
 import java.time.{LocalDateTime, ZoneId}
@@ -32,8 +33,8 @@ object CommonUtil {
     def format: String = numberFormatter.format(value)
   }
 
-  def generateHMAC512(message: String, key: String): String = {
-    val algorithm = "HmacSHA512"
+  def generateHMAC(message: String, key: String, hmacAlgorithm: HmacAlgorithm = HmacAlgorithm.HmacSHA512): String = {
+    val algorithm = hmacAlgorithm.toString
     val secret = new SecretKeySpec(key.getBytes(), algorithm)
     val mac = Mac.getInstance(algorithm)
 
