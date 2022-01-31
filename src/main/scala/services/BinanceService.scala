@@ -1,7 +1,9 @@
 package services
 
+trait BinanceService {
+  def getSavings()
+}
 
-
-class BinanceService {
-
+class BinanceServiceImpl() extends BinanceService {
+  override def getSavings(): Unit = ???
 }
