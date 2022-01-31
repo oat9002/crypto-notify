@@ -1,3 +1,3 @@
 package models.configuration
 
-case class BinanceConfig(apiKey: String, secretKey: String)
+case class BinanceConfig(url: String, apiKey: String, secretKey: String)

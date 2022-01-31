@@ -2,7 +2,7 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.ResponseEntity
-import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.{DeserializationFeature, MapperFeature}
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import commons.HmacAlgorithm.HmacAlgorithm
@@ -57,6 +57,7 @@ object JsonUtil {
   private val mapper: JsonMapper = JsonMapper.builder()
     .addModule(DefaultScalaModule)
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
     .build()
 
   implicit class JsonSerialize(obj: Any) {
