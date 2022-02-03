@@ -10,7 +10,7 @@ trait UserService {
   def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]]
 }
 
-class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
+class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   override def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]] = {
     val userFuture = satangService.getUser(userId)
     val currentPricesFuture = satangService.getCryptoPrices
@@ -18,6 +18,7 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
     val extCakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
     val extCakeStakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
     val extBetaAmountFuture = bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
+    val binanceSavingFuture = binanceService.getSaving
 
     for {
       user <- userFuture
@@ -26,22 +27,24 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       extCakeAmount <- extCakeAmountFuture
       extCakeStakeAmount <- extCakeStakeAmountFuture
       extBetaAmount <- extBetaAmountFuture
+      binanceSaving <- binanceSavingFuture
     } yield {
-      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount) match {
-        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount)) =>
-          val pairMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
-          val noneZeroCryptoBalance = pairMap
-            .map {
-              case ("bnb", availableBalance) => ("bnb", availableBalance + eBnB)
-              case ("cake", availableBalance) => ("cake", availableBalance + eCake + eCakeStake)
-              case ("beta", availableBalance) => ("beta", availableBalance + eBetaAmount)
-              case (pair, availableBalance) => (pair, availableBalance)
-            }
-            .filter(x => x._1 != "thb" && x._2 != 0)
-
+      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving) match {
+        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving)) =>
+          val satangMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
+          val binanceMap = binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount).toMap
+          val externalMap = Map(
+            "cake" -> (eCake + eCakeStake),
+            "bnb" -> eBnB,
+            "beta" -> eBetaAmount
+          )
+          val mergedPair = (satangMap.toList ++ binanceMap.toList ++ externalMap.toList).groupBy(_._1).map {
+            case (k, v) => k -> v.map(_._2).sum
+          }
+          val noneZeroCryptoBalance = mergedPair.filter(x => x._1 != "thb" && x._2 != 0)
           val cryptoBalanceInThb = noneZeroCryptoBalance
             .map(x => x._1 -> (cp.find(_.symbol == s"${x._1}_thb").get.lastPrice * x._2).setScale(2, RoundingMode.HALF_UP))
-          val allBalanceIntThb = pairMap.filter(_._1 == "thb")
+          val allBalanceIntThb = satangMap.filter(_._1 == "thb")
             .map("fiat money" -> _._2)
             .concat(cryptoBalanceInThb)
 
