@@ -7,7 +7,7 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import models.mackerel.MackerelRequest
-import services.{BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import services.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
 
 import scala.concurrent.Future
 
@@ -20,6 +20,7 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   private lazy val lineService: LineService = wire[LineServiceImpl]
   private lazy val satangService: SatangService = wire[SatangServiceImpl]
   private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
+  private lazy val binanceService: BinanceService = wire[BinanceServiceImpl]
   private lazy val userService: UserService = wire[UserServiceImpl]
   private lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
 
