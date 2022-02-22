@@ -12,25 +12,18 @@ trait UserService {
 
 class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   override def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]] = {
-    val userFuture = satangService.getUser(userId)
-    val currentPricesFuture = satangService.getCryptoPrices
-    val extBnbAmountFuture = bscScanService.getBnbBalance(extWalletAddress)
-    val extCakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
-    val extCakeStakeAmountFuture = bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
-    val extBetaAmountFuture = bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
-    val binanceSavingFuture = binanceService.getSaving
-
     for {
-      user <- userFuture
-      currentPrices <- currentPricesFuture
-      extBnbAmount <- extBnbAmountFuture
-      extCakeAmount <- extCakeAmountFuture
-      extCakeStakeAmount <- extCakeStakeAmountFuture
-      extBetaAmount <- extBetaAmountFuture
-      binanceSaving <- binanceSavingFuture
+      user <- satangService.getUser(userId)
+      currentPrices <- satangService.getCryptoPrices
+      extBnbAmount <- bscScanService.getBnbBalance(extWalletAddress)
+      extCakeAmount <- bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
+      extCakeStakeAmount <- bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
+      extBetaAmount <- bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
+      binanceSaving <- binanceService.getSaving
+      binanceAccount <- binanceService.getAccountDetail
     } yield {
-      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving) match {
-        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving)) =>
+      (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount) match {
+        case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount)) =>
           val satangMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
           val binanceMap = binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount).toMap
           val externalMap = Map(
