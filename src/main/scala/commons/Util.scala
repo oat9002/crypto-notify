@@ -17,6 +17,7 @@ import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.reflect.{ClassTag, classTag}
+import scala.util.Try
 
 trait Format {
   val numberFormatter: NumberFormat = NumberFormat.getInstance(new Locale("th", "TH"))
@@ -65,7 +66,7 @@ object JsonUtil {
   }
 
   implicit class JsonDeserialize(content: String) {
-    def toObject[T: ClassTag]: T = mapper.readValue(content, classTag[T].runtimeClass.asInstanceOf[Class[T]])
+    def toObject[T: ClassTag]: Try[T] = Try(mapper.readValue(content, classTag[T].runtimeClass.asInstanceOf[Class[T]]))
   }
 }
 

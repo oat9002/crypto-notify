@@ -1,6 +1,6 @@
 package models.binance
 
-case class Account(
+case class Coin(
                     coin: String,
                     depositAllEnable: Boolean,
                     free: BigDecimal,
@@ -10,7 +10,7 @@ case class Account(
                     isLegalMoney: Boolean,
                     locked: BigDecimal,
                     name: String,
-                    networkList: List[NetWork],
+                    networkList: Array[NetWork],
                     storage: BigDecimal,
                     trading: Boolean,
                     withdrawAllEnable: Boolean,
@@ -22,7 +22,7 @@ case class NetWork(
                   coin: String,
                   depositDesc: String,
                   isDefault: Boolean,
-                  memoRegex: Boolean,
+                  memoRegex: String,
                   minComfirm: Int,
                   name: String,
                   network: String,

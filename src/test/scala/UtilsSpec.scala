@@ -5,6 +5,8 @@ import models.configuration.AppConfig
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.util.Success
+
 class UtilsSpec extends AnyFunSpec with Matchers {
   describe("CommonUtils") {
     describe("FormatNumberAnyVal") {
@@ -57,9 +59,23 @@ class UtilsSpec extends AnyFunSpec with Matchers {
       describe("JsonDeserialize") {
         it("should deserialize correctly") {
           val config = "{\"port\":5000}"
-          val result = config.toObject[AppConfig]
+          val result = config.toObject[AppConfig] match {
+            case Success(value) => value
+            case _ => AppConfig
+          }
 
           result shouldBe AppConfig(5000)
+        }
+
+        it("should deserialize array of objects correctly") {
+          val configList = "[{\"port\":5000},{\"port\":6000}]"
+          val result = configList.toObject[Array[AppConfig]] match {
+            case Success(value) => value
+            case _ => Array(AppConfig, AppConfig)
+          }
+
+          result.head shouldBe AppConfig(5000)
+          result(1) shouldBe AppConfig(6000)
         }
       }
     }

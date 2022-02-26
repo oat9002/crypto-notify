@@ -25,7 +25,9 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       (user, currentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount) match {
         case (Some(u), Some(cp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount)) =>
           val satangMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
-          val binanceMap = binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount).toMap
+          val binanceMap = (binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount) ++ binAccount.filter(_.free != 0).map(x => x.coin.toLowerCase() -> x.free)).groupBy(_._1).map {
+            case (k, v) => k -> v.map(_._2).sum
+          }
           val externalMap = Map(
             "cake" -> (eCake + eCakeStake),
             "bnb" -> eBnB,
