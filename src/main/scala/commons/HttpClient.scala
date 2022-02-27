@@ -13,7 +13,7 @@ import scala.reflect.ClassTag
 import scala.util.{Failure, Success}
 
 trait HttpClient {
-  def get[Req : ClassTag, Res : ClassTag](url: String, request: Option[Req] = None, header: Map[String, String] = Map()): Future[Either[String, Res]]
+  def get[Res : ClassTag](url: String, header: Map[String, String] = Map()): Future[Either[String, Res]]
   def post[Req : ClassTag, Res : ClassTag](url: String, request: Req, header: Map[String, String] = Map()): Future[Either[String, Res]]
   def postFormData[Res : ClassTag](url: String, request: Map[String, String], header: Map[String, String] = Map()) : Future[Either[String, Res]]
 }
@@ -21,20 +21,13 @@ trait HttpClient {
 class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext) extends HttpClient with LazyLogging {
   val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] = AkkaHttpBackend.usingActorSystem(system.classicSystem)
 
-  override def get[Req : ClassTag, Res : ClassTag](url: String, request: Option[Req] = None, header: Map[String, String]): Future[Either[String, Res]] = {
-    val response = request match {
-      case Some(req) => basicRequest
-        .contentType("application/json")
-        .body(req.toJson)
-        .headers(header)
-        .get(uri"$url")
-        .send(backend)
-      case _ => basicRequest
+  override def get[Res : ClassTag](url: String, header: Map[String, String]): Future[Either[String, Res]] = {
+    val response = basicRequest
         .contentType("application/json")
         .headers(header)
         .get(uri"$url")
         .send(backend)
-    }
+
 
     response.map { x =>
       x.body match {

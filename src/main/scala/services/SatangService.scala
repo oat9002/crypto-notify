@@ -20,7 +20,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
     val signature = CommonUtil.generateHMAC("", configuration.satangConfig.apiSecret)
-    val response = httpClient.get[Any, User](userUrl + s"/$userId", None, Map("Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}", "Signature" -> s"$signature"))
+    val response = httpClient.get[User](userUrl + s"/$userId", Map("Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}", "Signature" -> s"$signature"))
 
     response.map {
       case Left(err) =>
@@ -32,7 +32,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
 
   override def getCryptoPrice(pair: String): Future[Option[Ticker]] = {
     val tickerUrl = url + s"v3/ticker/24hr?symbol=$pair"
-    val response = httpClient.get[Any, Ticker](tickerUrl)
+    val response = httpClient.get[Ticker](tickerUrl)
 
     response.map {
       case Left(err) =>
@@ -44,7 +44,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
 
   override def getCryptoPrices: Future[Option[List[Ticker]]] = {
     val tickerUrl = url + "v3/ticker/24hr"
-    val response = httpClient.get[Any, Array[Ticker]](tickerUrl)
+    val response = httpClient.get[Array[Ticker]](tickerUrl)
 
     response.map {
       case Left(err) =>
