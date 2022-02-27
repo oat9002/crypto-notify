@@ -10,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 trait SatangService {
   def getUser(userId: String): Future[Option[User]]
   def getCryptoPrice(pair: String): Future[Option[Ticker]]
-  def getCryptoPrices: Future[Option[Array[Ticker]]]
+  def getCryptoPrices: Future[Option[List[Ticker]]]
 }
 
 class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService with LazyLogging {
@@ -42,7 +42,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
     }
   }
 
-  override def getCryptoPrices: Future[Option[Array[Ticker]]] = {
+  override def getCryptoPrices: Future[Option[List[Ticker]]] = {
     val tickerUrl = url + "v3/ticker/24hr"
     val response = httpClient.get[Any, Array[Ticker]](tickerUrl)
 
@@ -50,7 +50,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
       case Left(err) =>
         logger.error(s"getCryptoPrices unexpected error, $err")
         None
-      case Right(x) => Some(x)
+      case Right(x) => Some(x.toList)
     }
   }
 }
