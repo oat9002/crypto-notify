@@ -7,7 +7,6 @@ import models.binance.{Ticker => BinanceTicker}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
-import scala.util.Success
 
 trait UserService {
   def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]]
