@@ -30,7 +30,7 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>
       val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
-      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address)
+      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address, configuration.terraConfig.address)
 
       logger.info(s"NotifyTask run at $now")
 
