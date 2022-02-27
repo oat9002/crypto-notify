@@ -65,7 +65,8 @@ class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext
           case Failure(ex) =>
             logger.error(s"Convert string to object failed. response: $responseJson", ex)
             Left(ex.toString)
-        }      }
+        }
+      }
     }
   }
 
