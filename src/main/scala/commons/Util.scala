@@ -2,8 +2,9 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.ResponseEntity
-import com.fasterxml.jackson.databind.{DeserializationFeature, MapperFeature}
+import com.fasterxml.jackson.databind.{DeserializationFeature, JavaType, MapperFeature}
 import com.fasterxml.jackson.databind.json.JsonMapper
+import com.fasterxml.jackson.databind.`type`.TypeFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import commons.HmacAlgorithm.HmacAlgorithm
 
@@ -17,8 +18,9 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
+import scala.reflect.runtime.universe.{Type, TypeTag}
 import scala.reflect.{ClassTag, classTag}
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 trait Format {
   val numberFormatter: NumberFormat = NumberFormat.getInstance(new Locale("th", "TH"))
@@ -73,7 +75,27 @@ object JsonUtil {
   }
 
   implicit class JsonDeserialize(content: String) {
-    def toObject[T: ClassTag]: Try[T] = Try(mapper.readValue(content, classTag[T].runtimeClass.asInstanceOf[Class[T]]))
+    def toObject[T](implicit typeTag: TypeTag[T], classTag: ClassTag[T]): Try[T] = {
+      def recursiveFindGenericClasses(t: Type): JavaType = {
+        val current = typeTag.mirror.runtimeClass(t)
+
+        if (t.typeArgs.isEmpty) {
+          val noSubtypes = Seq.empty[Class[_]]
+          mapper.getTypeFactory.constructParametricType(current, noSubtypes:_*)
+        }
+
+        else {
+          val genericSubtypes: Seq[JavaType] = t.typeArgs.map(recursiveFindGenericClasses)
+          mapper.getTypeFactory.constructParametricType(current, genericSubtypes:_*)
+        }
+      }
+
+      try {
+        Success(mapper.readValue(content, recursiveFindGenericClasses(typeTag.tpe)))
+      } catch {
+        case _: Throwable => Try(mapper.readValue(content, classTag.runtimeClass.asInstanceOf[Class[T]]))
+      }
+    }
   }
 }
 
@@ -84,4 +106,3 @@ object HttpResponseUtil {
     def toJson(implicit context: ExecutionContext, actor: ActorSystem[Nothing]): Future[Option[String]] = entity.toStrict(serializeTimeout).map(e => e.getData()).map(data => Some(data.utf8String))
   }
 }
-

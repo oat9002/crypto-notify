@@ -1,7 +1,9 @@
+import com.fasterxml.jackson.core.`type`.TypeReference
 import commons.JsonUtil.{JsonDeserialize, JsonSerialize}
 import commons.CommonUtil._
 import commons.HmacAlgorithm
 import models.configuration.AppConfig
+import models.terra.QueryResult
 import org.scalatest.funspec.AnyFunSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -35,6 +37,14 @@ class UtilsSpec extends AnyFunSpec with Matchers {
         val result = generateHMAC("test", "test", HmacAlgorithm.HmacSHA256)
 
         result shouldBe "88cd2108b5347d973cf39cdf9053d7dd42704876d8c9a9bd8e2d168259d3ddf7"
+      }
+    }
+
+    describe("base64encode") {
+      it("should encode correctly") {
+        val result = base64Encode("{\"test\":1}")
+
+        result shouldBe "eyJ0ZXN0IjoxfQ=="
       }
     }
 
@@ -76,6 +86,27 @@ class UtilsSpec extends AnyFunSpec with Matchers {
 
           result.head shouldBe AppConfig(5000)
           result(1) shouldBe AppConfig(6000)
+        }
+
+        it("should deserialize List of objects correctly") {
+          val configList = "[{\"port\":5000},{\"port\":6000}]"
+          val result = configList.toObject[List[AppConfig]] match {
+            case Success(value) => value
+            case _ => List(AppConfig, AppConfig)
+          }
+
+          result.head shouldBe AppConfig(5000)
+          result(1) shouldBe AppConfig(6000)
+        }
+
+        it("should deserialize generic of objects correctly") {
+          val configList = "{\"query_result\":{\"port\":5000}}"
+          val result = configList.toObject[QueryResult[AppConfig]] match {
+            case Success(value) => value
+            case _ => QueryResult[AppConfig](AppConfig(0))
+          }
+
+          result.queryResult shouldBe AppConfig(5000)
         }
       }
     }

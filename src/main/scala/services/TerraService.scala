@@ -41,7 +41,9 @@ class TerraServiceImpl(configuration: Configuration, httpClient: HttpClient, ter
     }
   }
 
-  override def getaUstBalance(address: String): Future[Option[BigDecimal]] = ???
+  override def getaUstBalance(address: String): Future[Option[BigDecimal]] = {
+
+  }
 
   override def getaUstExchangeRate(): Future[Option[BigDecimal]] = {
     val url = s"${configuration.terraConfig.url}/terra/wasm/v1beta1/contracts/${Constant.anchorMarketContractAddress}/store?query_msg=eyJlcG9jaF9zdGF0ZSI6e319"
@@ -51,8 +53,7 @@ class TerraServiceImpl(configuration: Configuration, httpClient: HttpClient, ter
       case Left(err) =>
         logger.error(s"getsUstExchange failed, err: $err")
         None
-      case Right(e) =>
-        None
+      case Right(v) => Some(v.queryResult.exchangeRate)
     }
   }
 }
