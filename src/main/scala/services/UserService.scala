@@ -9,11 +9,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 
 trait UserService {
-  def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]]
+  def getBalanceMessageForLine(userId: String, extWalletAddress: String, terraAddress: String): Future[Option[String]]
 }
 
-class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
-  override def getBalanceMessageForLine(userId: String, extWalletAddress: String): Future[Option[String]] = {
+class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService, terraService: TerraService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
+  override def getBalanceMessageForLine(userId: String, extWalletAddress: String, terraAddress: String): Future[Option[String]] = {
     for {
       satangUser <- satangService.getUser(userId)
       satangCurrentPrices <- satangService.getCryptoPrices
@@ -24,19 +24,21 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       extBetaAmount <- bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
       binanceSaving <- binanceService.getSaving
       binanceAccount <- binanceService.getAccountDetail
+      terraAccount <- terraService.getAllBalance(terraAddress)
     } yield {
-      (satangUser, satangCurrentPrices, binanceCurrentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount) match {
-        case (Some(u), Some(cp), Some(bcp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount)) =>
+      (satangUser, satangCurrentPrices, binanceCurrentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount, terraAccount) match {
+        case (Some(u), Some(cp), Some(bcp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount), Some(tAccount)) =>
           val satangMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
           val binanceMap = (binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount) ++ binAccount.filter(_.free != 0).map(x => x.coin.toLowerCase() -> x.free)).groupBy(_._1).map {
             case (k, v) => k -> v.map(_._2).sum
           }
+          val terraMap = tAccount.balances.map(x => x.symbol -> x.amount).toMap
           val externalMap = Map(
             "cake" -> (eCake + eCakeStake),
             "bnb" -> eBnB,
             "beta" -> eBetaAmount
           )
-          val mergedPair = (satangMap.toList ++ binanceMap.toList ++ externalMap.toList).groupBy(_._1).map {
+          val mergedPair = (satangMap.toList ++ binanceMap.toList ++ externalMap.toList ++ terraMap.toList).groupBy(_._1).map {
             case (k, v) => k -> v.map(_._2).sum
           }
           val noneZeroCryptoBalance = mergedPair.filter(x => x._1 != "thb" && x._2 != 0)

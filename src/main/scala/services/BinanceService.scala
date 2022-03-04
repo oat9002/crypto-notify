@@ -22,7 +22,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
     val signature = CommonUtil.generateHMAC(queryString, configuration.binanceConfig.secretKey, HmacAlgorithm.HmacSHA256)
     val url = s"${configuration.binanceConfig.url}/sapi/v1/lending/union/account?$queryString&signature=$signature"
-    val response = httpClient.get[Any, Saving](url, None, Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey))
+    val response = httpClient.get[Saving](url, Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey))
 
     response map {
       case Left(err) =>
@@ -37,7 +37,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
     val signature = CommonUtil.generateHMAC(queryString, configuration.binanceConfig.secretKey, HmacAlgorithm.HmacSHA256)
     val url = s"${configuration.binanceConfig.url}/sapi/v1/capital/config/getall?$queryString&signature=$signature"
-    val response = httpClient.get[Any, Array[Coin]](url, None, Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey))
+    val response = httpClient.get[Array[Coin]](url, Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey))
 
     response map {
       case Left(err) =>
@@ -49,7 +49,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
 
   override def getLatestPrice: Future[Option[List[Ticker]]] = {
     val url = s"${configuration.binanceConfig.url}/api/v3/ticker/price"
-    val response = httpClient.get[Any, Array[Ticker]](url, None)
+    val response = httpClient.get[Array[Ticker]](url)
 
     response map {
       case Left(err) =>

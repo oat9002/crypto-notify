@@ -6,8 +6,9 @@ import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
+import helpers.{TerraHelper, TerraHelperImpl}
 import models.mackerel.MackerelRequest
-import services.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, UserService, UserServiceImpl}
+import services.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl, UserService, UserServiceImpl}
 
 import scala.concurrent.Future
 
@@ -17,17 +18,19 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   implicit val nothingSystem: ActorSystem[Nothing] = actorContext.system
   private lazy val configuration: Configuration = wire[ConfigurationImpl]
   private lazy val httpclient: HttpClient = wire[HttpClientImpl]
+  private lazy val terraHelper: TerraHelper = wire[TerraHelperImpl]
   private lazy val lineService: LineService = wire[LineServiceImpl]
   private lazy val satangService: SatangService = wire[SatangServiceImpl]
   private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
   private lazy val binanceService: BinanceService = wire[BinanceServiceImpl]
+  private lazy val terraService: TerraService = wire[TerraServiceImpl]
   private lazy val userService: UserService = wire[UserServiceImpl]
   private lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
 
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>
       val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
-      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address)
+      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address, configuration.terraConfig.address)
 
       logger.info(s"NotifyTask run at $now")
 
