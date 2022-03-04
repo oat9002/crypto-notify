@@ -7,11 +7,12 @@ import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import commons.HmacAlgorithm.HmacAlgorithm
 
+import java.nio.charset.StandardCharsets
 import java.text.NumberFormat
 import java.time.{LocalDateTime, ZoneId}
 import java.time.chrono.ThaiBuddhistChronology
 import java.time.format.DateTimeFormatter
-import java.util.Locale
+import java.util.{Base64, Locale}
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,6 +45,12 @@ object CommonUtil {
     val digest = mac.doFinal(message.getBytes())
 
     digest.map(d => String.format("%02x", d)).mkString("")
+  }
+
+  def base64Encode(message: String): String = {
+    val text = Base64.getEncoder.encodeToString(message.getBytes(StandardCharsets.UTF_8))
+
+    text
   }
 
   def getFormattedNowDate(pattern: String = "E dd MMM YYYY เวลา HH:mm น.", isThai: Boolean = true): String = {
