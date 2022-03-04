@@ -24,7 +24,7 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       extBetaAmount <- bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
       binanceSaving <- binanceService.getSaving
       binanceAccount <- binanceService.getAccountDetail
-      terraAccount <- terraService.getBalance(terraAddress)
+      terraAccount <- terraService.getAllBalance(terraAddress)
     } yield {
       (satangUser, satangCurrentPrices, binanceCurrentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount, terraAccount) match {
         case (Some(u), Some(cp), Some(bcp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount), Some(tAccount)) =>

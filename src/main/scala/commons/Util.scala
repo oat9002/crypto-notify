@@ -4,7 +4,6 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.ResponseEntity
 import com.fasterxml.jackson.databind.{DeserializationFeature, JavaType, MapperFeature}
 import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.databind.`type`.TypeFactory
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import commons.HmacAlgorithm.HmacAlgorithm
 
@@ -19,8 +18,8 @@ import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.reflect.runtime.universe.{Type, TypeTag}
-import scala.reflect.{ClassTag, classTag}
-import scala.util.{Failure, Success, Try}
+import scala.reflect.ClassTag
+import scala.util.{Success, Try}
 
 trait Format {
   val numberFormatter: NumberFormat = NumberFormat.getInstance(new Locale("th", "TH"))

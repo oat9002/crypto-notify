@@ -5,7 +5,7 @@ import scala.math.pow
 
 trait TerraHelper {
   def denomToSymbol(denom: String): Option[String]
-  def convertRawAmount(amount: String): BigDecimal
+  def convertRawAmount(amount: Long): BigDecimal
 }
 
 class TerraHelperImpl extends TerraHelper {
@@ -16,9 +16,7 @@ class TerraHelperImpl extends TerraHelper {
     }
   }
 
-  def convertRawAmount(amountStr: String): BigDecimal = {
-    val amount = amountStr.toLong
-
+  def convertRawAmount(amount: Long): BigDecimal = {
     (BigDecimal(amount) / pow(10.0, 6.0)).setScale(6, RoundingMode.HALF_UP)
   }
 }

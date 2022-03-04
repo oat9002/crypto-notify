@@ -29,8 +29,6 @@ class HttpClientImpl(implicit system: ActorSystem[Nothing], ec: ExecutionContext
         .get(uri"$url")
         .send(backend)
 
-
-
     response.map { x =>
       x.body match {
         case Left(error) => Left(error)

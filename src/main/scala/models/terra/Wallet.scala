@@ -8,4 +8,4 @@ case class Balance(symbol: String,
 case class RawWallet(balances: Array[RawBalance])
 
 case class RawBalance(denom: String,
-                   amount: String)
+                   amount: Long)
