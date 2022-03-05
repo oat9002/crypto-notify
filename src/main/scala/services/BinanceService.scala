@@ -3,6 +3,7 @@ package services
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration, HmacAlgorithm, HttpClient}
+import models.CryptoBalance
 import models.binance.{Coin, Saving, Ticker}
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
@@ -12,6 +13,7 @@ trait BinanceService {
   def getSaving: Future[Option[Saving]]
   def getAccountDetail: Future[Option[List[Coin]]]
   def getLatestPrice: Future[Option[List[Ticker]]]
+  def getAllBalance: Future[Option[List[CryptoBalance]]]
 }
 
 class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BinanceService with LazyLogging {
@@ -56,6 +58,22 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
         logger.error(s"getLatestPrice failed: $err")
         None
       case Right(price) => Some(price.toList)
+    }
+  }
+
+  override def getAllBalance: Future[Option[List[CryptoBalance]]] = {
+    for {
+      savingOpt <- getSaving
+      accountDetailOpt <- getAccountDetail
+    } yield for {
+      saving <- savingOpt
+      accountDetail <- accountDetailOpt
+    } yield {
+      val binanceMap = (saving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount) ++ accountDetail.filter(_.free != 0).map(x => x.coin.toLowerCase() -> x.free)).groupBy(_._1).map {
+        case (k, v) => k -> v.map(_._2).sum
+      }
+
+      binanceMap.map(x => CryptoBalance(symbol = x._1, balance = x._2)).toList
     }
   }
 }
