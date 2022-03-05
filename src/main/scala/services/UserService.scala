@@ -2,6 +2,7 @@ package services
 
 import akka.actor.typed.ActorSystem
 import commons.Constant
+import models.CryptoBalance
 import models.satang.{Ticker => SatangTicker}
 import models.binance.{Ticker => BinanceTicker}
 
@@ -15,62 +16,60 @@ trait UserService {
 class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService, terraService: TerraService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   override def getBalanceMessageForLine(userId: String, extWalletAddress: String, terraAddress: String): Future[Option[String]] = {
     for {
-      satangUser <- satangService.getUser(userId)
-      satangCurrentPrices <- satangService.getCryptoPrices
-      binanceCurrentPrices <- binanceService.getLatestPrice
-      extBnbAmount <- bscScanService.getBnbBalance(extWalletAddress)
-      extCakeAmount <- bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
-      extCakeStakeAmount <- bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
-      extBetaAmount <- bscScanService.getTokenBalance(Constant.BetaTokenContractAddress, extWalletAddress)
-      binanceSaving <- binanceService.getSaving
-      binanceAccount <- binanceService.getAccountDetail
-      terraAccount <- terraService.getAllBalance(terraAddress)
+      satangUserOpt <- satangService.getUser(userId)
+      satangCurrentPricesOpt <- satangService.getCryptoPrices
+      binanceCurrentPricesOpt <- binanceService.getLatestPrice
+      extBnbAmountOpt <- bscScanService.getBnbBalance(extWalletAddress)
+      extCakeAmountOpt <- bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
+      extCakeStakeAmountOpt <- bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
+      binanceOpt <- binanceService.getAllBalance
+      terraAccountOpt <- terraService.getAllBalance(terraAddress)
+    } yield for {
+      satangUser <- satangUserOpt
+      satangCurrentPrices <- satangCurrentPricesOpt
+      binanceCurrentPrices <- binanceCurrentPricesOpt
+      eBnB <- extBnbAmountOpt
+      eCake <- extCakeAmountOpt
+      eCakeStake <- extCakeStakeAmountOpt
+      binance <- binanceOpt
+      terra <- terraAccountOpt
     } yield {
-      (satangUser, satangCurrentPrices, binanceCurrentPrices, extBnbAmount, extCakeAmount, extCakeStakeAmount, extBetaAmount, binanceSaving, binanceAccount, terraAccount) match {
-        case (Some(u), Some(cp), Some(bcp), Some(eBnB), Some(eCake), Some(eCakeStake), Some(eBetaAmount), Some(binSaving), Some(binAccount), Some(tAccount)) =>
-          val satangMap =  u.wallets.map(x => x._1 -> x._2.availableBalance)
-          val binanceMap = (binSaving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount) ++ binAccount.filter(_.free != 0).map(x => x.coin.toLowerCase() -> x.free)).groupBy(_._1).map {
-            case (k, v) => k -> v.map(_._2).sum
-          }
-          val terraMap = tAccount.balances.map(x => x.symbol -> x.amount).toMap
-          val externalMap = Map(
-            "cake" -> (eCake + eCakeStake),
-            "bnb" -> eBnB,
-            "beta" -> eBetaAmount
-          )
-          val mergedPair = (satangMap.toList ++ binanceMap.toList ++ externalMap.toList ++ terraMap.toList).groupBy(_._1).map {
-            case (k, v) => k -> v.map(_._2).sum
-          }
-          val noneZeroCryptoBalance = mergedPair.filter(x => x._1 != "thb" && x._2 != 0)
-          val cryptoBalanceInThb = noneZeroCryptoBalance
-            .map(x => getCryptoPriceInThb(x, cp, bcp))
-          val allBalanceIntThb = satangMap.filter(_._1 == "thb")
-            .map("fiat money" -> _._2)
-            .concat(cryptoBalanceInThb)
+      val satangList = satangUser.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList
+      val externalList = List(CryptoBalance("cake", eCake + eCakeStake), CryptoBalance("bnb", eBnB))
+      val mergedPair = (satangList ++ binance ++ externalList ++ terra).groupBy(_.symbol).map {
+        case (k, v) => CryptoBalance(k, v.map(_.balance).sum)
+      }.toList
+      val noneZeroCryptoBalance = mergedPair
+        .filter(x => x.symbol != "thb" && x.balance != 0)
+        .sortBy(_.symbol)
+      val cryptoBalanceInThb = noneZeroCryptoBalance
+        .map(x => getCryptoPriceInThb(x, satangCurrentPrices, binanceCurrentPrices))
+      val allBalanceIntThb = satangList.filter(_.symbol == "thb")
+        .map(x => CryptoBalance("fiat money", x.balance))
+        .concat(cryptoBalanceInThb)
+        .sortBy(_.symbol)
 
-          Some(generateMessage(allBalanceIntThb, noneZeroCryptoBalance))
-        case _ => None
-      }
+      generateMessage(allBalanceIntThb, noneZeroCryptoBalance)
     }
   }
 
-  private def getCryptoPriceInThb(balance: (String, BigDecimal), satangPrices: List[SatangTicker], binancePrices: List[BinanceTicker]): (String, BigDecimal) = {
-    val lastThbPrice = satangPrices.find(_.symbol == s"${balance._1}_thb").map(_.lastPrice).getOrElse {
-      val btcBinance = binancePrices.find(_.symbol.toLowerCase() == s"${balance._1}btc").map(_.price).get
+  private def getCryptoPriceInThb(balance: CryptoBalance, satangPrices: List[SatangTicker], binancePrices: List[BinanceTicker]): CryptoBalance = {
+    val lastThbPrice = satangPrices.find(_.symbol == s"${balance.symbol}_thb").map(_.lastPrice).getOrElse {
+      val btcBinance = binancePrices.find(_.symbol.toLowerCase() == s"${balance.symbol}btc").map(_.price).get
 
       satangPrices.find(_.symbol == "btc_thb").map(_.lastPrice).get * btcBinance
     }
 
-    balance._1 -> (balance._2 * lastThbPrice).setScale(2, RoundingMode.HALF_UP)
+    CryptoBalance(balance.symbol, (balance.balance * lastThbPrice).setScale(2, RoundingMode.HALF_UP))
   }
 
-  private def generateMessage(allBalanceInThb: Map[String, BigDecimal], cryptoBalance: Map[String, BigDecimal]): String = {
+  private def generateMessage(allBalanceInThb: List[CryptoBalance], cryptoBalance: List[CryptoBalance]): String = {
     import commons.CommonUtil._
 
     val date = getFormattedNowDate() + "\n"
-    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${allBalanceInThb.values.sum.format} บาท\n"
-    val balanceThb = allBalanceInThb.map(x => s"${x._1}: ${x._2.format} บาท").mkString("\n")
-    val balance = cryptoBalance.map(x => s"${x._1}: ${x._2.format}").mkString("\n")
+    val sumCurrentBalanceThb = s"จำนวนเงินทั้งหมด: ${allBalanceInThb.map(_.balance).sum.format} บาท\n"
+    val balanceThb = allBalanceInThb.map(x => s"${x.symbol}: ${x.balance.format} บาท").mkString("\n")
+    val balance = cryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
 
     "\n".concat(date).concat(sumCurrentBalanceThb).concat(balanceThb).concat("\n\n").concat(balance)
   }

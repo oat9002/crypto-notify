@@ -5,13 +5,14 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.JsonUtil.JsonSerialize
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import helpers.TerraHelper
+import models.CryptoBalance
 import models.terra.{Balance, ExchangeRate, QueryResult, RawWallet, Wallet, aUstBalance}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait TerraService {
   def getWalletBalance(address: String): Future[Option[Wallet]]
-  def getAllBalance(address: String): Future[Option[Wallet]]
+  def getAllBalance(address: String): Future[Option[List[CryptoBalance]]]
   def getaUstBalance(address: String): Future[Option[BigDecimal]]
   def getaUstExchangeRate(): Future[Option[BigDecimal]]
 }
@@ -67,22 +68,22 @@ class TerraServiceImpl(configuration: Configuration, httpClient: HttpClient, ter
     }
   }
 
-  override def getAllBalance(address: String): Future[Option[Wallet]] = {
+  override def getAllBalance(address: String): Future[Option[List[CryptoBalance]]] = {
     for {
-      walletBalance <- getWalletBalance(address)
-      aUstExchangeRate <- getaUstExchangeRate()
-      aUstBalance <- getaUstBalance(address)
+      walletBalanceOpt <- getWalletBalance(address)
+      aUstExchangeRateOpt <- getaUstExchangeRate()
+      aUstBalanceOpt <- getaUstBalance(address)
+    } yield for {
+      walletBalance <- walletBalanceOpt
+      aUstExchangeRate <- aUstExchangeRateOpt
+      aUstBalance <- aUstBalanceOpt
     } yield {
-      (walletBalance, aUstBalance, aUstExchangeRate) match {
-        case (Some(wallet), Some(aUst), Some(aUstExc)) =>
-          val newBalances = wallet.balances.map {
-            case Balance(symbol, balance) if symbol == "ust" => Balance(symbol, balance + (aUst * aUstExc))
-            case x => x
-          }
-
-          Some(Wallet(newBalances))
-        case _ => None
+      val newBalances = walletBalance.balances.map {
+        case Balance(symbol, balance) if symbol == "ust" => Balance(symbol, balance + (aUstBalance * aUstExchangeRate))
+        case x => x
       }
+
+      newBalances.map(x => CryptoBalance(symbol = x.symbol, balance = x.amount))
     }
   }
 }
