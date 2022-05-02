@@ -8,6 +8,7 @@ import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
 import models.mackerel.MackerelRequest
+import services.contracts.{PancakeService, PancakeServiceImpl}
 import services.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl, UserService, UserServiceImpl}
 
 import scala.concurrent.Future
@@ -24,6 +25,7 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
   private lazy val binanceService: BinanceService = wire[BinanceServiceImpl]
   private lazy val terraService: TerraService = wire[TerraServiceImpl]
+  private lazy val pancakeService: PancakeService = wire[PancakeServiceImpl]
   private lazy val userService: UserService = wire[UserServiceImpl]
   private lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
 

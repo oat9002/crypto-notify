@@ -17,15 +17,9 @@ trait Configuration {
 
 class ConfigurationImpl extends Configuration {
   private val conf: Config = {
-    val c = ConfigFactory.load()
-    val env = c.getConfig("app").getString("env").toLowerCase.trim
-    if ("development".equals(env)) {
-      val toReturn = ConfigFactory.load("application.local")
-      ConfigFactory.invalidateCaches()
-      toReturn
-    } else {
-      c
-    }
+    val baseConfig = ConfigFactory.load()
+
+    ConfigFactory.load("application.local").withFallback(baseConfig)
   }
   private val appSection = conf.getConfig("app")
   private val lineSection = conf.getConfig("line")

@@ -12,8 +12,9 @@ object Dependencies {
   val scalaTest = "3.2.10"
   val scalaMock = "5.1.0"
   val sttp = "3.3.16"
+  val web3j = "4.9.1"
 
-  lazy val dependencies = Seq(
+  lazy val dependencies: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % akka,
     "com.typesafe.akka" %% "akka-stream" % akka,
     "com.typesafe.akka" %% "akka-http" % akkaHttp,
@@ -30,9 +31,10 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % scalaLogging,
     "com.softwaremill.sttp.client3" %% "core" % sttp,
     "com.softwaremill.sttp.client3" %% "akka-http-backend" % sttp,
+    "org.web3j" % "core" % web3j,
   )
 
-  lazy val testDependencies = Seq(
+  lazy val testDependencies: Seq[ModuleID] = Seq(
     "org.scalatest" %% "scalatest" % scalaTest % "test",
     "org.scalatest" %% "scalatest-shouldmatchers" % scalaTest % "test",
     "org.scalamock" %% "scalamock" % scalaMock % "test",

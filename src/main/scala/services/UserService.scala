@@ -5,15 +5,17 @@ import commons.Constant
 import models.CryptoBalance
 import models.satang.{Ticker => SatangTicker}
 import models.binance.{Ticker => BinanceTicker}
+import services.contracts.PancakeService
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 
 trait UserService {
   def getBalanceMessageForLine(userId: String, extWalletAddress: String, terraAddress: String): Future[Option[String]]
 }
 
-class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService, terraService: TerraService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
+class UserServiceImpl(satangService: SatangService, bscScanService: BscScanService, binanceService: BinanceService, terraService: TerraService, pancakeService: PancakeService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends UserService {
   override def getBalanceMessageForLine(userId: String, extWalletAddress: String, terraAddress: String): Future[Option[String]] = {
     for {
       satangUserOpt <- satangService.getUser(userId)
@@ -21,7 +23,7 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
       binanceCurrentPricesOpt <- binanceService.getLatestPrice
       extBnbAmountOpt <- bscScanService.getBnbBalance(extWalletAddress)
       extCakeAmountOpt <- bscScanService.getTokenBalance(Constant.CakeTokenContractAddress, extWalletAddress)
-      extCakeStakeAmountOpt <- bscScanService.getTokenBalance(Constant.CakeTokenStakeContractAddress, extWalletAddress)
+      extCakeStakeAmountOpt <- pancakeService.getPancakeStakeBalance(extWalletAddress)
       binanceOpt <- binanceService.getAllBalance
       terraAccountOpt <- terraService.getAllBalance(terraAddress)
     } yield for {
