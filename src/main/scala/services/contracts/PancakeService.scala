@@ -14,11 +14,11 @@ import scala.jdk.FutureConverters.CompletionStageOps
 import scala.math.BigDecimal.RoundingMode
 import scala.util.{Failure, Success, Try}
 
-trait PanCakeService {
+trait PancakeService {
   def getPancakeStakeBalance(address: String): Future[Option[BigDecimal]]
 }
 
-class PancakeServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends PanCakeService with LazyLogging {
+class PancakeServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends PancakeService with LazyLogging {
   val web3j: Web3j = Web3j.build(new HttpService(Constant.bscRpcUrl))
   val cakePool: CakePool = CakePool.load(Constant.cakePoolContractAddress, web3j, Credentials.create("0") ,  new DefaultGasProvider())
 
