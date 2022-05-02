@@ -19,8 +19,8 @@ trait PancakeService {
 }
 
 class PancakeServiceImpl(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends PancakeService with LazyLogging {
-  val web3j: Web3j = Web3j.build(new HttpService(Constant.bscRpcUrl))
-  val cakePool: CakePool = CakePool.load(Constant.cakePoolContractAddress, web3j, Credentials.create("0") ,  new DefaultGasProvider())
+  private lazy val web3j: Web3j = Web3j.build(new HttpService(Constant.bscRpcUrl))
+  private lazy val cakePool: CakePool = CakePool.load(Constant.cakePoolContractAddress, web3j, Credentials.create("0") ,  new DefaultGasProvider())
 
   def getPancakeStakeBalance(address: String): Future[Option[BigDecimal]] = {
     for {
