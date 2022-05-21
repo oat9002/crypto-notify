@@ -30,9 +30,9 @@ class PancakeServiceImpl(implicit system: ActorSystem[Nothing], context: Executi
       Try {
         val shares = BigInt(userInfo.component1())
         val userBoostedShare = userInfo.component7()
-        val stakeCaked = (BigDecimal(shares * BigInt(pricePerFullShare)) / Math.pow(10, 18)) - BigDecimal(userBoostedShare)
+        val stakedCake = (BigDecimal(shares * BigInt(pricePerFullShare)) / Math.pow(10, 18)) - BigDecimal(userBoostedShare)
 
-        (stakeCaked / Math.pow(10,18)).setScale(6, RoundingMode.HALF_UP)
+        (stakedCake / Math.pow(10,18)).setScale(6, RoundingMode.HALF_UP)
       } match {
         case Success(value) => Some(value)
         case Failure(exception) =>
