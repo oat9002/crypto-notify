@@ -35,11 +35,10 @@ class TerraServiceImpl(configuration: Configuration, httpClient: HttpClient, ter
         }
 
         if (balance.exists(_._1.isEmpty)) {
-          logger.error(s"Some denoms aren't define, rawWallet:${rawWallet.toJson}")
-          None
-        } else {
-          Some(Wallet(balances = balance.map(x => Balance(x._1.get, x._2)).toList))
+          logger.warn(s"Some denoms aren't define, rawWallet:${rawWallet.toJson}")
         }
+
+        Some(Wallet(balances = balance.filter(_._1.nonEmpty).map(x => Balance(x._1.get, x._2)).toList))
     }
   }
 

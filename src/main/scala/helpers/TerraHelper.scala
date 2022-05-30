@@ -12,6 +12,7 @@ class TerraHelperImpl extends TerraHelper {
   def denomToSymbol(denom: String): Option[String] = {
     denom match {
       case "uusd" => Some("ust")
+      case "uluna" => Some("lunc")
       case _ => None
     }
   }
