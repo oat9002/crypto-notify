@@ -24,7 +24,7 @@ jobs:
           IS_HOTFIX: 'true'
 
   githubRelease:
-    needs: release
+    needs: hotfix
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
           tag: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
 
   deploy:
-    needs: [release, githubRelease]
+    needs: [hotfix, githubRelease]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
