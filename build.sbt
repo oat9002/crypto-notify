@@ -18,8 +18,7 @@ dockerCommands ++= Seq(Cmd("USER", "root"),
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 
-val bumpMode = if (sys.env.getOrElse("IS_HOTFIX", "false") == "true") sbtrelease.Version.Bump.Next else sbtrelease.Version.Bump.Minor
-releaseVersionBump := bumpMode
+releaseVersionBump := sbtrelease.Version.Bump.Minor
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,              // : ReleaseStep
   inquireVersions,                        // : ReleaseStep
