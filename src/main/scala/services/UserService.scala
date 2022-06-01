@@ -57,9 +57,9 @@ class UserServiceImpl(satangService: SatangService, bscScanService: BscScanServi
 
   private def getCryptoPriceInThb(balance: CryptoBalance, satangPrices: List[SatangTicker], binancePrices: List[BinanceTicker]): CryptoBalance = {
     val lastThbPrice = satangPrices.find(_.symbol == s"${balance.symbol}_thb").map(_.lastPrice).getOrElse {
-      val btcBinance = binancePrices.find(_.symbol.toLowerCase() == s"${balance.symbol}btc").map(_.price).get
+      val btcBinance = binancePrices.find(_.symbol.toLowerCase() == s"${balance.symbol}btc").map(_.price).getOrElse(BigDecimal(0))
 
-      satangPrices.find(_.symbol == "btc_thb").map(_.lastPrice).get * btcBinance
+      satangPrices.find(_.symbol == "btc_thb").map(_.lastPrice).getOrElse(BigDecimal(0)) * btcBinance
     }
 
     CryptoBalance(balance.symbol, (balance.balance * lastThbPrice).setScale(2, RoundingMode.HALF_UP))
