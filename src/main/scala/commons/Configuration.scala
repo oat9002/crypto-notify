@@ -49,5 +49,5 @@ class ConfigurationImpl extends Configuration {
   }))
   lazy val mackerelConfig: MackerelConfig = MackerelConfig(mackerelSection.getString("url"), mackerelSection.getString("apiKey"), mackerelSection.getString("serviceName"))
   lazy val binanceConfig: BinanceConfig = BinanceConfig(binanceSection.getString("url"), binanceSection.getString("apiKey"), binanceSection.getString("secretKey"))
-  lazy val terraConfig: TerraConfig = TerraConfig(terraSection.getString("url"), terraSection.getString("address"))
+  lazy val terraConfig: TerraConfig = TerraConfig(terraSection.getString("url"), terraSection.getString("twoPointOUrl"), terraSection.getString("address"))
 }
