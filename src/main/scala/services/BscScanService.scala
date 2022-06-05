@@ -11,12 +11,21 @@ import scala.math.pow
 
 trait BscScanService {
   def getBnbBalance(address: String): Future[Option[BigDecimal]]
-  def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]]
+  def getTokenBalance(
+      contractAddress: String,
+      address: String
+  ): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends BscScanService with LazyLogging {
+class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(
+    implicit
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) extends BscScanService
+    with LazyLogging {
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
-    val url = s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
+    val url =
+      s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
     val response = httpClient.get[BscScanResponse](url)
 
     response.map {
@@ -33,8 +42,12 @@ class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
     }
   }
 
-  override def getTokenBalance(contractAddress: String, address: String): Future[Option[BigDecimal]] = {
-    val url = s"${configuration.bscScanConfig.url}?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=${configuration.bscScanConfig.apiKey}"
+  override def getTokenBalance(
+      contractAddress: String,
+      address: String
+  ): Future[Option[BigDecimal]] = {
+    val url =
+      s"${configuration.bscScanConfig.url}?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=${configuration.bscScanConfig.apiKey}"
     val response = httpClient.get[BscScanResponse](url)
 
     response.map {
@@ -52,6 +65,6 @@ class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(i
   }
 
   private def convertFromWei(value: BigInt): BigDecimal = {
-    (BigDecimal(value) / pow(10.0, 18.0))setScale(6, RoundingMode.HALF_UP)
+    (BigDecimal(value) / pow(10.0, 18.0)) setScale (6, RoundingMode.HALF_UP)
   }
 }

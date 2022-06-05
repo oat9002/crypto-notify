@@ -11,8 +11,14 @@ trait QuartzService[T] {
   def schedule(name: SchedulerName, receiver: ActorRef[T], msg: T): Unit
 }
 
-class QuartzServiceImpl[T](implicit system: ActorSystem[T], context: ExecutionContext) extends QuartzService[T] with LazyLogging {
-  val scheduler: QuartzSchedulerTypedExtension = QuartzSchedulerTypedExtension(system)
+class QuartzServiceImpl[T](implicit
+    system: ActorSystem[T],
+    context: ExecutionContext
+) extends QuartzService[T]
+    with LazyLogging {
+  val scheduler: QuartzSchedulerTypedExtension = QuartzSchedulerTypedExtension(
+    system
+  )
 
   def schedule(name: SchedulerName, receiver: ActorRef[T], msg: T): Unit = {
     val startDate = scheduler.scheduleTyped(name.toString, receiver, msg)

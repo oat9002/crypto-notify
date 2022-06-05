@@ -14,20 +14,29 @@ import services.{MackerelService, MackerelServiceImpl}
 import scala.concurrent.ExecutionContextExecutor
 
 object Boot extends App with LazyLogging {
-  implicit val system: ActorSystem[Command] = ActorSystem(Scheduler(), "crypto-notify")
-  implicit val nothingActorRef: ActorRef[Nothing] = system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
-  implicit val executionContext: ExecutionContextExecutor = system.executionContext
+  implicit val system: ActorSystem[Command] =
+    ActorSystem(Scheduler(), "crypto-notify")
+  implicit val nothingActorRef: ActorRef[Nothing] =
+    system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
+  implicit val executionContext: ExecutionContextExecutor =
+    system.executionContext
   lazy val httpClient: HttpClient = wire[HttpClientImpl]
   lazy val configuration: Configuration = wire[ConfigurationImpl]
   lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
   lazy val executor: Executor = wire[ExecutorImpl]
-  lazy val healthCheckController: HealthCheckController = wire[HealthCheckController]
+  lazy val healthCheckController: HealthCheckController =
+    wire[HealthCheckController]
 
   val route =
     concat(
       pathEndOrSingleSlash {
         get {
-          complete(HttpEntity(ContentTypes.`application/json`, "Say hello to crypto-notify"))
+          complete(
+            HttpEntity(
+              ContentTypes.`application/json`,
+              "Say hello to crypto-notify"
+            )
+          )
         }
       },
       healthCheckController.route
@@ -36,5 +45,7 @@ object Boot extends App with LazyLogging {
   executor.execute()
   Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
 
-  logger.info(s"Server online at http://localhost:${configuration.appConfig.port}/")
+  logger.info(
+    s"Server online at http://localhost:${configuration.appConfig.port}/"
+  )
 }
