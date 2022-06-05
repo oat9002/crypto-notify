@@ -9,11 +9,28 @@ import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
 import models.mackerel.MackerelRequest
 import services.contracts.{PancakeService, PancakeServiceImpl}
-import services.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, LineService, LineServiceImpl, MackerelService, MackerelServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl, UserService, UserServiceImpl}
+import services.{
+  BinanceService,
+  BinanceServiceImpl,
+  BscScanService,
+  BscScanServiceImpl,
+  LineService,
+  LineServiceImpl,
+  MackerelService,
+  MackerelServiceImpl,
+  SatangService,
+  SatangServiceImpl,
+  TerraService,
+  TerraServiceImpl,
+  UserService,
+  UserServiceImpl
+}
 
 import scala.concurrent.Future
 
-class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Command](actorContext) with LazyLogging {
+class Scheduler(actorContext: ActorContext[Command])
+    extends AbstractBehavior[Command](actorContext)
+    with LazyLogging {
   import context.executionContext
 
   implicit val nothingSystem: ActorSystem[Nothing] = actorContext.system
@@ -32,17 +49,24 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>
       val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
-      val message = userService.getBalanceMessageForLine(configuration.satangConfig.userId, configuration.bscScanConfig.address, configuration.terraConfig.address)
+      val message = userService.getBalanceMessageForLine(
+        configuration.satangConfig.userId,
+        configuration.bscScanConfig.address,
+        configuration.terraConfig.address
+      )
 
       logger.info(s"NotifyTask run at $now")
 
-      message.flatMap {
-        case Some(m) => lineService.notify(m)
-        case _ => Future.successful(false)
-      }.foreach {
-        case false => logger.error(s"$now -> There is some problem with cronjob")
-        case _ =>
-      }
+      message
+        .flatMap {
+          case Some(m) => lineService.notify(m)
+          case _       => Future.successful(false)
+        }
+        .foreach {
+          case false =>
+            logger.error(s"$now -> There is some problem with cronjob")
+          case _ =>
+        }
       this
     case HealthCheckTask =>
       mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
@@ -52,5 +76,6 @@ class Scheduler(actorContext: ActorContext[Command]) extends AbstractBehavior[Co
 }
 
 object Scheduler {
-  def apply(): Behavior[Command] = Behaviors.setup(context => new Scheduler(context))
+  def apply(): Behavior[Command] =
+    Behaviors.setup(context => new Scheduler(context))
 }

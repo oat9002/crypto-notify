@@ -13,14 +13,26 @@ trait SatangService {
   def getCryptoPrices: Future[Option[List[Ticker]]]
 }
 
-class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends SatangService with LazyLogging {
+class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(
+    implicit
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) extends SatangService
+    with LazyLogging {
 
   val url: String = configuration.satangConfig.url
 
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
-    val signature = CommonUtil.generateHMAC("", configuration.satangConfig.apiSecret)
-    val response = httpClient.get[User](userUrl + s"/$userId", Map("Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}", "Signature" -> s"$signature"))
+    val signature =
+      CommonUtil.generateHMAC("", configuration.satangConfig.apiSecret)
+    val response = httpClient.get[User](
+      userUrl + s"/$userId",
+      Map(
+        "Authorization" -> s"TDAX-API ${configuration.satangConfig.apiKey}",
+        "Signature" -> s"$signature"
+      )
+    )
 
     response.map {
       case Left(err) =>

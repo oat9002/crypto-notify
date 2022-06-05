@@ -1,4 +1,3 @@
 package models.binance
 
-case class Ticker(symbol: String,
-                  price: BigDecimal)
+case class Ticker(symbol: String, price: BigDecimal)

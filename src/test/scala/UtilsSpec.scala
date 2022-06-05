@@ -71,7 +71,7 @@ class UtilsSpec extends AnyFunSpec with Matchers {
           val config = "{\"port\":5000}"
           val result = config.toObject[AppConfig] match {
             case Success(value) => value
-            case _ => AppConfig
+            case _              => AppConfig
           }
 
           result shouldBe AppConfig(5000)
@@ -81,7 +81,7 @@ class UtilsSpec extends AnyFunSpec with Matchers {
           val configList = "[{\"port\":5000},{\"port\":6000}]"
           val result = configList.toObject[Array[AppConfig]] match {
             case Success(value) => value
-            case _ => Array(AppConfig, AppConfig)
+            case _              => Array(AppConfig, AppConfig)
           }
 
           result.head shouldBe AppConfig(5000)
@@ -92,7 +92,7 @@ class UtilsSpec extends AnyFunSpec with Matchers {
           val configList = "[{\"port\":5000},{\"port\":6000}]"
           val result = configList.toObject[List[AppConfig]] match {
             case Success(value) => value
-            case _ => List(AppConfig, AppConfig)
+            case _              => List(AppConfig, AppConfig)
           }
 
           result.head shouldBe AppConfig(5000)
@@ -103,7 +103,7 @@ class UtilsSpec extends AnyFunSpec with Matchers {
           val configList = "{\"query_result\":{\"port\":5000}}"
           val result = configList.toObject[QueryResult[AppConfig]] match {
             case Success(value) => value
-            case _ => QueryResult[AppConfig](AppConfig(0))
+            case _              => QueryResult[AppConfig](AppConfig(0))
           }
 
           result.queryResult shouldBe AppConfig(5000)

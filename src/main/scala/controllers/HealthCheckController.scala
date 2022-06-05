@@ -9,7 +9,10 @@ import services.MackerelService
 
 import scala.concurrent.ExecutionContext
 
-class HealthCheckController(mackerelService: MackerelService)(implicit system: ActorSystem[Nothing], context: ExecutionContext) {
+class HealthCheckController(mackerelService: MackerelService)(implicit
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) {
   val route: Route = {
     path("healthCheck") {
       get {

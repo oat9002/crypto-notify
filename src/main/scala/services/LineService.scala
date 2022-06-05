@@ -11,9 +11,20 @@ trait LineService {
   def notify(message: String): Future[Boolean]
 }
 
-class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(implicit system: ActorSystem[Nothing], context: ExecutionContext) extends LineService with LazyLogging {
+class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(
+    implicit
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) extends LineService
+    with LazyLogging {
   override def notify(message: String): Future[Boolean] = {
-    val response = httpClient.postFormData[Any]( configuration.lineConfig.url, Map("message" -> message), Map("Authorization" -> s"Bearer ${configuration.lineConfig.lineNotifyToken}"))
+    val response = httpClient.postFormData[Any](
+      configuration.lineConfig.url,
+      Map("message" -> message),
+      Map(
+        "Authorization" -> s"Bearer ${configuration.lineConfig.lineNotifyToken}"
+      )
+    )
 
     response.map {
       case Left(err) =>

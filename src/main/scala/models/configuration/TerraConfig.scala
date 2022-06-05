@@ -1,4 +1,3 @@
 package models.configuration
 
-case class TerraConfig(url: String,
-                       address: String)
+case class TerraConfig(url: String, twoPointOUrl: String, address: String)
