@@ -16,6 +16,10 @@ jobs:
         distribution: 'adopt'
     - name: Format
       run: sbt scalafmtAll
+    - name: Set GitHub user
+      run: |
+        git config --global user.name 'oat9002'
+        git config --global user.email 'oat9002@hotmail.com'
     - name: Commit
       run: |
         git add --all
