@@ -14,28 +14,31 @@ import models.configuration.{
   TerraConfig
 }
 
+import scala.util.{Success, Try}
+
 trait Configuration {
   val appConfig: AppConfig
   val lineConfig: LineConfig
   val satangConfig: SatangConfig
-  val bscScanConfig: BscScanConfig
   val akkaConfig: AkkaConfig
-  val mackerelConfig: MackerelConfig
-  val binanceConfig: BinanceConfig
-  val terraConfig: TerraConfig
+  val bscScanConfig: Option[BscScanConfig]
+  val mackerelConfig: Option[MackerelConfig]
+  val binanceConfig: Option[BinanceConfig]
+  val terraConfig: Option[TerraConfig]
 }
 
 class ConfigurationImpl extends Configuration {
   private val conf: Config = {
     val baseConfig = ConfigFactory.load()
 
-    ConfigFactory.load("application.local").withFallback(baseConfig)
+    baseConfig
+    //ConfigFactory.load("application.local").withFallback(baseConfig)
   }
   private val appSection = conf.getConfig("app")
   private val lineSection = conf.getConfig("line")
   private val satangSection = conf.getConfig("satang")
-  private val bscScanSection = conf.getConfig("bscScan")
   private val akkaSection = conf.getConfig("akka")
+  private val bscScanSection = conf.getConfig("bscScan")
   private val mackerelSection = conf.getConfig("mackerel")
   private val binanceSection = conf.getConfig("binance")
   private val terraSection = conf.getConfig("terra")
@@ -50,11 +53,17 @@ class ConfigurationImpl extends Configuration {
     satangSection.getString("userId"),
     satangSection.getString("url")
   )
-  lazy val bscScanConfig: BscScanConfig = BscScanConfig(
-    bscScanSection.getString("url"),
-    bscScanSection.getString("apiKey"),
-    bscScanSection.getString("address")
-  )
+  lazy val bscScanConfig: Option[BscScanConfig] = Try(
+    BscScanConfig(
+      bscScanSection.getString("url"),
+      bscScanSection.getString("apiKey"),
+      bscScanSection.getString("address")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
+
   lazy val akkaConfig: AkkaConfig = AkkaConfig(
     Quartz(
       akkaSection.getConfig("quartz").getString("defaultTimezone"), {
@@ -89,19 +98,34 @@ class ConfigurationImpl extends Configuration {
       }
     )
   )
-  lazy val mackerelConfig: MackerelConfig = MackerelConfig(
-    mackerelSection.getString("url"),
-    mackerelSection.getString("apiKey"),
-    mackerelSection.getString("serviceName")
-  )
-  lazy val binanceConfig: BinanceConfig = BinanceConfig(
-    binanceSection.getString("url"),
-    binanceSection.getString("apiKey"),
-    binanceSection.getString("secretKey")
-  )
-  lazy val terraConfig: TerraConfig = TerraConfig(
-    terraSection.getString("url"),
-    terraSection.getString("twoPointOUrl"),
-    terraSection.getString("address")
-  )
+  lazy val mackerelConfig: Option[MackerelConfig] = Try(
+    MackerelConfig(
+      mackerelSection.getString("url"),
+      mackerelSection.getString("apiKey"),
+      mackerelSection.getString("serviceName")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
+  lazy val binanceConfig: Option[BinanceConfig] = Try(
+    BinanceConfig(
+      binanceSection.getString("url"),
+      binanceSection.getString("apiKey"),
+      binanceSection.getString("secretKey")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
+  lazy val terraConfig: Option[TerraConfig] = Try(
+    TerraConfig(
+      terraSection.getString("url"),
+      terraSection.getString("twoPointOUrl"),
+      terraSection.getString("address")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
 }

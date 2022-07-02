@@ -14,8 +14,8 @@ import scala.math.BigDecimal.RoundingMode
 trait UserService {
   def getBalanceMessageForLine(
       userId: String,
-      extWalletAddress: String,
-      terraAddress: String
+      bscAddress: Option[String],
+      terraAddress: Option[String]
   ): Future[Option[String]]
 }
 
@@ -29,23 +29,31 @@ class UserServiceImpl(
     extends UserService {
   override def getBalanceMessageForLine(
       userId: String,
-      extWalletAddress: String,
-      terraAddress: String
+      bscAddress: Option[String],
+      terraAddress: Option[String]
   ): Future[Option[String]] = {
     for {
       satangUser <- satangService.getUser(userId)
       satangCurrentPrices <- satangService.getCryptoPrices
       binanceCurrentPrices <- binanceService.getLatestPrice
-      extBnbAmount <- bscScanService.getBnbBalance(extWalletAddress)
-      extCakeAmount <- bscScanService.getTokenBalance(
-        Constant.CakeTokenContractAddress,
-        extWalletAddress
-      )
-      extCakeStakeAmount <- pancakeService.getPancakeStakeBalance(
-        extWalletAddress
-      )
+      extBnbAmount <- bscAddress
+        .map(bscScanService.getBnbBalance)
+        .getOrElse(Future.successful(None))
+      extCakeAmount <- bscAddress
+        .map(address =>
+          bscScanService.getTokenBalance(
+            Constant.CakeTokenContractAddress,
+            address
+          )
+        )
+        .getOrElse(Future.successful(None))
+      extCakeStakeAmount <- bscAddress
+        .map(pancakeService.getPancakeStakeBalance)
+        .getOrElse(Future.successful(None))
       binance <- binanceService.getAllBalance
-      terraAccount <- terraService.getAllBalance(terraAddress)
+      terraAccount <- terraAddress
+        .map(terraService.getAllBalance)
+        .getOrElse(Future.successful(None))
     } yield {
       val satangList = satangUser
         .map(s =>

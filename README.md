@@ -1,9 +1,9 @@
 # crypto-notify
 Notify your current cryptocurrency balance from Satang Pro via Line Notify
 
-## Source
+## Supported Source
 
-- Satang Pro
+- Satang Pro `// Required to convert to THB`
 - Binance
 - BscScan
 - Terra
