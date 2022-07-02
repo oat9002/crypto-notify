@@ -5,29 +5,6 @@ on:
     branches: [ main ]
 
 jobs:
-#  format:
-#    runs-on: ubuntu-latest
-#    steps:
-#    - uses: actions/checkout@v2
-#      with:
-#        ref: ${{ github.event.pull_request.head.ref }}
-#    - name: Set up JDK 16
-#      uses: actions/setup-java@v2
-#      with:
-#        java-version: '16'
-#        distribution: 'adopt'
-#    - name: Format
-#      run: sbt scalafmtAll
-#    - name: Set GitHub user
-#      run: |
-#        git config --global user.name 'oat9002'
-#        git config --global user.email 'oat9002@hotmail.com'
-#    - name: Commit
-#      run: |
-#        git add --all
-#        git commit -m ":recycle: format code"
-#        git push
-
   build:
     runs-on: ubuntu-latest
     steps:
