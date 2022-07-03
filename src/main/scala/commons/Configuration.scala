@@ -31,8 +31,7 @@ class ConfigurationImpl extends Configuration {
   private val conf: Config = {
     val baseConfig = ConfigFactory.load()
 
-    baseConfig
-    //ConfigFactory.load("application.local").withFallback(baseConfig)
+    ConfigFactory.load("application.local").withFallback(baseConfig)
   }
   private val appSection = conf.getConfig("app")
   private val lineSection = conf.getConfig("line")
