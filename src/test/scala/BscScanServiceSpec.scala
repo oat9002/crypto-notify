@@ -1,15 +1,15 @@
-import akka.actor.testkit.typed.scaladsl.ActorTestKit
-import commons.{Configuration, HttpClient}
-import models.bscScan.BscScanResponse
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.funspec.AnyFunSpec
-import org.scalatest.matchers.should.Matchers
-import services.BscScanServiceImpl
-
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future}
-
-class BscScanServiceSpec extends AnyFunSpec with Matchers with MockFactory {
+//import akka.actor.testkit.typed.scaladsl.ActorTestKit
+//import commons.{Configuration, HttpClient}
+//import models.bscScan.BscScanResponse
+//import org.scalamock.scalatest.MockFactory
+//import org.scalatest.funspec.AnyFunSpec
+//import org.scalatest.matchers.should.Matchers
+//import services.BscScanServiceImpl
+//
+//import scala.concurrent.duration.Duration
+//import scala.concurrent.{Await, Future}
+//
+//class BscScanServiceSpec extends AnyFunSpec with Matchers with MockFactory {
 //  val actorTestKit: ActorTestKit = ActorTestKit()
 //  val httpClientMock: HttpClient = mock[HttpClient]
 //  val configurationMock: Configuration = mock[Configuration]
@@ -27,5 +27,5 @@ class BscScanServiceSpec extends AnyFunSpec with Matchers with MockFactory {
 //
 //      result shouldBe Some(BigInt(1))
 //    }
-  }
-}
+//  }
+//}
