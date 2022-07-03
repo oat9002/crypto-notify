@@ -23,20 +23,24 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(
 ) extends BinanceService
     with LazyLogging {
   val recvWindow: FiniteDuration = 10.seconds
+  val baseUrl: String = configuration.binanceConfig.map(_.url).getOrElse("")
+  val secretKey: String =
+    configuration.binanceConfig.map(_.secretKey).getOrElse("")
+  val apiKey: String = configuration.binanceConfig.map(_.apiKey).getOrElse("")
 
   override def getSaving: Future[Option[Saving]] = {
     val timeStamp = System.currentTimeMillis()
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
     val signature = CommonUtil.generateHMAC(
       queryString,
-      configuration.binanceConfig.secretKey,
+      configuration.binanceConfig.map(_.secretKey).getOrElse(""),
       HmacAlgorithm.HmacSHA256
     )
     val url =
-      s"${configuration.binanceConfig.url}/sapi/v1/lending/union/account?$queryString&signature=$signature"
+      s"$baseUrl/sapi/v1/lending/union/account?$queryString&signature=$signature"
     val response = httpClient.get[Saving](
       url,
-      Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey)
+      Map("X-MBX-APIKEY" -> apiKey)
     )
 
     response map {
@@ -52,14 +56,14 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
     val signature = CommonUtil.generateHMAC(
       queryString,
-      configuration.binanceConfig.secretKey,
+      secretKey,
       HmacAlgorithm.HmacSHA256
     )
     val url =
-      s"${configuration.binanceConfig.url}/sapi/v1/capital/config/getall?$queryString&signature=$signature"
+      s"$baseUrl/sapi/v1/capital/config/getall?$queryString&signature=$signature"
     val response = httpClient.get[Array[Coin]](
       url,
-      Map("X-MBX-APIKEY" -> configuration.binanceConfig.apiKey)
+      Map("X-MBX-APIKEY" -> apiKey)
     )
 
     response map {
@@ -71,7 +75,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(
   }
 
   override def getLatestPrice: Future[Option[List[Ticker]]] = {
-    val url = s"${configuration.binanceConfig.url}/api/v3/ticker/price"
+    val url = s"$baseUrl/api/v3/ticker/price"
     val response = httpClient.get[Array[Ticker]](url)
 
     response map {

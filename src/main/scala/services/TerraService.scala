@@ -31,11 +31,15 @@ class TerraServiceImpl(
 )(implicit system: ActorSystem[Nothing], context: ExecutionContext)
     extends TerraService
     with LazyLogging {
+  val baseOldUrl: String = configuration.terraConfig.map(_.url).getOrElse("")
+  val baseTwoPointOUrl: String =
+    configuration.terraConfig.map(_.twoPointOUrl).getOrElse("")
+
   override def getWalletBalance(address: String): Future[Option[Wallet]] = {
     val classicUrl =
-      s"${configuration.terraConfig.url}/cosmos/bank/v1beta1/balances/$address"
+      s"$baseOldUrl/cosmos/bank/v1beta1/balances/$address"
     val twoPointOUrl =
-      s"${configuration.terraConfig.twoPointOUrl}/cosmos/bank/v1beta1/balances/$address"
+      s"$baseTwoPointOUrl/cosmos/bank/v1beta1/balances/$address"
     val classicResponse = httpClient.get[RawWallet](classicUrl)
     val twoPointOResponse = httpClient.get[RawWallet](twoPointOUrl)
 
@@ -91,7 +95,7 @@ class TerraServiceImpl(
     val queryMsg =
       CommonUtil.base64Encode("{\"balance\":{\"address\":\"" + address + "\"}}")
     val url =
-      s"${configuration.terraConfig.url}/terra/wasm/v1beta1/contracts/${Constant.aUstContractAddress}/store?query_msg=$queryMsg"
+      s"$baseOldUrl/terra/wasm/v1beta1/contracts/${Constant.aUstContractAddress}/store?query_msg=$queryMsg"
     val response = httpClient.get[QueryResult[aUstBalance]](url)
 
     response map {
@@ -104,7 +108,7 @@ class TerraServiceImpl(
 
   override def getaUstExchangeRate(): Future[Option[BigDecimal]] = {
     val url =
-      s"${configuration.terraConfig.url}/terra/wasm/v1beta1/contracts/${Constant.anchorMarketContractAddress}/store?query_msg=eyJlcG9jaF9zdGF0ZSI6e319"
+      s"$baseOldUrl/terra/wasm/v1beta1/contracts/${Constant.anchorMarketContractAddress}/store?query_msg=eyJlcG9jaF9zdGF0ZSI6e319"
     val response = httpClient.get[QueryResult[ExchangeRate]](url)
 
     response map {

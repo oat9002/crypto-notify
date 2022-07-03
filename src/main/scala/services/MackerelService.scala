@@ -18,15 +18,20 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
     context: ExecutionContext
 ) extends MackerelService
     with LazyLogging {
+  val baseUrl: String = configuration.mackerelConfig.map(_.url).getOrElse("")
+  val serviceName: String =
+    configuration.mackerelConfig.map(_.serviceName).getOrElse("")
+  val apiKey: String = configuration.mackerelConfig.map(_.apiKey).getOrElse("")
+
   override def sendMeasurement(
       request: List[MackerelRequest]
   ): Future[Boolean] = {
     val url =
-      s"${configuration.mackerelConfig.url}/api/v0/services/${configuration.mackerelConfig.serviceName}/tsdb"
+      s"$baseUrl/api/v0/services/$serviceName/tsdb"
     val response = httpClient.post[List[MackerelRequest], Any](
       url,
       request,
-      Map("X-Api-Key" -> s"${configuration.mackerelConfig.apiKey}")
+      Map("X-Api-Key" -> s"${apiKey}")
     )
 
     response.map {
