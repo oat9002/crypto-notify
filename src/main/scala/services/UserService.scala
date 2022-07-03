@@ -3,7 +3,7 @@ package services
 import akka.actor.typed.ActorSystem
 import commons.Constant
 import models.CryptoBalance
-import models.satang.{Ticker => SatangTicker}
+import models.satang.{User, Ticker => SatangTicker}
 import models.binance.{Ticker => BinanceTicker}
 import services.contracts.PancakeService
 
@@ -14,8 +14,8 @@ import scala.math.BigDecimal.RoundingMode
 trait UserService {
   def getBalanceMessageForLine(
       userId: String,
-      extWalletAddress: String,
-      terraAddress: String
+      bscAddress: Option[String],
+      terraAddress: Option[String]
   ): Future[Option[String]]
 }
 
@@ -29,41 +29,49 @@ class UserServiceImpl(
     extends UserService {
   override def getBalanceMessageForLine(
       userId: String,
-      extWalletAddress: String,
-      terraAddress: String
+      bscAddress: Option[String],
+      terraAddress: Option[String]
   ): Future[Option[String]] = {
     for {
-      satangUserOpt <- satangService.getUser(userId)
-      satangCurrentPricesOpt <- satangService.getCryptoPrices
-      binanceCurrentPricesOpt <- binanceService.getLatestPrice
-      extBnbAmountOpt <- bscScanService.getBnbBalance(extWalletAddress)
-      extCakeAmountOpt <- bscScanService.getTokenBalance(
-        Constant.CakeTokenContractAddress,
-        extWalletAddress
-      )
-      extCakeStakeAmountOpt <- pancakeService.getPancakeStakeBalance(
-        extWalletAddress
-      )
-      binanceOpt <- binanceService.getAllBalance
-      terraAccountOpt <- terraService.getAllBalance(terraAddress)
-    } yield for {
-      satangUser <- satangUserOpt
-      satangCurrentPrices <- satangCurrentPricesOpt
-      binanceCurrentPrices <- binanceCurrentPricesOpt
-      eBnB <- extBnbAmountOpt
-      eCake <- extCakeAmountOpt
-      eCakeStake <- extCakeStakeAmountOpt
-      binance <- binanceOpt
-      terra <- terraAccountOpt
+      satangUser <- satangService.getUser(userId)
+      satangCurrentPrices <- satangService.getCryptoPrices
+      binanceCurrentPrices <- binanceService.getLatestPrice
+      extBnbAmount <- bscAddress
+        .map(bscScanService.getBnbBalance)
+        .getOrElse(Future.successful(None))
+      extCakeAmount <- bscAddress
+        .map(address =>
+          bscScanService.getTokenBalance(
+            Constant.CakeTokenContractAddress,
+            address
+          )
+        )
+        .getOrElse(Future.successful(None))
+      extCakeStakeAmount <- bscAddress
+        .map(pancakeService.getPancakeStakeBalance)
+        .getOrElse(Future.successful(None))
+      binance <- binanceService.getAllBalance
+      terraAccount <- terraAddress
+        .map(terraService.getAllBalance)
+        .getOrElse(Future.successful(None))
     } yield {
-      val satangList = satangUser.wallets
-        .map(x => CryptoBalance(x._1, x._2.availableBalance))
-        .toList
+      val satangList = satangUser
+        .map(s =>
+          s.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList
+        )
+        .getOrElse(List[CryptoBalance]())
       val externalList = List(
-        CryptoBalance("cake", eCake + eCakeStake),
-        CryptoBalance("bnb", eBnB)
+        CryptoBalance(
+          "cake",
+          extCakeAmount.getOrElse(BigDecimal(0)) + extCakeStakeAmount.getOrElse(
+            BigDecimal(0)
+          )
+        ),
+        CryptoBalance("bnb", extBnbAmount.getOrElse(BigDecimal(0)))
       )
-      val mergedPair = (satangList ++ binance ++ externalList ++ terra)
+      val mergedPair = (satangList ++ binance.getOrElse(
+        List[CryptoBalance]()
+      ) ++ externalList ++ terraAccount.getOrElse(List[CryptoBalance]()))
         .groupBy(_.symbol)
         .map { case (k, v) =>
           CryptoBalance(k, v.map(_.balance).sum)
@@ -74,7 +82,11 @@ class UserServiceImpl(
         .sortBy(_.symbol)
       val cryptoBalanceInThb = noneZeroCryptoBalance
         .map(x =>
-          getCryptoPriceInThb(x, satangCurrentPrices, binanceCurrentPrices)
+          getCryptoPriceInThb(
+            x,
+            satangCurrentPrices.getOrElse(List[SatangTicker]()),
+            binanceCurrentPrices.getOrElse(List[BinanceTicker]())
+          )
         )
       val allBalanceIntThb = satangList
         .filter(_.symbol == "thb")
@@ -82,7 +94,11 @@ class UserServiceImpl(
         .concat(cryptoBalanceInThb)
         .sortBy(_.symbol)
 
-      generateMessage(allBalanceIntThb, noneZeroCryptoBalance)
+      if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
+        None
+      } else {
+        Some(generateMessage(allBalanceIntThb, noneZeroCryptoBalance))
+      }
     }
   }
 

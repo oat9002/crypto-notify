@@ -23,9 +23,12 @@ class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(
     context: ExecutionContext
 ) extends BscScanService
     with LazyLogging {
+  val baseUrl: String = configuration.bscScanConfig.map(_.url).getOrElse("")
+  val apiKey: String = configuration.bscScanConfig.map(_.apiKey).getOrElse("")
+
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
     val url =
-      s"${configuration.bscScanConfig.url}?module=account&action=balance&address=$address&apikey=${configuration.bscScanConfig.apiKey}"
+      s"$baseUrl?module=account&action=balance&address=$address&apikey=$apiKey"
     val response = httpClient.get[BscScanResponse](url)
 
     response.map {
@@ -47,7 +50,7 @@ class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(
       address: String
   ): Future[Option[BigDecimal]] = {
     val url =
-      s"${configuration.bscScanConfig.url}?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=${configuration.bscScanConfig.apiKey}"
+      s"$baseUrl?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=$apiKey"
     val response = httpClient.get[BscScanResponse](url)
 
     response.map {

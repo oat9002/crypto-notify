@@ -51,8 +51,8 @@ class Scheduler(actorContext: ActorContext[Command])
       val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
       val message = userService.getBalanceMessageForLine(
         configuration.satangConfig.userId,
-        configuration.bscScanConfig.address,
-        configuration.terraConfig.address
+        configuration.bscScanConfig.map(_.address),
+        configuration.terraConfig.map(_.address)
       )
 
       logger.info(s"NotifyTask run at $now")
