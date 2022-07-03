@@ -10,15 +10,15 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 class BscScanServiceSpec extends AnyFunSpec with Matchers with MockFactory {
-  val actorTestKit: ActorTestKit = ActorTestKit()
-  val httpClientMock: HttpClient = mock[HttpClient]
-  val configurationMock: Configuration = mock[Configuration]
-  val bscScanService = new BscScanServiceImpl(
-    configurationMock,
-    httpClientMock
-  )(actorTestKit.system, actorTestKit.system.executionContext)
-
-  describe("getBnbBalance") {
+//  val actorTestKit: ActorTestKit = ActorTestKit()
+//  val httpClientMock: HttpClient = mock[HttpClient]
+//  val configurationMock: Configuration = mock[Configuration]
+//  val bscScanService = new BscScanServiceImpl(
+//    configurationMock,
+//    httpClientMock
+//  )(actorTestKit.system, actorTestKit.system.executionContext)
+//
+//  describe("getBnbBalance") {
 //    it("get balance correctly") {
 //
 //      (httpClientMock.get[Any, BscScanResponse] _).expects(*, *, *).returning(Future.successful(Right(BscScanResponse(200, "", BigInt(1)))))
