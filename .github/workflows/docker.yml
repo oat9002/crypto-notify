@@ -34,7 +34,7 @@ jobs:
       - name: Get current app version
         id: get-app-version
         run: |
-          export VERSION=$(cat version.sbt | cut -d '"' -f2)
+          export VERSION=$(cat version.sbt | cut -d '"' -f2 | sed 's/-SNAPSHOT//g')
           echo "version: $VERSION"
           echo "::set-output name=APP_VERSION::$VERSION"
       - name: Create Dockerfile

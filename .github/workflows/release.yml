@@ -4,7 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
+  dockerPublish:
+    uses: ./.github/workflows/docker.yml
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+
   release:
+    needs: dockerPublish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -43,13 +50,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
-
-  dockerPublish:
-    needs: release
-    uses: ./.github/workflows/docker.yml
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
 #
 #  deploy:
 #    needs: dockerPublish
