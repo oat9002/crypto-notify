@@ -24,15 +24,6 @@ dockerRepository := Some("oat9002")
 dockerBaseImage := "eclipse-temurin:16-jdk-focal"
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
-//dockerBuildOptions := Seq(
-//  "--platform",
-//  "linux/amd64,linux/arm64,linux/arm/v7",
-//  "-t"
-//) :+ dockerAlias.value.toString()
-//dockerBuildCommand := dockerExecCommand.value ++ Seq(
-//  "buildx",
-//  "build"
-//) ++ dockerBuildOptions.value ++ Seq(".")
 
 releaseVersionBump := sbtrelease.Version.Bump.Minor
 releaseProcess := Seq[ReleaseStep](
