@@ -1,0 +1,15 @@
+name: release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    needs: [release, githubRelease]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to server
+        run: |
+          curl ${{ secrets.SERVER_URL }} -H "X-Api-Key: ${{ secrets.DEPLOY_API_KEY }}"
+
