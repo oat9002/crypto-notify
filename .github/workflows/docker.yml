@@ -15,7 +15,7 @@ jobs:
   dockerPublish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up JDK 16
         uses: actions/setup-java@v2
         with:
@@ -43,6 +43,7 @@ jobs:
         run: |
           cd ./target/docker/stage
           pwd
+          ls
       - name: Publish to Docker Hub
         run: docker buildx build --platform="linux/amd64,linux/arm64,linux/arm/v7" -t oat9002/crypto-notify:latest -t oat9002/crypto-notify:${{ steps.get-app-version.outputs.APP_VERSION }} --push .
 
