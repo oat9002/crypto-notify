@@ -1,11 +1,10 @@
-name: release
+name: deploy
 
 on:
   workflow_dispatch:
 
 jobs:
   deploy:
-    needs: [release, githubRelease]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
