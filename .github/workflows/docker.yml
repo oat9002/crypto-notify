@@ -35,12 +35,14 @@ jobs:
         run: sbt "Docker / stage"
       - name: Go to Dockerfile dir
         run: |
-          - cd ./target/docker/stage
-          - pwd
+          cd ./target/docker/stage
+          pwd
       - name: Get current app version
         id: get-app-version
         run: |
-          - echo '::set-output name=APP_VERSION::$(sbt 'show version' | tail -n1 | cut -d " " -f2)'
+          export VERSION=$(sbt 'show version' | tail -n1 | cut -d " " -f2)
+          echo version: $VERSION
+          echo '::set-output name=APP_VERSION::$VERSION'
       - name: Publish to Docker Hub
         run: docker buildx build --platform="linux/amd64,linux/arm64,linux/arm/v7" -t oat9002/crypto-notify:latest -t oat9002/crypto-notify:${{ steps.get-app-version.outputs.APP_VERSION }} --push .
 
