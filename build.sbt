@@ -1,4 +1,3 @@
-import com.typesafe.sbt.packager.docker.{Cmd, ExecCmd}
 import sbtrelease.ReleaseStateTransformations.{
   checkSnapshotDependencies,
   commitNextVersion,
