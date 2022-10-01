@@ -13,7 +13,7 @@ import sbtrelease.ReleaseStateTransformations.{
 
 name := "crypto-notify"
 
-scalaVersion := "2.13.5"
+scalaVersion := "2.13.7"
 
 libraryDependencies ++= Dependencies.allDependencies
 

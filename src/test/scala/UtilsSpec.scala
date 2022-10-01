@@ -1,4 +1,3 @@
-import com.fasterxml.jackson.core.`type`.TypeReference
 import commons.JsonUtil.{JsonDeserialize, JsonSerialize}
 import commons.CommonUtil._
 import commons.HmacAlgorithm
