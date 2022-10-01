@@ -12,6 +12,7 @@ import processors.{Executor, ExecutorImpl}
 import services.{MackerelService, MackerelServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
+import akka.http.scaladsl.server.Route
 
 object Boot extends App with LazyLogging {
   implicit val system: ActorSystem[Command] =
@@ -27,7 +28,7 @@ object Boot extends App with LazyLogging {
   lazy val healthCheckController: HealthCheckController =
     wire[HealthCheckController]
 
-  val route =
+  val route: Route =
     concat(
       pathEndOrSingleSlash {
         get {
