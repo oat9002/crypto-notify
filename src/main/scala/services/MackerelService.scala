@@ -13,7 +13,7 @@ trait MackerelService {
 }
 
 class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    implicit
+    using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends MackerelService

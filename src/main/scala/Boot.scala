@@ -15,18 +15,19 @@ import scala.concurrent.ExecutionContextExecutor
 import akka.http.scaladsl.server.Route
 
 object Boot extends App with LazyLogging {
-  implicit val system: ActorSystem[Command] =
+  given system: ActorSystem[Command] =
     ActorSystem(Scheduler(), "crypto-notify")
-  implicit val nothingActorRef: ActorRef[Nothing] =
+  given nothingActorRef: ActorRef[Nothing] =
     system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
-  implicit val executionContext: ExecutionContextExecutor =
+  given executionContext: ExecutionContextExecutor =
     system.executionContext
-  lazy val httpClient: HttpClient = wire[HttpClientImpl]
-  lazy val configuration: Configuration = wire[ConfigurationImpl]
-  lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
-  lazy val executor: Executor = wire[ExecutorImpl]
+  lazy val httpClient: HttpClient = HttpClientImpl()
+  lazy val configuration: Configuration = ConfigurationImpl()
+  lazy val mackerelService: MackerelService =
+    MackerelServiceImpl(configuration, httpClient)
+  lazy val executor: Executor = ExecutorImpl(configuration)
   lazy val healthCheckController: HealthCheckController =
-    wire[HealthCheckController]
+    HealthCheckController(mackerelService)
 
   val route: Route =
     concat(

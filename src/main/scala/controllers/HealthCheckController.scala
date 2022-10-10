@@ -4,12 +4,11 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives.{complete, get, path}
 import akka.http.scaladsl.server.Route
-import models.mackerel.MackerelRequest
 import services.MackerelService
 
 import scala.concurrent.ExecutionContext
 
-class HealthCheckController(mackerelService: MackerelService)(implicit
+class HealthCheckController(mackerelService: MackerelService)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) {

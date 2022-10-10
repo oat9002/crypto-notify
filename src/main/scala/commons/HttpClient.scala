@@ -2,10 +2,10 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.JsonUtil._
-import sttp.capabilities
+import commons.*
+import sttp.*
 import sttp.capabilities.akka.AkkaStreams
-import sttp.client3._
+import sttp.client3.*
 import sttp.client3.akkahttp.AkkaHttpBackend
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +38,7 @@ trait HttpClient {
   ): Future[Either[String, Res]]
 }
 
-class HttpClientImpl(implicit
+class HttpClientImpl(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
 ) extends HttpClient
