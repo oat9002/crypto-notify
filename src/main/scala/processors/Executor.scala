@@ -19,7 +19,7 @@ class ExecutorImpl(configuration: Configuration)(using
 ) extends Executor
     with LazyLogging {
   private lazy val quartzService: QuartzService[Command] =
-    wire[QuartzServiceImpl[Command]]
+    QuartzServiceImpl[Command]()
 
   def execute(): Unit = {
     val notifyCron = SchedulerName.Notify

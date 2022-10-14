@@ -17,7 +17,7 @@ trait BinanceService {
 }
 
 class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    implicit
+    using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BinanceService

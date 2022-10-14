@@ -33,18 +33,31 @@ class Scheduler(actorContext: ActorContext[Command])
     with LazyLogging {
   import context.executionContext
 
-  implicit val nothingSystem: ActorSystem[Nothing] = actorContext.system
-  private lazy val configuration: Configuration = wire[ConfigurationImpl]
-  private lazy val httpclient: HttpClient = wire[HttpClientImpl]
-  private lazy val terraHelper: TerraHelper = wire[TerraHelperImpl]
-  private lazy val lineService: LineService = wire[LineServiceImpl]
-  private lazy val satangService: SatangService = wire[SatangServiceImpl]
-  private lazy val bscScanService: BscScanService = wire[BscScanServiceImpl]
-  private lazy val binanceService: BinanceService = wire[BinanceServiceImpl]
-  private lazy val terraService: TerraService = wire[TerraServiceImpl]
-  private lazy val pancakeService: PancakeService = wire[PancakeServiceImpl]
-  private lazy val userService: UserService = wire[UserServiceImpl]
-  private lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
+  given nothingSystem: ActorSystem[Nothing] = actorContext.system
+  private lazy val configuration: Configuration = ConfigurationImpl()
+  private lazy val httpclient: HttpClient = HttpClientImpl()
+  private lazy val terraHelper: TerraHelper = TerraHelperImpl()
+  private lazy val lineService: LineService =
+    LineServiceImpl(httpclient, configuration)
+  private lazy val satangService: SatangService =
+    SatangServiceImpl(configuration, httpclient)
+  private lazy val bscScanService: BscScanService =
+    BscScanServiceImpl(configuration, httpclient)
+  private lazy val binanceService: BinanceService =
+    BinanceServiceImpl(configuration, httpclient)
+  private lazy val terraService: TerraService =
+    TerraServiceImpl(configuration, httpclient, terraHelper)
+  private lazy val pancakeService: PancakeService =
+    PancakeServiceImpl()
+  private lazy val userService: UserService = UserServiceImpl(
+    satangService,
+    bscScanService,
+    binanceService,
+    terraService,
+    pancakeService
+  )
+  private lazy val mackerelService: MackerelService =
+    MackerelServiceImpl(configuration, httpclient)
 
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>

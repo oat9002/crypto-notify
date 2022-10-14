@@ -50,6 +50,8 @@ class HttpClientImpl(using
       classTag: ClassTag[Res],
       typeTag: TypeTag[Res]
   ): Future[Either[String, Res]] = {
+    import commons.JsonUtil.*
+
     val response = basicRequest
       .contentType("application/json")
       .headers(header)
@@ -83,6 +85,8 @@ class HttpClientImpl(using
       classTagRes: ClassTag[Res],
       typeTagRes: TypeTag[Res]
   ): Future[Either[String, Res]] = {
+    import commons.JsonUtil.*
+
     val response = basicRequest
       .contentType("application/json")
       .body(request.toJson)
@@ -115,6 +119,8 @@ class HttpClientImpl(using
       classTag: ClassTag[Res],
       typeTag: TypeTag[Res]
   ): Future[Either[String, Res]] = {
+    import commons.JsonUtil.*
+
     val body = request.map(x => multipart(x._1, x._2)).to(Seq)
     val response = basicRequest
       .multipartBody(body)
