@@ -2,7 +2,8 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.JsonUtil.JsonSerialize
+import io.circe.generic.auto._
+import io.circe.syntax.*
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import helpers.TerraHelper
 import models.CryptoBalance
@@ -60,13 +61,13 @@ class TerraServiceImpl(
 
         if (classicBalance.exists(_._1.isEmpty)) {
           logger.warn(
-            s"Some denoms aren't define on terra classic, rawWallet:${classicBalance.toJson}"
+            s"Some denoms aren't define on terra classic, rawWallet:${classicBalance.asJson.spaces2}"
           )
         }
 
         if (twoPointOBalance.exists(_._1.isEmpty)) {
           logger.warn(
-            s"Some denoms aren't define on terra 2.0, rawWallet:${twoPointOBalance.toJson}"
+            s"Some denoms aren't define on terra 2.0, rawWallet:${twoPointOBalance.asJson.spaces2}"
           )
         }
 

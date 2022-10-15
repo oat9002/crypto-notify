@@ -10,14 +10,14 @@ case class Coin(
     isLegalMoney: Boolean,
     locked: BigDecimal,
     name: String,
-    networkList: Array[NetWork],
+    networkList: List[Network],
     storage: BigDecimal,
     trading: Boolean,
     withdrawAllEnable: Boolean,
     withdrawing: BigDecimal
 )
 
-case class NetWork(
+case class Network(
     addressRegex: String,
     coin: String,
     depositDesc: String,

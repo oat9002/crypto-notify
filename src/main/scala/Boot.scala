@@ -4,7 +4,6 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
-import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController

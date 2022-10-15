@@ -2,14 +2,7 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.ResponseEntity
-import com.fasterxml.jackson.databind.{
-  DeserializationFeature,
-  JavaType,
-  MapperFeature
-}
-import com.fasterxml.jackson.databind.json.JsonMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import commons.HmacAlgorithm.HmacAlgorithm
+import commons.Constant.EncryptionAlgorithm
 
 import java.nio.charset.StandardCharsets
 import java.text.NumberFormat
@@ -21,9 +14,12 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
-import scala.reflect.runtime.universe.{Type, TypeTag}
 import scala.reflect.ClassTag
 import scala.util.{Success, Try}
+import io.circe.generic.auto.*
+import io.circe.syntax.*
+import io.circe.*
+import io.circe.parser.*
 
 trait Format {
   val numberFormatter: NumberFormat =
@@ -44,9 +40,9 @@ object CommonUtil {
   def generateHMAC(
       message: String,
       key: String,
-      hmacAlgorithm: HmacAlgorithm = HmacAlgorithm.HmacSHA512
+      encryptionAlgorithm: EncryptionAlgorithm
   ): String = {
-    val algorithm = hmacAlgorithm.toString
+    val algorithm = encryptionAlgorithm.toString
     val secret = new SecretKeySpec(key.getBytes(), algorithm)
     val mac = Mac.getInstance(algorithm)
 
@@ -80,60 +76,10 @@ object CommonUtil {
   }
 }
 
-object JsonUtil {
-  private val mapper: JsonMapper = JsonMapper
-    .builder()
-    .addModule(DefaultScalaModule)
-    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-    .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true)
-    .build()
-
-  implicit class JsonSerialize(obj: Any) {
-    def toJson: String = mapper.writeValueAsString(obj)
-  }
-
-  implicit class JsonDeserialize(content: String) {
-    def toObject[T](implicit
-        typeTag: TypeTag[T],
-        classTag: ClassTag[T]
-    ): Try[T] = {
-      def recursiveFindGenericClasses(t: Type): JavaType = {
-        val current = typeTag.mirror.runtimeClass(t)
-
-        if (t.typeArgs.isEmpty) {
-          val noSubtypes = Seq.empty[Class[_]]
-          mapper.getTypeFactory.constructParametricType(current, noSubtypes: _*)
-        } else {
-          val genericSubtypes: Seq[JavaType] =
-            t.typeArgs.map(recursiveFindGenericClasses)
-          mapper.getTypeFactory.constructParametricType(
-            current,
-            genericSubtypes: _*
-          )
-        }
-      }
-
-      try {
-        Success(
-          mapper.readValue(content, recursiveFindGenericClasses(typeTag.tpe))
-        )
-      } catch {
-        case _: Throwable =>
-          Try(
-            mapper.readValue(
-              content,
-              classTag.runtimeClass.asInstanceOf[Class[T]]
-            )
-          )
-      }
-    }
-  }
-}
-
 object HttpResponseUtil {
   val serializeTimeout: FiniteDuration = 5.seconds
 
-  implicit class ToJsonString(entity: ResponseEntity) {
+  extension (entity: ResponseEntity) {
     def toJson(implicit
         context: ExecutionContext,
         actor: ActorSystem[Nothing]

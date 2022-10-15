@@ -17,14 +17,14 @@ import models.configuration.{
 import scala.util.{Success, Try}
 
 trait Configuration {
-  val appConfig: AppConfig
-  val lineConfig: LineConfig
-  val satangConfig: SatangConfig
-  val akkaConfig: AkkaConfig
-  val bscScanConfig: Option[BscScanConfig]
-  val mackerelConfig: Option[MackerelConfig]
-  val binanceConfig: Option[BinanceConfig]
-  val terraConfig: Option[TerraConfig]
+  lazy val appConfig: AppConfig
+  lazy val lineConfig: LineConfig
+  lazy val satangConfig: SatangConfig
+  lazy val akkaConfig: AkkaConfig
+  lazy val bscScanConfig: Option[BscScanConfig]
+  lazy val mackerelConfig: Option[MackerelConfig]
+  lazy val binanceConfig: Option[BinanceConfig]
+  lazy val terraConfig: Option[TerraConfig]
 }
 
 class ConfigurationImpl extends Configuration {

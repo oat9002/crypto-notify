@@ -2,7 +2,6 @@ package processors
 
 import actors.*
 import akka.actor.typed.*
-import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
 import services.*

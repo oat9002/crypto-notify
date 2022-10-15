@@ -2,7 +2,6 @@ package actors
 
 import akka.actor.typed.{ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
-import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}

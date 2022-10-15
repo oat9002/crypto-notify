@@ -4,6 +4,8 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration, HttpClient}
 import models.satang.{Ticker, User}
+import commons.Constant.EncryptionAlgorithm
+import io.circe.generic.auto._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -25,7 +27,11 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = url + "users/"
     val signature =
-      CommonUtil.generateHMAC("", configuration.satangConfig.apiSecret)
+      CommonUtil.generateHMAC(
+        "",
+        configuration.satangConfig.apiSecret,
+        EncryptionAlgorithm.HmacSHA512
+      )
     val response = httpClient.get[User](
       userUrl + s"/$userId",
       Map(
