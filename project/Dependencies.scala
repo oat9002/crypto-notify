@@ -3,6 +3,7 @@ import sbt._
 object Dependencies {
   val akka = "2.6.20"
   val akkaHttp = "10.2.10"
+  val akkaHttpCircie = "1.39.2"
   val typesafeConfig = "1.4.1"
   val akkaQuartz = "1.9.3-akka-2.6.x"
   val macWire = "2.5.8"

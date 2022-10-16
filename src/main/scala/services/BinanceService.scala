@@ -4,10 +4,9 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import commons.Constant.EncryptionAlgorithm
-import io.circe.Decoder
+import io.circe.generic.auto._
 import models.CryptoBalance
 import models.binance.{Coin, Network, Saving, Ticker}
-import io.circe.generic.auto.*
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,10 +39,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
     )
     val url =
       s"$baseUrl/sapi/v1/lending/union/account?$queryString&signature=$signature"
-    val response = httpClient.get[Saving](
-      url,
-      Map("X-MBX-APIKEY" -> apiKey)
-    )
+    val response = httpClient.get[Saving](url, Map("X-MBX-APIKEY" -> apiKey))
 
     response map {
       case Left(err) =>

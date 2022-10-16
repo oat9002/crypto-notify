@@ -7,7 +7,7 @@ case class Saving(
     totalFixedAmountInUsdt: BigDecimal,
     totalFlexibleInBtc: BigDecimal,
     totalFlexibleInUsdt: BigDecimal,
-    positionAmountVos: Array[PositionAmount]
+    positionAmountVos: List[PositionAmount]
 )
 
 case class PositionAmount(

@@ -19,6 +19,8 @@ lazy val main = project
     libraryDependencies ++= Dependencies.allDependencies
   )
 
+scalacOptions ++= Seq("-Xmax-inlines", "50")
+
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
 dockerRepository := Some("oat9002")

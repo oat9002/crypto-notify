@@ -2,7 +2,7 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.generic.auto.*
+import io.circe.generic.auto._
 import io.circe.syntax.*
 import commons.{Configuration, HttpClient}
 import models.mackerel.MackerelRequest
@@ -13,8 +13,7 @@ trait MackerelService {
   def sendMeasurement(request: List[MackerelRequest]): Future[Boolean]
 }
 
-class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    using
+class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends MackerelService
