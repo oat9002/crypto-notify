@@ -16,12 +16,14 @@ object Dependencies {
   val circe = "0.14.3"
 
   lazy val dependencies: Seq[ModuleID] = Seq(
-    "com.typesafe.akka" %% "akka-actor-typed" % akka,
-    "com.typesafe.akka" %% "akka-stream" % akka,
+    "com.typesafe.akka" %% "akka-actor-typed" % akka cross CrossVersion.for3Use2_13,
+    "com.typesafe.akka" %% "akka-stream" % akka cross CrossVersion.for3Use2_13,
     "com.typesafe.akka" %% "akka-http" % akkaHttp cross CrossVersion.for3Use2_13,
-    "com.typesafe.akka" %% "akka-http-jackson" % akkaHttp cross CrossVersion.for3Use2_13,
+    "de.heikoseeberger" %% "akka-http-circe" % akkaHttpCircie cross CrossVersion.for3Use2_13 excludeAll (
+      ExclusionRule(organization = "io.circe")
+    ),
     "com.typesafe" % "config" % typesafeConfig,
-    "com.enragedginger" %% "akka-quartz-scheduler" % akkaQuartz,
+    "com.enragedginger" %% "akka-quartz-scheduler" % akkaQuartz cross CrossVersion.for3Use2_13,
     "io.circe" %% "circe-core" % circe,
     "io.circe" %% "circe-generic" % circe,
     "io.circe" %% "circe-parser" % circe,

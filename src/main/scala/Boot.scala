@@ -2,8 +2,8 @@ import actors.{Command, Scheduler}
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.server.Directives.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
@@ -12,8 +12,9 @@ import services.{MackerelService, MackerelServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
 import akka.http.scaladsl.server.Route
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-object Boot extends App with LazyLogging {
+object Boot extends App with LazyLogging with FailFastCirceSupport {
   given system: ActorSystem[Command] =
     ActorSystem(Scheduler(), "crypto-notify")
   given nothingActorRef: ActorRef[Nothing] =

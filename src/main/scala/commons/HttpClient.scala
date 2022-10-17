@@ -40,8 +40,8 @@ class HttpClientImpl(using
     ec: ExecutionContext
 ) extends HttpClient
     with LazyLogging {
-  val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] = AkkaHttpBackend()
-
+  val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] =
+    AkkaHttpBackend.usingActorSystem(system.classicSystem)
   override def get[Res](url: String, header: Map[String, String])(using
       decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
