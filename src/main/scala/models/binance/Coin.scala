@@ -1,5 +1,8 @@
 package models.binance
 
+import io.circe._
+import io.circe.generic.semiauto._
+
 case class Coin(
     coin: String,
     depositAllEnable: Boolean,
@@ -16,6 +19,10 @@ case class Coin(
     withdrawAllEnable: Boolean,
     withdrawing: BigDecimal
 )
+object Coin {
+  given Encoder[Coin] = deriveEncoder[Coin]
+  given Decoder[Coin] = deriveDecoder[Coin]
+}
 
 case class Network(
     addressRegex: String,
@@ -36,3 +43,7 @@ case class Network(
     withdrawMin: BigDecimal,
     sameAddress: Boolean
 )
+object Network {
+  given Encoder[Network] = deriveEncoder[Network]
+  given Decoder[Network] = deriveDecoder[Network]
+}

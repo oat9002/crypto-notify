@@ -1,5 +1,8 @@
 package models.binance
 
+import io.circe._
+import io.circe.generic.semiauto._
+
 case class Saving(
     totalAmountInBtc: BigDecimal,
     totalAmountInUsdt: BigDecimal,
@@ -9,6 +12,10 @@ case class Saving(
     totalFlexibleInUsdt: BigDecimal,
     positionAmountVos: List[PositionAmount]
 )
+object Saving {
+  given Encoder[Saving] = deriveEncoder[Saving]
+  given Decoder[Saving] = deriveDecoder[Saving]
+}
 
 case class PositionAmount(
     asset: String,
@@ -16,3 +23,7 @@ case class PositionAmount(
     amountInBtc: BigDecimal,
     amountInUsdt: BigDecimal
 )
+object PositionAmount {
+  given Encoder[PositionAmount] = deriveEncoder[PositionAmount]
+  given Decoder[PositionAmount] = deriveDecoder[PositionAmount]
+}

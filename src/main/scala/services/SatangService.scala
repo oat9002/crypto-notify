@@ -5,7 +5,6 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration, HttpClient}
 import models.satang.{Ticker, User}
 import commons.Constant.EncryptionAlgorithm
-import io.circe.generic.auto._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,8 +14,7 @@ trait SatangService {
   def getCryptoPrices: Future[Option[List[Ticker]]]
 }
 
-class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    implicit
+class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends SatangService
