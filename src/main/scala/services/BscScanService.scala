@@ -4,11 +4,10 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, HttpClient}
 import models.bscScan.BscScanResponse
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.pow
-import io.circe.generic.auto._
+
 
 trait BscScanService {
   def getBnbBalance(address: String): Future[Option[BigDecimal]]

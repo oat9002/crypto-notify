@@ -4,7 +4,6 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import commons.Constant.EncryptionAlgorithm
-import io.circe.generic.auto._
 import models.CryptoBalance
 import models.binance.{Coin, Network, Saving, Ticker}
 

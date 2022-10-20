@@ -10,7 +10,7 @@ object Address {
 }
 
 case class Wallet(
-    addresses: Array[Address],
+    addresses: Option[List[Address]],
     availableBalance: BigDecimal
 )
 object Wallet {

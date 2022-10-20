@@ -30,18 +30,20 @@ case class Network(
     depositDesc: String,
     isDefault: Boolean,
     memoRegex: String,
-    minComfirm: Int,
+    minConfirm: Int,
     name: String,
     network: String,
     resetAddressStatus: Boolean,
-    specialTips: String,
     unLockConfirm: Int,
     withdrawDesc: String,
+    withdrawEnable: Boolean,
     withdrawFee: BigDecimal,
     withdrawIntegerMultiple: BigDecimal,
     withdrawMax: BigDecimal,
     withdrawMin: BigDecimal,
-    sameAddress: Boolean
+    sameAddress: Boolean,
+    estimatedArrivalTime: Int,
+    busy: Boolean
 )
 object Network {
   given Encoder[Network] = deriveEncoder[Network]

@@ -1,12 +1,28 @@
 package models.terra
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import io.circe._
+import io.circe.generic.semiauto._
 
-case class QueryResult[T](@JsonProperty("query_result") queryResult: T)
+case class QueryResult[T](queryResult: T)
+object QueryResult {
+  given [T]: Encoder[QueryResult[T]] = Encoder.forProduct1("query_result")(q => q)
+  given [T: Decoder]: Decoder[QueryResult[T]] =
+    Decoder.forProduct1("query_result")(QueryResult[T].apply)
+}
 
 case class ExchangeRate(
-    @JsonProperty("exchange_rate") exchangeRate: BigDecimal,
-    @JsonProperty("aterra_supply") aTerraSupply: String
+    exchangeRate: BigDecimal,
+    aTerraSupply: String
 )
+object ExchangeRate {
+  given Encoder[ExchangeRate] =
+    Encoder.forProduct2("exchange_rate", "aterra_supply")(e => (e.exchangeRate, e.aTerraSupply))
+  given Decoder[ExchangeRate] =
+    Decoder.forProduct2("exchange_rate", "aterra_supply")(ExchangeRate.apply)
+}
 
 case class aUstBalance(balance: Long)
+object aUstBalance {
+  given Encoder[aUstBalance] = deriveEncoder[aUstBalance]
+  given Decoder[aUstBalance] = deriveDecoder[aUstBalance]
+}
