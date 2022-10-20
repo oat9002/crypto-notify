@@ -2,12 +2,12 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.*
-import io.circe.*
+import commons._
+import io.circe._
 import io.circe.generic.semiauto._
-import sttp.*
+import sttp._
 import sttp.capabilities.akka.AkkaStreams
-import sttp.client3.*
+import sttp.client3._
 import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.client3.circe.asJson
 
