@@ -2,7 +2,7 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.syntax.*
+import io.circe.syntax._
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import helpers.TerraHelper
 import models.CryptoBalance

@@ -1,10 +1,10 @@
 package processors
 
-import actors.*
-import akka.actor.typed.*
+import actors._
+import akka.actor.typed._
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
-import services.*
+import services._
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 

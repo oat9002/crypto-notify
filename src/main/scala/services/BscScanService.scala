@@ -8,7 +8,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.pow
 
-
 trait BscScanService {
   def getBnbBalance(address: String): Future[Option[BigDecimal]]
   def getTokenBalance(
@@ -17,8 +16,7 @@ trait BscScanService {
   ): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    implicit
+class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BscScanService
