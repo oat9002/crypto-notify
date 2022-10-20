@@ -16,10 +16,6 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.reflect.ClassTag
 import scala.util.{Success, Try}
-import io.circe.generic.auto.*
-import io.circe.syntax.*
-import io.circe.*
-import io.circe.parser.*
 
 trait Format {
   val numberFormatter: NumberFormat =
