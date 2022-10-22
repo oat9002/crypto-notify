@@ -14,7 +14,6 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
-import scala.reflect.ClassTag
 import scala.util.{Success, Try}
 
 trait Format {
@@ -72,16 +71,16 @@ object CommonUtil {
   }
 }
 
-object HttpResponseUtil {
-  val serializeTimeout: FiniteDuration = 5.seconds
-
-  extension (entity: ResponseEntity) {
-    def toJson(implicit
-        context: ExecutionContext,
-        actor: ActorSystem[Nothing]
-    ): Future[Option[String]] = entity
-      .toStrict(serializeTimeout)
-      .map(e => e.getData())
-      .map(data => Some(data.utf8String))
-  }
-}
+//object HttpResponseUtil {
+//  val serializeTimeout: FiniteDuration = 5.seconds
+//
+//  extension (entity: ResponseEntity) {
+//    def toJson(implicit
+//        context: ExecutionContext,
+//        actor: ActorSystem[Nothing]
+//    ): Future[Option[String]] = entity
+//      .toStrict(serializeTimeout)
+//      .map(e => e.getData())
+//      .map(data => Some(data.utf8String))
+//  }
+//}
