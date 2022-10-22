@@ -2,9 +2,9 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.syntax._
+import io.circe.syntax.*
 import commons.{Configuration, HttpClient}
-import models.mackerel.MackerelRequest
+import models.mackerel.{MackerelRequest, MackerelResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -27,7 +27,7 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
   ): Future[Boolean] = {
     val url =
       s"$baseUrl/api/v0/services/$serviceName/tsdb"
-    val response = httpClient.post[List[MackerelRequest], String](
+    val response = httpClient.post[List[MackerelRequest], List[MackerelResponse]](
       url,
       request,
       Map("X-Api-Key" -> s"${apiKey}")
