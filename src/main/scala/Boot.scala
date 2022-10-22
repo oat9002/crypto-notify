@@ -2,9 +2,8 @@ import actors.{Command, Scheduler}
 import akka.actor.typed.{ActorRef, ActorSystem}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model._
-import akka.http.scaladsl.server.Directives._
-import com.softwaremill.macwire.wire
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.server.Directives.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
@@ -12,22 +11,25 @@ import processors.{Executor, ExecutorImpl}
 import services.{MackerelService, MackerelServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
+import akka.http.scaladsl.server.Route
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 
-object Boot extends App with LazyLogging {
-  implicit val system: ActorSystem[Command] =
+object Boot extends App with LazyLogging with FailFastCirceSupport {
+  given system: ActorSystem[Command] =
     ActorSystem(Scheduler(), "crypto-notify")
-  implicit val nothingActorRef: ActorRef[Nothing] =
+  given nothingActorRef: ActorRef[Nothing] =
     system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
-  implicit val executionContext: ExecutionContextExecutor =
+  given executionContext: ExecutionContextExecutor =
     system.executionContext
-  lazy val httpClient: HttpClient = wire[HttpClientImpl]
-  lazy val configuration: Configuration = wire[ConfigurationImpl]
-  lazy val mackerelService: MackerelService = wire[MackerelServiceImpl]
-  lazy val executor: Executor = wire[ExecutorImpl]
+  lazy val httpClient: HttpClient = HttpClientImpl()
+  lazy val configuration: Configuration = ConfigurationImpl()
+  lazy val mackerelService: MackerelService =
+    MackerelServiceImpl(configuration, httpClient)
+  lazy val executor: Executor = ExecutorImpl(configuration)
   lazy val healthCheckController: HealthCheckController =
-    wire[HealthCheckController]
+    HealthCheckController(mackerelService)
 
-  val route =
+  val route: Route =
     concat(
       pathEndOrSingleSlash {
         get {

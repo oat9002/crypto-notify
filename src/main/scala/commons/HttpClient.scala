@@ -2,73 +2,61 @@ package commons
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.JsonUtil._
-import sttp.capabilities
+import commons._
+import io.circe._
+import io.circe.generic.semiauto._
+import sttp._
 import sttp.capabilities.akka.AkkaStreams
 import sttp.client3._
 import sttp.client3.akkahttp.AkkaHttpBackend
+import sttp.client3.circe.asJson
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
-import scala.reflect.runtime.universe.TypeTag
 import scala.util.{Failure, Success}
 
 trait HttpClient {
-  def get[Res](url: String, header: Map[String, String] = Map())(implicit
-      classTag: ClassTag[Res],
-      typeTag: TypeTag[Res]
+  def get[Res](url: String, header: Map[String, String] = Map())(using
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]]
   def post[Req, Res](
       url: String,
       request: Req,
       header: Map[String, String] = Map()
-  )(implicit
-      classTagReq: ClassTag[Req],
-      typeTagReq: TypeTag[Req],
-      classTagRes: ClassTag[Res],
-      typeTagRes: TypeTag[Res]
+  )(using
+      encoder: Encoder[Req],
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]]
   def postFormData[Res](
       url: String,
       request: Map[String, String],
       header: Map[String, String] = Map()
-  )(implicit
-      classTag: ClassTag[Res],
-      typeTag: TypeTag[Res]
+  )(using
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]]
 }
 
-class HttpClientImpl(implicit
+class HttpClientImpl(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
 ) extends HttpClient
     with LazyLogging {
   val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] =
     AkkaHttpBackend.usingActorSystem(system.classicSystem)
-
-  override def get[Res](url: String, header: Map[String, String])(implicit
-      classTag: ClassTag[Res],
-      typeTag: TypeTag[Res]
+  override def get[Res](url: String, header: Map[String, String])(using
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
+
     val response = basicRequest
       .contentType("application/json")
       .headers(header)
       .get(uri"$url")
+      .response(asJson[Res])
       .send(backend)
 
     response.map { x =>
       x.body match {
-        case Left(error) => Left(error)
-        case Right(responseJson) =>
-          responseJson.toObject[Res] match {
-            case Success(v) => Right(v)
-            case Failure(ex) =>
-              logger.error(
-                s"Convert string to object failed. response: $responseJson",
-                ex
-              )
-              Left(ex.toString)
-          }
+        case Left(error)     => Left(error.getMessage)
+        case Right(response) => Right(response)
       }
     }
   }
@@ -77,32 +65,23 @@ class HttpClientImpl(implicit
       url: String,
       request: Req,
       header: Map[String, String] = Map()
-  )(implicit
-      classTagReq: ClassTag[Req],
-      typeTagReq: TypeTag[Req],
-      classTagRes: ClassTag[Res],
-      typeTagRes: TypeTag[Res]
+  )(using
+      encoder: Encoder[Req],
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
+
     val response = basicRequest
       .contentType("application/json")
-      .body(request.toJson)
+      .body(encoder(request).spaces2)
       .headers(header)
       .post(uri"$url")
+      .response(asJson[Res])
       .send(backend)
 
     response.map { x =>
       x.body match {
-        case Left(error) => Left(error)
-        case Right(responseJson) =>
-          responseJson.toObject[Res] match {
-            case Success(v) => Right(v)
-            case Failure(ex) =>
-              logger.error(
-                s"Convert string to object failed. response: $responseJson",
-                ex
-              )
-              Left(ex.toString)
-          }
+        case Left(error)     => Left(error.getMessage)
+        case Right(response) => Right(response)
       }
     }
   }
@@ -111,30 +90,22 @@ class HttpClientImpl(implicit
       url: String,
       request: Map[String, String],
       header: Map[String, String] = Map()
-  )(implicit
-      classTag: ClassTag[Res],
-      typeTag: TypeTag[Res]
+  )(using
+      decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
+
     val body = request.map(x => multipart(x._1, x._2)).to(Seq)
     val response = basicRequest
       .multipartBody(body)
       .headers(header)
       .post(uri"$url")
+      .response(asJson[Res])
       .send(backend)
 
     response.map { x =>
       x.body match {
-        case Left(error) => Left(error)
-        case Right(responseJson) =>
-          responseJson.toObject[Res] match {
-            case Success(v) => Right(v)
-            case Failure(ex) =>
-              logger.error(
-                s"Convert string to object failed. response: $responseJson",
-                ex
-              )
-              Left(ex.toString)
-          }
+        case Left(error)     => Left(error.getMessage)
+        case Right(response) => Right(response)
       }
     }
   }

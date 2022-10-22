@@ -1,9 +1,9 @@
 package services
 
 import akka.actor.typed.ActorSystem
-import com.softwaremill.macwire.wire
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient}
+import models.line.LineResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -18,7 +18,7 @@ class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(
 ) extends LineService
     with LazyLogging {
   override def notify(message: String): Future[Boolean] = {
-    val response = httpClient.postFormData[Any](
+    val response = httpClient.postFormData[LineResponse](
       configuration.lineConfig.url,
       Map("message" -> message),
       Map(

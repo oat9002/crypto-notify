@@ -4,15 +4,16 @@ import akka.actor.typed.ActorSystem
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives.{complete, get, path}
 import akka.http.scaladsl.server.Route
-import models.mackerel.MackerelRequest
+import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import services.MackerelService
+import models.mackerel.*
 
 import scala.concurrent.ExecutionContext
 
-class HealthCheckController(mackerelService: MackerelService)(implicit
+class HealthCheckController(mackerelService: MackerelService)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
-) {
+) extends FailFastCirceSupport {
   val route: Route = {
     path("healthCheck") {
       get {

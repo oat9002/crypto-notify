@@ -1,5 +1,8 @@
 package models.satang
 
+import io.circe._
+import io.circe.generic.semiauto._
+
 case class Ticker(
     askPrice: BigDecimal,
     bidPrice: BigDecimal,
@@ -21,3 +24,7 @@ case class Ticker(
     volume: BigDecimal,
     weightedAvgPrice: BigDecimal
 )
+object Ticker {
+  given Encoder[Ticker] = deriveEncoder[Ticker]
+  given Decoder[Ticker] = deriveDecoder[Ticker]
+}

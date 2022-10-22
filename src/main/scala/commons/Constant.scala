@@ -9,9 +9,9 @@ object Constant {
   val cakePoolContractAddress = "0x45c54210128a065de780C4B0Df3d16664f7f859e"
 
   val bscRpcUrl = "https://bsc-dataseed.binance.org"
+
+  enum EncryptionAlgorithm:
+    case HmacSHA512, HmacSHA256
 }
 
-object HmacAlgorithm extends Enumeration {
-  type HmacAlgorithm = Value
-  val HmacSHA512, HmacSHA256 = Value
-}
+

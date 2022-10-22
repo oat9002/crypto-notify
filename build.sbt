@@ -11,11 +11,16 @@ import sbtrelease.ReleaseStateTransformations.{
   tagRelease
 }
 
-name := "crypto-notify"
+ThisBuild / scalaVersion := "3.2.0"
 
-scalaVersion := "2.13.5"
+lazy val root = project
+  .in(file("."))
+  .settings(
+    name := "crypto-notify",
+    libraryDependencies ++= Dependencies.allDependencies
+  )
 
-libraryDependencies ++= Dependencies.allDependencies
+scalacOptions ++= Seq("-Xmax-inlines", "50")
 
 enablePlugins(JavaAppPackaging, DockerPlugin)
 

@@ -2,7 +2,7 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.JsonUtil.JsonSerialize
+import io.circe.syntax._
 import commons.{Configuration, HttpClient}
 import models.mackerel.MackerelRequest
 
@@ -12,8 +12,7 @@ trait MackerelService {
   def sendMeasurement(request: List[MackerelRequest]): Future[Boolean]
 }
 
-class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
-    implicit
+class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends MackerelService
@@ -28,7 +27,7 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
   ): Future[Boolean] = {
     val url =
       s"$baseUrl/api/v0/services/$serviceName/tsdb"
-    val response = httpClient.post[List[MackerelRequest], Any](
+    val response = httpClient.post[List[MackerelRequest], String](
       url,
       request,
       Map("X-Api-Key" -> s"${apiKey}")
@@ -36,7 +35,9 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
 
     response.map {
       case Left(err) =>
-        logger.error(s"Send measurement failed, Error: $err, ${request.toJson}")
+        logger.error(
+          s"Send measurement failed, Error: $err, ${request.asJson.spaces2}"
+        )
         false
       case _ => true
     }

@@ -1,8 +1,7 @@
 package processors
 
-import actors.{Command, HealthCheckTask, NotifyTask, Scheduler}
-import akka.actor.typed.ActorSystem
-import com.softwaremill.macwire.wire
+import actors._
+import akka.actor.typed._
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
 import services._
@@ -13,13 +12,13 @@ trait Executor {
   def execute(): Unit
 }
 
-class ExecutorImpl(configuration: Configuration)(implicit
+class ExecutorImpl(configuration: Configuration)(using
     val system: ActorSystem[Command],
     context: ExecutionContext
 ) extends Executor
     with LazyLogging {
   private lazy val quartzService: QuartzService[Command] =
-    wire[QuartzServiceImpl[Command]]
+    QuartzServiceImpl[Command]()
 
   def execute(): Unit = {
     val notifyCron = SchedulerName.Notify
