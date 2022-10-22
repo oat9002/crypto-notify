@@ -27,10 +27,10 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
   ): Future[Boolean] = {
     val url =
       s"$baseUrl/api/v0/services/$serviceName/tsdb"
-    val response = httpClient.post[List[MackerelRequest], List[MackerelResponse]](
+    val response = httpClient.post[List[MackerelRequest], MackerelResponse](
       url,
       request,
-      Map("X-Api-Key" -> s"${apiKey}")
+      Map("X-Api-Key" -> s"$apiKey")
     )
 
     response.map {
@@ -39,7 +39,7 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
           s"Send measurement failed, Error: $err, ${request.asJson.spaces2}"
         )
         false
-      case _ => true
+      case Right(res) => res.success
     }
   }
 }
