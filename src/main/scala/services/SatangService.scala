@@ -2,7 +2,7 @@ package services
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration, HttpClient}
+import commons.{CommonUtil, Configuration, HttpClient, Constant}
 import models.satang.{Ticker, User}
 import commons.Constant.EncryptionAlgorithm
 
@@ -20,10 +20,10 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
 ) extends SatangService
     with LazyLogging {
 
-  val url: String = configuration.satangConfig.url
+  val baseUrl: String = Constant.satangUrl
 
   override def getUser(userId: String): Future[Option[User]] = {
-    val userUrl: String = url + "users/"
+    val userUrl: String = baseUrl + "users/"
     val signature =
       CommonUtil.generateHMAC(
         "",
@@ -47,7 +47,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
   }
 
   override def getCryptoPrice(pair: String): Future[Option[Ticker]] = {
-    val tickerUrl = url + s"v3/ticker/24hr?symbol=$pair"
+    val tickerUrl = baseUrl + s"v3/ticker/24hr?symbol=$pair"
     val response = httpClient.get[Ticker](tickerUrl)
 
     response.map {
@@ -59,7 +59,7 @@ class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(im
   }
 
   override def getCryptoPrices: Future[Option[List[Ticker]]] = {
-    val tickerUrl = url + "v3/ticker/24hr"
+    val tickerUrl = baseUrl + "v3/ticker/24hr"
     val response = httpClient.get[Array[Ticker]](tickerUrl)
 
     response.map {

@@ -43,18 +43,15 @@ class ConfigurationImpl extends Configuration {
   private val terraSection = conf.getConfig("terra")
   lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
   lazy val lineConfig: LineConfig = LineConfig(
-    lineSection.getString("lineNotifyToken"),
-    lineSection.getString("url")
+    lineSection.getString("lineNotifyToken")
   )
   lazy val satangConfig: SatangConfig = SatangConfig(
     satangSection.getString("apiKey"),
     satangSection.getString("apiSecret"),
-    satangSection.getString("userId"),
-    satangSection.getString("url")
+    satangSection.getString("userId")
   )
   lazy val bscScanConfig: Option[BscScanConfig] = Try(
     BscScanConfig(
-      bscScanSection.getString("url"),
       bscScanSection.getString("apiKey"),
       bscScanSection.getString("address")
     )
@@ -99,7 +96,6 @@ class ConfigurationImpl extends Configuration {
   )
   lazy val mackerelConfig: Option[MackerelConfig] = Try(
     MackerelConfig(
-      mackerelSection.getString("url"),
       mackerelSection.getString("apiKey"),
       mackerelSection.getString("serviceName")
     )
@@ -109,7 +105,6 @@ class ConfigurationImpl extends Configuration {
   }
   lazy val binanceConfig: Option[BinanceConfig] = Try(
     BinanceConfig(
-      binanceSection.getString("url"),
       binanceSection.getString("apiKey"),
       binanceSection.getString("secretKey")
     )
@@ -119,8 +114,6 @@ class ConfigurationImpl extends Configuration {
   }
   lazy val terraConfig: Option[TerraConfig] = Try(
     TerraConfig(
-      terraSection.getString("url"),
-      terraSection.getString("twoPointOUrl"),
       terraSection.getString("address")
     )
   ) match {

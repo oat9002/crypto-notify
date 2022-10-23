@@ -24,9 +24,8 @@ class TerraServiceImpl(
 )(implicit system: ActorSystem[Nothing], context: ExecutionContext)
     extends TerraService
     with LazyLogging {
-  val baseOldUrl: String = configuration.terraConfig.map(_.url).getOrElse("")
-  val baseTwoPointOUrl: String =
-    configuration.terraConfig.map(_.twoPointOUrl).getOrElse("")
+  val baseOldUrl: String = Constant.terraUrl
+  val baseTwoPointOUrl: String = Constant.twoPointOTerraUrl
 
   override def getWalletBalance(address: String): Future[Option[Wallet]] = {
     val classicUrl =

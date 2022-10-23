@@ -3,7 +3,7 @@ package services
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import io.circe.syntax.*
-import commons.{Configuration, HttpClient}
+import commons.{Configuration, HttpClient, Constant}
 import models.mackerel.{MackerelRequest, MackerelResponse}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,7 +17,7 @@ class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(
     context: ExecutionContext
 ) extends MackerelService
     with LazyLogging {
-  val baseUrl: String = configuration.mackerelConfig.map(_.url).getOrElse("")
+  val baseUrl: String = Constant.makerelUrl
   val serviceName: String =
     configuration.mackerelConfig.map(_.serviceName).getOrElse("")
   val apiKey: String = configuration.mackerelConfig.map(_.apiKey).getOrElse("")

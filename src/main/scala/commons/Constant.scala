@@ -9,6 +9,13 @@ object Constant {
   val cakePoolContractAddress = "0x45c54210128a065de780C4B0Df3d16664f7f859e"
 
   val bscRpcUrl = "https://bsc-dataseed.binance.org"
+  val satangUrl = "https://satangcorp.com/api/"
+  val bscScanUrl = "https://api.bscscan.com/api"
+  val binanceUrl = "https://api.binance.com"
+  val terraUrl = "https://lcd.terra.dev"
+  val twoPointOTerraUrl = "https://phoenix-lcd.terra.dev"
+  val makerelUrl = "https://api.mackerelio.com"
+  val lineNotifyUrl = "https://notify-api.line.me/api/notify"
 
   enum EncryptionAlgorithm:
     case HmacSHA512, HmacSHA256
