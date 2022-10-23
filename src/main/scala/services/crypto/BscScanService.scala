@@ -1,9 +1,11 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, HttpClient, Constant}
+import commons.{Configuration, Constant, HttpClient}
 import models.bscScan.BscScanResponse
+import services.crypto.BscScanService
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.pow

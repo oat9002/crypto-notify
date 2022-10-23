@@ -1,4 +1,4 @@
-package services.contracts
+package services.crypto.contracts
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging

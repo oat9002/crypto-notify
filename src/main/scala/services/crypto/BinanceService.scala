@@ -1,11 +1,12 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import commons.Constant.EncryptionAlgorithm
+import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import models.CryptoBalance
 import models.binance.{Coin, Network, Saving, Ticker}
+import services.crypto.BinanceService
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}

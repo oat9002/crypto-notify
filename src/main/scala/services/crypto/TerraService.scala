@@ -1,12 +1,13 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import io.circe.syntax._
 import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import helpers.TerraHelper
+import io.circe.syntax.*
 import models.CryptoBalance
-import models.terra.{Balance, ExchangeRate, QueryResult, RawWallet, Wallet, aUstBalance}
+import models.terra.*
+import services.crypto.TerraService
 
 import scala.concurrent.{ExecutionContext, Future}
 

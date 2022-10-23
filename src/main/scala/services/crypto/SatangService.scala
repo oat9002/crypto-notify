@@ -1,10 +1,11 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration, HttpClient, Constant}
-import models.satang.{Ticker, User}
 import commons.Constant.EncryptionAlgorithm
+import commons.{CommonUtil, Configuration, Constant, HttpClient}
+import models.satang.{Ticker, User}
+import services.crypto.SatangService
 
 import scala.concurrent.{ExecutionContext, Future}
 

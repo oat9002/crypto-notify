@@ -1,9 +1,10 @@
-package services
+package services.notification
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl, HttpClient, Constant}
+import commons.{Configuration, ConfigurationImpl, Constant, HttpClient}
 import models.line.LineResponse
+import services.notification.LineService
 
 import scala.concurrent.{ExecutionContext, Future}
 

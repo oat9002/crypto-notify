@@ -1,9 +1,10 @@
-package services
+package services.scheduler
 
 import akka.actor.typed.{ActorRef, ActorSystem}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 import com.typesafe.scalalogging.LazyLogging
-import services.SchedulerName.SchedulerName
+import services.scheduler.QuartzService
+import services.scheduler.SchedulerName.SchedulerName
 
 import scala.concurrent.ExecutionContext
 

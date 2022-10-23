@@ -1,11 +1,13 @@
-package services
+package services.user
 
 import akka.actor.typed.ActorSystem
 import commons.Constant
 import models.CryptoBalance
-import models.satang.{User, Ticker => SatangTicker}
-import models.binance.{Ticker => BinanceTicker}
-import services.contracts.PancakeService
+import models.binance.Ticker as BinanceTicker
+import models.satang.{User, Ticker as SatangTicker}
+import services.user.UserService
+import services.crypto.contracts.PancakeService
+import services.crypto.{BinanceService, BscScanService, SatangService, TerraService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -56,9 +58,7 @@ class UserServiceImpl(
         .getOrElse(Future.successful(None))
     } yield {
       val satangList = satangUser
-        .map(s =>
-          s.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList
-        )
+        .map(s => s.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList)
         .getOrElse(List[CryptoBalance]())
       val externalList = List(
         CryptoBalance(
@@ -144,7 +144,7 @@ class UserServiceImpl(
       allBalanceInThb: List[CryptoBalance],
       cryptoBalance: List[CryptoBalance]
   ): String = {
-    import commons.CommonUtil._
+    import commons.CommonUtil.*
 
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =

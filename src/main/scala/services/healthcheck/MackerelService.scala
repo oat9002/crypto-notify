@@ -1,10 +1,11 @@
-package services
+package services.healthcheck
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
+import commons.{Configuration, Constant, HttpClient}
 import io.circe.syntax.*
-import commons.{Configuration, HttpClient, Constant}
 import models.mackerel.{MackerelRequest, MackerelResponse}
+import services.healthcheck.MackerelService
 
 import scala.concurrent.{ExecutionContext, Future}
 
