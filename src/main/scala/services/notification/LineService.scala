@@ -8,11 +8,9 @@ import services.notification.LineService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait LineService {
-  def notify(message: String): Future[Boolean]
-}
+trait LineService extends NotificationService
 
-class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(implicit
+class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends LineService

@@ -16,19 +16,16 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.util.{Success, Try}
 
-trait Format {
+object CommonUtil {
   val numberFormatter: NumberFormat =
     NumberFormat.getInstance(new Locale("th", "TH"))
-
   def formatNumber[T](value: T): String = numberFormatter.format(value)
-}
 
-object CommonUtil {
-  implicit class FormatNumberAnyVal(value: AnyVal) extends Format {
+  extension (value: AnyVal) {
     def format: String = numberFormatter.format(value)
   }
 
-  implicit class FormatBigDecimal(value: BigDecimal) extends Format {
+  extension (value: BigDecimal) {
     def format: String = numberFormatter.format(value)
   }
 
@@ -75,7 +72,7 @@ object CommonUtil {
 //  val serializeTimeout: FiniteDuration = 5.seconds
 //
 //  extension (entity: ResponseEntity) {
-//    def toJson(implicit
+//    def toJson(using
 //        context: ExecutionContext,
 //        actor: ActorSystem[Nothing]
 //    ): Future[Option[String]] = entity

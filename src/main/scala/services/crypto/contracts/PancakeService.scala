@@ -18,7 +18,7 @@ trait PancakeService {
   def getPancakeStakeBalance(address: String): Future[Option[BigDecimal]]
 }
 
-class PancakeServiceImpl(implicit
+class PancakeServiceImpl(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends PancakeService

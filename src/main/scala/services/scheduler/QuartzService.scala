@@ -12,7 +12,7 @@ trait QuartzService[T] {
   def schedule(name: SchedulerName, receiver: ActorRef[T], msg: T): Unit
 }
 
-class QuartzServiceImpl[T](implicit
+class QuartzServiceImpl[T](using
     system: ActorSystem[T],
     context: ExecutionContext
 ) extends QuartzService[T]

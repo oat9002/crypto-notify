@@ -22,7 +22,7 @@ class TerraServiceImpl(
     configuration: Configuration,
     httpClient: HttpClient,
     terraHelper: TerraHelper
-)(implicit system: ActorSystem[Nothing], context: ExecutionContext)
+)(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends TerraService
     with LazyLogging {
   val baseOldUrl: String = Constant.terraUrl

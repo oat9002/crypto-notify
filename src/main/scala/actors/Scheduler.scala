@@ -10,7 +10,7 @@ import models.mackerel.MackerelRequest
 import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
 import services.crypto.{BinanceService, BinanceServiceImpl, BscScanService, BscScanServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl}
 import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.{LineService, LineServiceImpl}
+import services.notification.{LineServiceImpl, NotificationService}
 import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.Future
@@ -24,7 +24,7 @@ class Scheduler(actorContext: ActorContext[Command])
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()
   private lazy val terraHelper: TerraHelper = TerraHelperImpl()
-  private lazy val lineService: LineService =
+  private lazy val notificationService: NotificationService =
     LineServiceImpl(httpclient, configuration)
   private lazy val satangService: SatangService =
     SatangServiceImpl(configuration, httpclient)
@@ -59,7 +59,7 @@ class Scheduler(actorContext: ActorContext[Command])
 
       message
         .flatMap {
-          case Some(m) => lineService.notify(m)
+          case Some(m) => notificationService.notify(m)
           case _       => Future.successful(false)
         }
         .foreach {

@@ -18,7 +18,7 @@ trait BscScanService {
   ): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit
+class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BscScanService

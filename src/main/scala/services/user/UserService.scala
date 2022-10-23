@@ -27,7 +27,7 @@ class UserServiceImpl(
     binanceService: BinanceService,
     terraService: TerraService,
     pancakeService: PancakeService
-)(implicit system: ActorSystem[Nothing], context: ExecutionContext)
+)(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends UserService {
   override def getBalanceMessageForLine(
       userId: String,
