@@ -22,7 +22,9 @@ class TelegramServiceImpl(httpClient: HttpClient, configuration: Configuration)(
     val chatId = configuration.telegramConfig.map(_.chatId).getOrElse("")
     val textParam = s"text=${URLEncoder.encode(message, charset)}"
     val chatIdParam = s"chat_id=${URLEncoder.encode(chatId, charset)}"
-    val baseUrl = s"${Constant.telegramUrl}/bot$botToken/sendMessage?$textParam&$chatIdParam"
+    val parseModeParam = s"parse_mode=HTML"
+    val baseUrl =
+      s"${Constant.telegramUrl}/bot$botToken/sendMessage?$textParam&$chatIdParam&$parseModeParam"
 
     httpClient
       .get[String](baseUrl, Map("Content-Type" -> "application/x-www-form-urlencoded"))
