@@ -3,6 +3,7 @@ package services.notification
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient}
+import models.telegram.TelegramResponse
 import org.bouncycastle.util.encoders.UTF8
 
 import java.net.URLEncoder
@@ -27,9 +28,9 @@ class TelegramServiceImpl(httpClient: HttpClient, configuration: Configuration)(
       s"${Constant.telegramUrl}/bot$botToken/sendMessage?$textParam&$chatIdParam&$parseModeParam"
 
     httpClient
-      .get[String](baseUrl, Map("Content-Type" -> "application/x-www-form-urlencoded"))
+      .get[TelegramResponse](baseUrl, Map("Content-Type" -> "application/x-www-form-urlencoded"))
       .map {
-        case Right(_) => true
+        case Right(response) => response.ok
         case Left(ex) =>
           logger.error("cannot send telegram message", ex)
           false
