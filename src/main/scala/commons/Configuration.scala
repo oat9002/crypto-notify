@@ -11,6 +11,7 @@ import models.configuration.{
   Quartz,
   SatangConfig,
   Schedule,
+  TelegramConfig,
   TerraConfig
 }
 
@@ -18,7 +19,8 @@ import scala.util.{Success, Try}
 
 trait Configuration {
   lazy val appConfig: AppConfig
-  lazy val lineConfig: LineConfig
+  lazy val lineConfig: Option[LineConfig]
+  lazy val telegramConfig: Option[TelegramConfig]
   lazy val satangConfig: SatangConfig
   lazy val akkaConfig: AkkaConfig
   lazy val bscScanConfig: Option[BscScanConfig]
@@ -41,10 +43,16 @@ class ConfigurationImpl extends Configuration {
   private val mackerelSection = conf.getConfig("mackerel")
   private val binanceSection = conf.getConfig("binance")
   private val terraSection = conf.getConfig("terra")
+  private val telegramSection = conf.getConfig("telegram")
   lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
-  lazy val lineConfig: LineConfig = LineConfig(
-    lineSection.getString("lineNotifyToken")
-  )
+  lazy val lineConfig: Option[LineConfig] = Try(
+    LineConfig(
+      lineSection.getString("lineNotifyToken")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
   lazy val satangConfig: SatangConfig = SatangConfig(
     satangSection.getString("apiKey"),
     satangSection.getString("apiSecret"),
@@ -115,6 +123,15 @@ class ConfigurationImpl extends Configuration {
   lazy val terraConfig: Option[TerraConfig] = Try(
     TerraConfig(
       terraSection.getString("address")
+    )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
+  lazy val telegramConfig: Option[TelegramConfig] = Try(
+    TelegramConfig(
+      telegramSection.getString("botToken"),
+      telegramSection.getString("chatId")
     )
   ) match {
     case Success(v) => Some(v)

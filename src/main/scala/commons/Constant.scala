@@ -16,9 +16,8 @@ object Constant {
   val twoPointOTerraUrl = "https://phoenix-lcd.terra.dev"
   val makerelUrl = "https://api.mackerelio.com"
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
+  val telegramUrl = "https://api.telegram.org"
 
   enum EncryptionAlgorithm:
     case HmacSHA512, HmacSHA256
 }
-
-

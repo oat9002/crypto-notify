@@ -20,7 +20,7 @@ class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(usin
       Constant.lineNotifyUrl,
       Map("message" -> message),
       Map(
-        "Authorization" -> s"Bearer ${configuration.lineConfig.lineNotifyToken}"
+        "Authorization" -> s"Bearer ${configuration.lineConfig.map(_.lineNotifyToken).getOrElse("")}"
       )
     )
 
