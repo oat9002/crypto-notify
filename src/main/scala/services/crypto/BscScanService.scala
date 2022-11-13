@@ -1,9 +1,11 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, HttpClient}
+import commons.{Configuration, Constant, HttpClient}
 import models.bscScan.BscScanResponse
+import services.crypto.BscScanService
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.pow
@@ -16,12 +18,12 @@ trait BscScanService {
   ): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(implicit
+class BscScanServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BscScanService
     with LazyLogging {
-  val baseUrl: String = configuration.bscScanConfig.map(_.url).getOrElse("")
+  val baseUrl: String = Constant.bscScanUrl
   val apiKey: String = configuration.bscScanConfig.map(_.apiKey).getOrElse("")
 
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {

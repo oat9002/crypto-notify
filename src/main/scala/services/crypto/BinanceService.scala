@@ -1,11 +1,12 @@
-package services
+package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import commons.Constant.EncryptionAlgorithm
+import commons.{CommonUtil, Configuration, Constant, HttpClient}
 import models.CryptoBalance
 import models.binance.{Coin, Network, Saving, Ticker}
+import services.crypto.BinanceService
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
@@ -23,7 +24,7 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
 ) extends BinanceService
     with LazyLogging {
   val recvWindow: FiniteDuration = 10.seconds
-  val baseUrl: String = configuration.binanceConfig.map(_.url).getOrElse("")
+  val baseUrl: String = Constant.binanceUrl
   val secretKey: String =
     configuration.binanceConfig.map(_.secretKey).getOrElse("")
   val apiKey: String = configuration.binanceConfig.map(_.apiKey).getOrElse("")

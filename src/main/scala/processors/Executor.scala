@@ -1,10 +1,11 @@
 package processors
 
-import actors._
-import akka.actor.typed._
+import actors.*
+import akka.actor.typed.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
-import services._
+import services.*
+import services.scheduler.{QuartzService, SchedulerName, QuartzServiceImpl}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 

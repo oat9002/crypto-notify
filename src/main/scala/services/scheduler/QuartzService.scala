@@ -1,9 +1,10 @@
-package services
+package services.scheduler
 
 import akka.actor.typed.{ActorRef, ActorSystem}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 import com.typesafe.scalalogging.LazyLogging
-import services.SchedulerName.SchedulerName
+import services.scheduler.QuartzService
+import services.scheduler.SchedulerName.SchedulerName
 
 import scala.concurrent.ExecutionContext
 
@@ -11,7 +12,7 @@ trait QuartzService[T] {
   def schedule(name: SchedulerName, receiver: ActorRef[T], msg: T): Unit
 }
 
-class QuartzServiceImpl[T](implicit
+class QuartzServiceImpl[T](using
     system: ActorSystem[T],
     context: ExecutionContext
 ) extends QuartzService[T]

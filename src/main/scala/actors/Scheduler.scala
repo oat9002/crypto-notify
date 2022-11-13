@@ -7,23 +7,27 @@ import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
 import models.mackerel.MackerelRequest
-import services.contracts.{PancakeService, PancakeServiceImpl}
-import services.{
+import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
+import services.crypto.{
   BinanceService,
   BinanceServiceImpl,
   BscScanService,
   BscScanServiceImpl,
-  LineService,
-  LineServiceImpl,
-  MackerelService,
-  MackerelServiceImpl,
   SatangService,
   SatangServiceImpl,
   TerraService,
-  TerraServiceImpl,
-  UserService,
-  UserServiceImpl
+  TerraServiceImpl
 }
+import services.healthcheck.{MackerelService, MackerelServiceImpl}
+import services.notification.{
+  LineService,
+  LineServiceImpl,
+  NotificationService,
+  NotificationServiceImpl,
+  TelegramService,
+  TelegramServiceImpl
+}
+import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.Future
 
@@ -33,11 +37,10 @@ class Scheduler(actorContext: ActorContext[Command])
   import context.executionContext
 
   given nothingSystem: ActorSystem[Nothing] = actorContext.system
+
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()
   private lazy val terraHelper: TerraHelper = TerraHelperImpl()
-  private lazy val lineService: LineService =
-    LineServiceImpl(httpclient, configuration)
   private lazy val satangService: SatangService =
     SatangServiceImpl(configuration, httpclient)
   private lazy val bscScanService: BscScanService =
@@ -55,8 +58,11 @@ class Scheduler(actorContext: ActorContext[Command])
     terraService,
     pancakeService
   )
-  private lazy val mackerelService: MackerelService =
-    MackerelServiceImpl(configuration, httpclient)
+  private lazy val mackerelService: MackerelService = MackerelServiceImpl(configuration, httpclient)
+  private lazy val lineService: LineService = LineServiceImpl(httpclient, configuration)
+  private lazy val telegramService: TelegramService = TelegramServiceImpl(httpclient, configuration)
+  private lazy val notificationService: NotificationService =
+    NotificationServiceImpl(configuration, lineService, telegramService)
 
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>
@@ -70,15 +76,17 @@ class Scheduler(actorContext: ActorContext[Command])
       logger.info(s"NotifyTask run at $now")
 
       message
-        .flatMap {
-          case Some(m) => lineService.notify(m)
-          case _       => Future.successful(false)
-        }
-        .foreach {
-          case false =>
-            logger.error(s"$now -> There is some problem with cronjob")
+        .map {
+          case Some(m) => notificationService.notify(m)
           case _ =>
+            logger.error(s"$now -> There is some problem about getting message")
+            false
         }
+        .recover { case ex: Throwable =>
+          logger.error(s"$now -> There is some problem with cronjob", ex)
+          false
+        }
+
       this
     case HealthCheckTask =>
       mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))

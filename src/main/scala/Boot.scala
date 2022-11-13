@@ -8,11 +8,11 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
 import processors.{Executor, ExecutorImpl}
-import services.{MackerelService, MackerelServiceImpl}
 
 import scala.concurrent.ExecutionContextExecutor
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
+import services.healthcheck.{MackerelService, MackerelServiceImpl}
 
 object Boot extends App with LazyLogging with FailFastCirceSupport {
   given system: ActorSystem[Command] =

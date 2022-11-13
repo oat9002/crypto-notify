@@ -4,7 +4,7 @@
 //import org.scalamock.scalatest.MockFactory
 //import org.scalatest.funspec.AnyFunSpec
 //import org.scalatest.matchers.should.Matchers
-//import services.BscScanServiceImpl
+//import services.crypto.BscScanServiceImpl
 //
 //import scala.concurrent.duration.Duration
 //import scala.concurrent.{Await, Future}

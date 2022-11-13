@@ -1,28 +1,26 @@
-package services
+package services.notification
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl, HttpClient}
+import commons.{Configuration, ConfigurationImpl, Constant, HttpClient}
 import models.line.LineResponse
+import services.notification.LineService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait LineService {
-  def notify(message: String): Future[Boolean]
-}
+trait LineService extends NotificationService
 
-class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(
-    implicit
+class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends LineService
     with LazyLogging {
   override def notify(message: String): Future[Boolean] = {
     val response = httpClient.postFormData[LineResponse](
-      configuration.lineConfig.url,
+      Constant.lineNotifyUrl,
       Map("message" -> message),
       Map(
-        "Authorization" -> s"Bearer ${configuration.lineConfig.lineNotifyToken}"
+        "Authorization" -> s"Bearer ${configuration.lineConfig.map(_.lineNotifyToken).getOrElse("")}"
       )
     )
 
