@@ -17,6 +17,7 @@ object Constant {
   val makerelUrl = "https://api.mackerelio.com"
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
   val telegramUrl = "https://api.telegram.org"
+  val blockStreamUrl = "https://blockstream.info/api"
 
   enum EncryptionAlgorithm:
     case HmacSHA512, HmacSHA256
