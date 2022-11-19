@@ -100,7 +100,6 @@ class UserServiceImpl(
         .map(x => CryptoBalance("fiat money", x.balance))
         .concat(cryptoBalanceInThb)
         .sortBy(_.symbol)
-
       if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
         None
       } else {

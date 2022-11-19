@@ -9,7 +9,7 @@ object Utxo {
   given Decoder[Utxo] = deriveDecoder[Utxo]
 }
 
-case class Status(confirmed: Boolean, blockHeight: Long, blockHash: String, blockTime: String)
+case class Status(confirmed: Boolean, blockHeight: Long, blockHash: String, blockTime: Long)
 object Status {
   given Encoder[Status] =
     Encoder.forProduct4("confirmed", "block_height", "block_hash", "block_time")(b =>
