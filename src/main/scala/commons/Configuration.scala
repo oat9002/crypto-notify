@@ -141,7 +141,7 @@ class ConfigurationImpl extends Configuration {
     case _          => None
   }
   lazy val bitcoinConfig: Option[BitcoinConfig] = Try(
-    BitcoinConfig(bitcoinSection.getString("address"))
+    BitcoinConfig(bitcoinSection.getString("addresses").split(",").map(_.trim).toList)
   ) match {
     case Success(v) => Some(v)
     case _          => None

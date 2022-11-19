@@ -18,7 +18,7 @@ trait UserService {
       userId: String,
       bscAddress: Option[String],
       terraAddress: Option[String],
-      bitcoinAddress: Option[String]
+      bitcoinAddress: Option[List[String]]
   ): Future[Option[String]]
 }
 
@@ -35,7 +35,7 @@ class UserServiceImpl(
       userId: String,
       bscAddress: Option[String],
       terraAddress: Option[String],
-      bitcoinAddress: Option[String]
+      bitcoinAddress: Option[List[String]]
   ): Future[Option[String]] = {
     for {
       satangUser <- satangService.getUser(userId)
