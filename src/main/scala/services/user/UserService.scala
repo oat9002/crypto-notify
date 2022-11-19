@@ -7,7 +7,7 @@ import models.binance.Ticker as BinanceTicker
 import models.satang.{User, Ticker as SatangTicker}
 import services.user.UserService
 import services.crypto.contracts.PancakeService
-import services.crypto.{BinanceService, BscScanService, SatangService, TerraService}
+import services.crypto.{BinanceService, BitcoinService, BscScanService, SatangService, TerraService}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -17,7 +17,8 @@ trait UserService {
   def getBalanceMessageForLine(
       userId: String,
       bscAddress: Option[String],
-      terraAddress: Option[String]
+      terraAddress: Option[String],
+      bitcoinAddress: Option[String]
   ): Future[Option[String]]
 }
 
@@ -26,13 +27,15 @@ class UserServiceImpl(
     bscScanService: BscScanService,
     binanceService: BinanceService,
     terraService: TerraService,
-    pancakeService: PancakeService
+    pancakeService: PancakeService,
+    bitcoinService: BitcoinService
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends UserService {
   override def getBalanceMessageForLine(
       userId: String,
       bscAddress: Option[String],
-      terraAddress: Option[String]
+      terraAddress: Option[String],
+      bitcoinAddress: Option[String]
   ): Future[Option[String]] = {
     for {
       satangUser <- satangService.getUser(userId)
@@ -56,6 +59,9 @@ class UserServiceImpl(
       terraAccount <- terraAddress
         .map(terraService.getAllBalance)
         .getOrElse(Future.successful(None))
+      bitcoinExtBalance <- bitcoinAddress
+        .map(bitcoinService.getBitcoinBalance)
+        .getOrElse(Future.successful(None))
     } yield {
       val satangList = satangUser
         .map(s => s.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList)
@@ -67,7 +73,8 @@ class UserServiceImpl(
             BigDecimal(0)
           )
         ),
-        CryptoBalance("bnb", extBnbAmount.getOrElse(BigDecimal(0)))
+        CryptoBalance("bnb", extBnbAmount.getOrElse(BigDecimal(0))),
+        CryptoBalance("btc", bitcoinExtBalance.getOrElse(BigDecimal(0)))
       )
       val mergedPair = (satangList ++ binance.getOrElse(
         List[CryptoBalance]()
@@ -93,7 +100,6 @@ class UserServiceImpl(
         .map(x => CryptoBalance("fiat money", x.balance))
         .concat(cryptoBalanceInThb)
         .sortBy(_.symbol)
-
       if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
         None
       } else {

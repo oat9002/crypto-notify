@@ -5,6 +5,7 @@ import models.configuration.{
   AkkaConfig,
   AppConfig,
   BinanceConfig,
+  BitcoinConfig,
   BscScanConfig,
   LineConfig,
   MackerelConfig,
@@ -27,6 +28,7 @@ trait Configuration {
   lazy val mackerelConfig: Option[MackerelConfig]
   lazy val binanceConfig: Option[BinanceConfig]
   lazy val terraConfig: Option[TerraConfig]
+  lazy val bitcoinConfig: Option[BitcoinConfig]
 }
 
 class ConfigurationImpl extends Configuration {
@@ -44,6 +46,7 @@ class ConfigurationImpl extends Configuration {
   private val binanceSection = conf.getConfig("binance")
   private val terraSection = conf.getConfig("terra")
   private val telegramSection = conf.getConfig("telegram")
+  private val bitcoinSection = conf.getConfig("bitcoin")
   lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
   lazy val lineConfig: Option[LineConfig] = Try(
     LineConfig(
@@ -133,6 +136,12 @@ class ConfigurationImpl extends Configuration {
       telegramSection.getString("botToken"),
       telegramSection.getString("chatId")
     )
+  ) match {
+    case Success(v) => Some(v)
+    case _          => None
+  }
+  lazy val bitcoinConfig: Option[BitcoinConfig] = Try(
+    BitcoinConfig(bitcoinSection.getString("address"))
   ) match {
     case Success(v) => Some(v)
     case _          => None

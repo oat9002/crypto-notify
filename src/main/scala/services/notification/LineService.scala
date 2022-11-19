@@ -4,11 +4,12 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, Constant, HttpClient}
 import models.line.LineResponse
-import services.notification.LineService
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait LineService extends NotificationService
+trait LineService {
+  def notify(message: String): Future[Boolean]
+}
 
 class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(using
     system: ActorSystem[Nothing],

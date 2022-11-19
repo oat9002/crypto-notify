@@ -11,6 +11,8 @@ import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
 import services.crypto.{
   BinanceService,
   BinanceServiceImpl,
+  BitcoinService,
+  BitcoinServiceImpl,
   BscScanService,
   BscScanServiceImpl,
   SatangService,
@@ -51,12 +53,14 @@ class Scheduler(actorContext: ActorContext[Command])
     TerraServiceImpl(configuration, httpclient, terraHelper)
   private lazy val pancakeService: PancakeService =
     PancakeServiceImpl()
+  private lazy val bitcoinService: BitcoinService = BitcoinServiceImpl(configuration, httpclient)
   private lazy val userService: UserService = UserServiceImpl(
     satangService,
     bscScanService,
     binanceService,
     terraService,
-    pancakeService
+    pancakeService,
+    bitcoinService
   )
   private lazy val mackerelService: MackerelService = MackerelServiceImpl(configuration, httpclient)
   private lazy val lineService: LineService = LineServiceImpl(httpclient, configuration)
@@ -70,7 +74,8 @@ class Scheduler(actorContext: ActorContext[Command])
       val message = userService.getBalanceMessageForLine(
         configuration.satangConfig.userId,
         configuration.bscScanConfig.map(_.address),
-        configuration.terraConfig.map(_.address)
+        configuration.terraConfig.map(_.address),
+        configuration.bitcoinConfig.map(_.address)
       )
 
       logger.info(s"NotifyTask run at $now")
