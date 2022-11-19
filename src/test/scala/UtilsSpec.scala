@@ -2,52 +2,52 @@ import commons.CommonUtil._
 import commons.Constant.EncryptionAlgorithm
 import models.configuration.AppConfig
 import models.terra.QueryResult
-import org.scalatest.funspec.AnyFunSpec
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
 
 import scala.util.Success
 
-class UtilsSpec extends AnyFunSpec with Matchers {
-  describe("CommonUtils") {
-    describe("FormatNumberAnyVal") {
-      it("should format correctly") {
+class UtilsSpec extends AnyWordSpec with Matchers {
+  "CommonUtils" when {
+    "FormatNumberAnyVal" should {
+      "should format correctly" in {
         val result = 1.format
 
         result shouldBe "1"
       }
     }
 
-    describe("FormatBigDecimal") {
-      it("should format correctly") {
+    "FormatBigDecimal" should {
+      "format correctly" in {
         val result = BigDecimal(1).format
 
         result shouldBe "1"
       }
     }
 
-    describe("generateHMAC") {
-      it("Hmac512 should return correct result") {
+    "generateHMAC" should {
+      "return correct result for Hmac512" in {
         val result = generateHMAC("test", "test", EncryptionAlgorithm.HmacSHA512)
 
         result shouldBe "9ba1f63365a6caf66e46348f43cdef956015bea997adeb06e69007ee3ff517df10fc5eb860da3d43b82c2a040c931119d2dfc6d08e253742293a868cc2d82015"
       }
-      it("Hmac256 should return correct result") {
+      "return correct result for Hmac256" in {
         val result = generateHMAC("test", "test", EncryptionAlgorithm.HmacSHA256)
 
         result shouldBe "88cd2108b5347d973cf39cdf9053d7dd42704876d8c9a9bd8e2d168259d3ddf7"
       }
     }
 
-    describe("base64encode") {
-      it("should encode correctly") {
+    "base64encode" should {
+      "encode correctly" in {
         val result = base64Encode("{\"test\":1}")
 
         result shouldBe "eyJ0ZXN0IjoxfQ=="
       }
     }
 
-    describe("getFormattedNowDate") {
-      it("should return something") {
+    "getFormattedNowDate" should {
+      "return something" in {
         val result = getFormattedNowDate()
 
         result should not be ""
