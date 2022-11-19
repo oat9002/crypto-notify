@@ -11,7 +11,7 @@ trait LineService {
   def notify(message: String): Future[Boolean]
 }
 
-class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(implicit
+class LineServiceImpl(httpClient: HttpClient, configuration: Configuration)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends LineService
