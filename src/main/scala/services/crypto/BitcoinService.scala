@@ -5,12 +5,18 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient}
 import helpers.BitcoinHelper
 import models.bitcoin.Utxo
+import org.bitcoinj.core.{BlockChain, NetworkParameters, PeerGroup}
+import org.bitcoinj.crypto.{DeterministicHierarchy, DeterministicKey}
+import org.bitcoinj.script.ScriptBuilder
+import org.bitcoinj.store.MemoryBlockStore
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait BitcoinService {
   def getAllUtxo(address: String): Future[Option[List[Utxo]]]
   def getBitcoinBalance(addresses: List[String]): Future[Option[BigDecimal]]
+
+  def getBitcoinBalanceFromXpub(xpubStr: String): Future[Option[BigDecimal]]
 }
 
 class BitcoinServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
@@ -36,5 +42,20 @@ class BitcoinServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
       allUtxoes.map(_.map(_.value).sum).map(b => Option(BitcoinHelper.fromSatoshiToBitcoin(b)))
 
     balance
+  }
+
+  override def getBitcoinBalanceFromXpub(xpubStr: String): Future[Option[BigDecimal]] = {
+    val networkParameters = NetworkParameters.fromID(NetworkParameters.ID_MAINNET)
+    val xpub = DeterministicKey.deserializeB58(xpubStr, networkParameters)
+    val hierarchy = new DeterministicHierarchy(xpub)
+    val childKey = hierarchy.deriveChild(List(0), false, false, null)
+    val script = ScriptBuilder.createOutpu
+    val chain = new BlockChain(networkParameters, new MemoryBlockStore(networkParameters))
+    val peers = new PeerGroup(networkParameters, chain)
+    peers.start()
+    peers.downloadBlockChain()
+    val chainHead = chain.getChainHead
+    val blockHeigh = chainHead.getHeight
+
   }
 }
