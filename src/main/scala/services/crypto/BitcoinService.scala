@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient}
 import helpers.BitcoinHelper
 import models.bitcoin.Utxo
-import org.bitcoinj.core.{BlockChain, NetworkParameters, PeerGroup}
+import org.bitcoinj.core.{BlockChain, DumpedPrivateKey, ECKey, NetworkParameters, PeerGroup}
 import org.bitcoinj.crypto.{DeterministicHierarchy, DeterministicKey}
 import org.bitcoinj.script.ScriptBuilder
 import org.bitcoinj.store.MemoryBlockStore
@@ -44,18 +44,5 @@ class BitcoinServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
     balance
   }
 
-  override def getBitcoinBalanceFromXpub(xpubStr: String): Future[Option[BigDecimal]] = {
-    val networkParameters = NetworkParameters.fromID(NetworkParameters.ID_MAINNET)
-    val xpub = DeterministicKey.deserializeB58(xpubStr, networkParameters)
-    val hierarchy = new DeterministicHierarchy(xpub)
-    val childKey = hierarchy.deriveChild(List(0), false, false, null)
-    val script = ScriptBuilder.createOutpu
-    val chain = new BlockChain(networkParameters, new MemoryBlockStore(networkParameters))
-    val peers = new PeerGroup(networkParameters, chain)
-    peers.start()
-    peers.downloadBlockChain()
-    val chainHead = chain.getChainHead
-    val blockHeigh = chainHead.getHeight
-
-  }
+  override def getBitcoinBalanceFromXpub(xpubStr: String): Future[Option[BigDecimal]] = ???
 }

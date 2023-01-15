@@ -22,7 +22,7 @@ class ExecutorImpl(configuration: Configuration)(using
     QuartzServiceImpl[Command]()
 
   def execute(): Unit = {
-    val notifyCron = SchedulerName.Notify
+    val notifyCron = SchedulerName.Every10Seconds
     val healthCheckCron = SchedulerName.HealthCheck
 
     logger.info(

@@ -15,6 +15,7 @@ object Dependencies {
   val web3j = "4.9.1"
   val circe = "0.14.3"
   val retry = "0.3.6"
+  val bitcoinj = "0.16.2"
 
   lazy val dependencies: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % akka cross CrossVersion.for3Use2_13 excludeAll
@@ -42,6 +43,8 @@ object Dependencies {
     "org.web3j" % "core" % web3j excludeAll
       ExclusionRule(organization = "org.slf4j"),
     "com.softwaremill.retry" %% "retry" % retry
+      ExclusionRule(organization = "org.slf4j"),
+    "org.bitcoinj" % "bitcoinj-core" % bitcoinj
   )
 
   lazy val testDependencies: Seq[ModuleID] = Seq(
