@@ -97,7 +97,7 @@ class Scheduler(actorContext: ActorContext[Command])
       if (configuration.mackerelConfig.map(_.apiKey).getOrElse("") != "") {
         mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
       } else {
-        logger.info("Mackerel config is not found")
+        logger.info("Mackerel api key is not found. HealthCheck task will not run.")
       }
       this
     case _ => this
