@@ -107,6 +107,7 @@ class ConfigurationImpl extends Configuration {
   )
   lazy val mackerelConfig: Option[MackerelConfig] = Try(
     MackerelConfig(
+      mackerelSection.getBoolean("enabled"),
       mackerelSection.getString("apiKey"),
       mackerelSection.getString("serviceName")
     )

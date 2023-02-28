@@ -29,9 +29,12 @@ class ExecutorImpl(configuration: Configuration)(using
       s"Cron name: ${notifyCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(notifyCron.toString).map(_.expression).getOrElse("")}"
     )
     quartzService.schedule(notifyCron, system, NotifyTask)
-    logger.info(
-      s"Cron name: ${healthCheckCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(healthCheckCron.toString).map(_.expression).getOrElse("")}"
-    )
-    quartzService.schedule(healthCheckCron, system, HealthCheckTask)
+
+    if (configuration.mackerelConfig.exists(_.enabled)) {
+      logger.info(
+        s"Cron name: ${healthCheckCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(healthCheckCron.toString).map(_.expression).getOrElse("")}"
+      )
+      quartzService.schedule(healthCheckCron, system, HealthCheckTask)
+    }
   }
 }
