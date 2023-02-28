@@ -94,7 +94,11 @@ class Scheduler(actorContext: ActorContext[Command])
 
       this
     case HealthCheckTask =>
-      mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
+      if (configuration.mackerelConfig.nonEmpty) {
+        mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
+      } else {
+        logger.info("Mackerel config is not found")
+      }
       this
     case _ => this
   }
