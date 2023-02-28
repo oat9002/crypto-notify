@@ -27,7 +27,7 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
     MackerelServiceImpl(configuration, httpClient)
   lazy val executor: Executor = ExecutorImpl(configuration)
   lazy val healthCheckController: HealthCheckController =
-    HealthCheckController(mackerelService)
+    HealthCheckController()
 
   val route: Route =
     concat(

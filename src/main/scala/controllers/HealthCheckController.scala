@@ -10,14 +10,13 @@ import services.healthcheck.MackerelService
 
 import scala.concurrent.ExecutionContext
 
-class HealthCheckController(mackerelService: MackerelService)(using
+class HealthCheckController()(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends FailFastCirceSupport {
   val route: Route = {
     path("healthCheck") {
       get {
-        mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))
         complete(HttpEntity(ContentTypes.`application/json`, "alive"))
       }
     }
