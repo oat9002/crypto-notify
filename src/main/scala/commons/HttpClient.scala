@@ -114,7 +114,7 @@ class HttpClientImpl(using
     }
   }
 
-  private def retryHttpCall[Res](f: Future[Response[Either[ResponseException[String, Error], Res]]]): Future[Response[Either[ResponseException[String, Error], Res]]] = {
+  private def retryHttpCall[Res](f: => Future[Response[Either[ResponseException[String, Error], Res]]]): Future[Response[Either[ResponseException[String, Error], Res]]] = {
     val successPolicy = (res: Response[Either[ResponseException[String, Error], Res]]) =>
       res.code match
         case StatusCode.Ok => true
