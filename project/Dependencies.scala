@@ -14,6 +14,7 @@ object Dependencies {
   val sttp = "3.8.2"
   val web3j = "4.9.1"
   val circe = "0.14.3"
+  val retry = "0.3.6"
 
   lazy val dependencies: Seq[ModuleID] = Seq(
     "com.typesafe.akka" %% "akka-actor-typed" % akka cross CrossVersion.for3Use2_13 excludeAll
@@ -39,7 +40,8 @@ object Dependencies {
     "com.softwaremill.sttp.client3" %% "circe" % sttp cross CrossVersion.for3Use2_13 excludeAll
       ExclusionRule(organization = "io.circe"),
     "org.web3j" % "core" % web3j excludeAll
-      ExclusionRule(organization = "org.slf4j")
+      ExclusionRule(organization = "org.slf4j"),
+    "com.softwaremill.retry" %% "retry" % retry
   )
 
   lazy val testDependencies: Seq[ModuleID] = Seq(
