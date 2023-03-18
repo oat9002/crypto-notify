@@ -151,15 +151,20 @@ class UserServiceImpl(
       cryptoBalance: List[CryptoBalance]
   ): String = {
     import commons.CommonUtil.*
+    val sortedAllBalanceInThb = allBalanceInThb.sortWith((x, y) => y.balance > x.balance)
+    val sortedCryptoBalance = sortedAllBalanceInThb
+      .map(_.symbol)
+      .distinct
+      .map(x => cryptoBalance.find(_.symbol == x).getOrElse(CryptoBalance(x, 0)))
 
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
-      s"จำนวนเงินทั้งหมด: ${allBalanceInThb.map(_.balance).sum.format} บาท\n"
-    val balanceThb = allBalanceInThb
+      s"จำนวนเงินทั้งหมด: ${sortedAllBalanceInThb.map(_.balance).sum.format} บาท\n"
+    val balanceThb = sortedAllBalanceInThb
       .map(x => s"${x.symbol}: ${x.balance.format} บาท")
       .mkString("\n")
     val balance =
-      cryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
+      sortedCryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
 
     "\n"
       .concat(date)
