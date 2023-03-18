@@ -86,7 +86,6 @@ class UserServiceImpl(
         .toList
       val noneZeroCryptoBalance = mergedPair
         .filter(x => x.symbol != "thb" && x.balance != 0)
-        .sortBy(_.symbol)
       val cryptoBalanceInThb = noneZeroCryptoBalance
         .map(x =>
           getCryptoPriceInThb(
@@ -99,7 +98,6 @@ class UserServiceImpl(
         .filter(_.symbol == "thb")
         .map(x => CryptoBalance("fiat money", x.balance))
         .concat(cryptoBalanceInThb)
-        .sortBy(_.symbol)
       if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
         None
       } else {
@@ -151,15 +149,20 @@ class UserServiceImpl(
       cryptoBalance: List[CryptoBalance]
   ): String = {
     import commons.CommonUtil.*
+    val sortedAllBalanceInThb = allBalanceInThb.sortWith((x, y) => x.balance > y.balance)
+    val sortedCryptoBalance = sortedAllBalanceInThb
+      .map(_.symbol)
+      .distinct
+      .map(x => cryptoBalance.find(_.symbol == x).getOrElse(CryptoBalance(x, 0)))
 
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
-      s"จำนวนเงินทั้งหมด: ${allBalanceInThb.map(_.balance).sum.format} บาท\n"
-    val balanceThb = allBalanceInThb
+      s"จำนวนเงินทั้งหมด: ${sortedAllBalanceInThb.map(_.balance).sum.format} บาท\n"
+    val balanceThb = sortedAllBalanceInThb
       .map(x => s"${x.symbol}: ${x.balance.format} บาท")
       .mkString("\n")
     val balance =
-      cryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
+      sortedCryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
 
     "\n"
       .concat(date)
