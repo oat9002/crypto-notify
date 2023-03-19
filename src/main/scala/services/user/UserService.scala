@@ -154,6 +154,7 @@ class UserServiceImpl(
       .map(_.symbol)
       .distinct
       .map(x => cryptoBalance.find(_.symbol == x).getOrElse(CryptoBalance(x, 0)))
+      .filter(_.balance != 0)
 
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
