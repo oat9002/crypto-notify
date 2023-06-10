@@ -37,31 +37,41 @@ class UserServiceImpl(
       terraAddress: Option[String],
       bitcoinAddress: Option[List[String]]
   ): Future[Option[String]] = {
-    for {
-      satangUser <- satangService.getUser(userId)
-      satangCurrentPrices <- satangService.getCryptoPrices
-      binanceCurrentPrices <- binanceService.getLatestPrice
-      extBnbAmount <- bscAddress
-        .map(bscScanService.getBnbBalance)
-        .getOrElse(Future.successful(None))
-      extCakeAmount <- bscAddress
-        .map(address =>
-          bscScanService.getTokenBalance(
-            Constant.CakeTokenContractAddress,
-            address
-          )
+    val satangUserF = satangService.getUser(userId)
+    val satangCurrentPricesF = satangService.getCryptoPrices
+    val binanceCurrentPricesF = binanceService.getLatestPrice
+    val extBnbAmountF = bscAddress
+      .map(bscScanService.getBnbBalance)
+      .getOrElse(Future.successful(None))
+    val extCakeAmountF = bscAddress
+      .map(address =>
+        bscScanService.getTokenBalance(
+          Constant.CakeTokenContractAddress,
+          address
         )
-        .getOrElse(Future.successful(None))
-      extCakeStakeAmount <- bscAddress
-        .map(pancakeService.getPancakeStakeBalance)
-        .getOrElse(Future.successful(None))
-      binance <- binanceService.getAllBalance
-      terraAccount <- terraAddress
-        .map(terraService.getAllBalance)
-        .getOrElse(Future.successful(None))
-      bitcoinExtBalance <- bitcoinAddress
-        .map(bitcoinService.getBitcoinBalance)
-        .getOrElse(Future.successful(None))
+      )
+      .getOrElse(Future.successful(None))
+    val extCakeStakeAmountF = bscAddress
+      .map(pancakeService.getPancakeStakeBalance)
+      .getOrElse(Future.successful(None))
+    val binanceF = binanceService.getAllBalance
+    val terraAccountF = terraAddress
+      .map(terraService.getAllBalance)
+      .getOrElse(Future.successful(None))
+    val bitcoinExtBalanceF = bitcoinAddress
+      .map(bitcoinService.getBitcoinBalance)
+      .getOrElse(Future.successful(None))
+
+    for {
+      satangUser <- satangUserF
+      satangCurrentPrices <- satangCurrentPricesF
+      binanceCurrentPrices <- binanceCurrentPricesF
+      extBnbAmount <- extBnbAmountF
+      extCakeAmount <- extCakeAmountF
+      extCakeStakeAmount <- extCakeStakeAmountF
+      binance <- binanceF
+      terraAccount <- terraAccountF
+      bitcoinExtBalance <- bitcoinExtBalanceF
     } yield {
       val satangList = satangUser
         .map(s => s.wallets.map(x => CryptoBalance(x._1, x._2.availableBalance)).toList)
