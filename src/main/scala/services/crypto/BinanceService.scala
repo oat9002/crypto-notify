@@ -81,9 +81,12 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
   }
 
   override def getAllBalance: Future[Option[List[CryptoBalance]]] = {
+    val savingF = getSaving
+    val accountDetailF = getAccountDetail
+    
     for {
-      savingOpt <- getSaving
-      accountDetailOpt <- getAccountDetail
+      savingOpt <- savingF
+      accountDetailOpt <- accountDetailF
     } yield for {
       saving <- savingOpt
       accountDetail <- accountDetailOpt

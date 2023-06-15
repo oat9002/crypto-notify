@@ -115,10 +115,14 @@ class TerraServiceImpl(
   override def getAllBalance(
       address: String
   ): Future[Option[List[CryptoBalance]]] = {
+    val walletBalanceF = getWalletBalance(address)
+    val aUstExchangeRateF = getaUstExchangeRate()
+    val aUstBalanceF = getaUstBalance(address)
+
     for {
-      walletBalanceOpt <- getWalletBalance(address)
-      aUstExchangeRateOpt <- getaUstExchangeRate()
-      aUstBalanceOpt <- getaUstBalance(address)
+      walletBalanceOpt <- walletBalanceF
+      aUstExchangeRateOpt <- aUstExchangeRateF
+      aUstBalanceOpt <- aUstBalanceF
     } yield for {
       walletBalance <- walletBalanceOpt
       aUstExchangeRate <- aUstExchangeRateOpt
