@@ -65,11 +65,9 @@ class TerraServiceImpl(
 
         val allBalance = classicBalance
           .filter(_._1.nonEmpty)
-          .map(x => Balance(x._1.get, x._2))
-          .toList ++ twoPointOBalance
+          .map(x => Balance(x._1.get, x._2)) ++ twoPointOBalance
           .filter(_._1.nonEmpty)
           .map(x => Balance(x._1.get, x._2))
-          .toList
 
         Some(Wallet(balances = allBalance))
       case (Left(classicErr), Left(twoPointOErr)) =>
@@ -120,21 +118,17 @@ class TerraServiceImpl(
     val aUstBalanceF = getaUstBalance(address)
 
     for {
-      walletBalanceOpt <- walletBalanceF
-      aUstExchangeRateOpt <- aUstExchangeRateF
-      aUstBalanceOpt <- aUstBalanceF
-    } yield for {
-      walletBalance <- walletBalanceOpt
-      aUstExchangeRate <- aUstExchangeRateOpt
-      aUstBalance <- aUstBalanceOpt
+      walletBalance <- walletBalanceF
+      aUstExchangeRate <- aUstExchangeRateF
+      aUstBalance <- aUstBalanceF
     } yield {
-      val newBalances = walletBalance.balances.map {
+      val newBalances = walletBalance.map(w => w.balances.map {
         case Balance(symbol, balance) if symbol == "ust" =>
-          Balance(symbol, balance + (aUstBalance * aUstExchangeRate))
+          Balance(symbol, balance + (aUstBalance.getOrElse(BigDecimal(0)) * aUstExchangeRate.getOrElse(BigDecimal(0))))
         case x => x
-      }
+      })
 
-      newBalances.map(x => CryptoBalance(symbol = x.symbol, balance = x.amount))
+      newBalances.map(b => b.map(x => CryptoBalance(symbol = x.symbol, balance = x.amount)))
     }
   }
 }

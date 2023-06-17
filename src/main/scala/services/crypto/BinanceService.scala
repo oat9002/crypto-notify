@@ -83,22 +83,31 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
   override def getAllBalance: Future[Option[List[CryptoBalance]]] = {
     val savingF = getSaving
     val accountDetailF = getAccountDetail
-    
+
     for {
-      savingOpt <- savingF
-      accountDetailOpt <- accountDetailF
-    } yield for {
-      saving <- savingOpt
-      accountDetail <- accountDetailOpt
+      saving <- savingF
+      accountDetail <- accountDetailF
     } yield {
-      val binanceMap =
-        (saving.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount) ++ accountDetail
-          .filter(_.free != 0)
-          .map(x => x.coin.toLowerCase() -> x.free)).groupBy(_._1).map { case (k, v) =>
+      val fromSaving = saving
+        .map(_.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount))
+        .getOrElse(List.empty)
+      val fromAccount = accountDetail
+        .map(x =>
+          x.filter(_.free != 0)
+            .map(x => x.coin.toLowerCase() -> x.free)
+        )
+        .getOrElse(List.empty)
+
+      val binanceMap = (fromSaving ++ fromAccount).groupBy(_._1)
+        .map { case (k, v) =>
           k -> v.map(_._2).sum
         }
 
-      binanceMap.map(x => CryptoBalance(symbol = x._1, balance = x._2)).toList
+      if (binanceMap.isEmpty) {
+        None
+      } else {
+        Some(binanceMap.map(x => CryptoBalance(symbol = x._1, balance = x._2)).toList)
+      }
     }
   }
 }
