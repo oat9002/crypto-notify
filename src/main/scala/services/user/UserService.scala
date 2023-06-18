@@ -106,7 +106,7 @@ class UserServiceImpl(
         )
       val allBalanceIntThb = satangList
         .filter(_.symbol == "thb")
-        .map(x => CryptoBalance("fiat money", x.balance))
+        .map(x => CryptoBalance("fiat", x.balance))
         .concat(cryptoBalanceInThb)
       if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
         None
@@ -169,8 +169,22 @@ class UserServiceImpl(
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
       s"จำนวนเงินทั้งหมด: ${sortedAllBalanceInThb.map(_.balance).sum.format} บาท\n"
+    val header = """
+                    ------------------------
+                    | ชื่อ   | ราตา(บาท)     |
+                    ------------------------
+     """
+    val nameCharCount = 5
+    val priceCharCount = 14
     val balanceThb = sortedAllBalanceInThb
-      .map(x => s"${x.symbol}: ${x.balance.format} บาท")
+      .map(x => {
+        val nameSpaceAdded = (1 to nameCharCount - x.symbol.length).map(" ").mkString("")
+        val priceSpaceAdded = (1 to priceCharCount - x.balance.format.length).map(" ").mkString("")
+        val name = s"| ${x.symbol}$nameSpaceAdded|"
+        val price = s"| ${x.balance.format}$priceSpaceAdded|"
+
+        name + price + "\n------------------------"
+      })
       .mkString("\n")
     val balance =
       sortedCryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
