@@ -66,5 +66,11 @@ jitwatch.out
 .bloop
 project/**/metals.sbt
 
+src/main/resources/application.local.conf
+.env
+
+*firebase-adminsdk*.json
+.attach*
+
 .bsp
 *.iml
