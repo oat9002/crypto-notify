@@ -17,8 +17,8 @@ jobs:
     - name: Format code
       run: | 
         sbt scalafmtAll
-        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
-        git config --global user.email "git@users.noreply.github.com"
+        git config user.name "${{ env.CI_COMMIT_AUTHOR }}"
+        git config user.email "${{ env.CI_COMMIT_AUTHOR }}@test.com"
         git add --all
         git commit -m ":recycle: format code"
         git push
