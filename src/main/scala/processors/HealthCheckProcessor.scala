@@ -10,9 +10,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait HealthCheckProcessor extends BaseProcessor
 
-class HealthCheckProcessorImpl(using
-                               system: ActorSystem[Nothing],
-                               context: ExecutionContext) extends HealthCheckProcessor with LazyLogging {
+class HealthCheckProcessorImpl(using system: ActorSystem[Nothing], context: ExecutionContext)
+    extends HealthCheckProcessor
+    with LazyLogging {
 
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()

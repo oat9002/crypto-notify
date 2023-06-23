@@ -7,11 +7,34 @@ import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
 import models.mackerel.MackerelRequest
-import processors.{HealthCheckProcessor, HealthCheckProcessorImpl, NotifyProcessor, NotifyProcessorImpl}
+import processors.{
+  HealthCheckProcessor,
+  HealthCheckProcessorImpl,
+  NotifyProcessor,
+  NotifyProcessorImpl
+}
 import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
-import services.crypto.{BinanceService, BinanceServiceImpl, BitcoinService, BitcoinServiceImpl, BscScanService, BscScanServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl}
+import services.crypto.{
+  BinanceService,
+  BinanceServiceImpl,
+  BitcoinService,
+  BitcoinServiceImpl,
+  BscScanService,
+  BscScanServiceImpl,
+  SatangService,
+  SatangServiceImpl,
+  TerraService,
+  TerraServiceImpl
+}
 import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.{LineService, LineServiceImpl, NotificationService, NotificationServiceImpl, TelegramService, TelegramServiceImpl}
+import services.notification.{
+  LineService,
+  LineServiceImpl,
+  NotificationService,
+  NotificationServiceImpl,
+  TelegramService,
+  TelegramServiceImpl
+}
 import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.Future

@@ -50,12 +50,14 @@ class HttpClientImpl(using
       decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
 
-    val response = retryHttpCall(basicRequest
-      .contentType("application/json")
-      .headers(header)
-      .get(uri"$url")
-      .response(asJson[Res])
-      .send(backend))
+    val response = retryHttpCall(
+      basicRequest
+        .contentType("application/json")
+        .headers(header)
+        .get(uri"$url")
+        .response(asJson[Res])
+        .send(backend)
+    )
 
     response.map { x =>
       x.body match {
@@ -74,13 +76,15 @@ class HttpClientImpl(using
       decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
 
-    val response = retryHttpCall(basicRequest
-      .contentType("application/json")
-      .body(encoder(request).spaces2)
-      .headers(header)
-      .post(uri"$url")
-      .response(asJson[Res])
-      .send(backend))
+    val response = retryHttpCall(
+      basicRequest
+        .contentType("application/json")
+        .body(encoder(request).spaces2)
+        .headers(header)
+        .post(uri"$url")
+        .response(asJson[Res])
+        .send(backend)
+    )
 
     response.map { x =>
       x.body match {
@@ -99,12 +103,14 @@ class HttpClientImpl(using
   ): Future[Either[String, Res]] = {
 
     val body = request.map(x => multipart(x._1, x._2)).to(Seq)
-    val response = retryHttpCall(basicRequest
-      .multipartBody(body)
-      .headers(header)
-      .post(uri"$url")
-      .response(asJson[Res])
-      .send(backend))
+    val response = retryHttpCall(
+      basicRequest
+        .multipartBody(body)
+        .headers(header)
+        .post(uri"$url")
+        .response(asJson[Res])
+        .send(backend)
+    )
 
     response.map { x =>
       x.body match {
@@ -114,17 +120,20 @@ class HttpClientImpl(using
     }
   }
 
-  private def retryHttpCall[Res](f: => Future[Response[Either[ResponseException[String, Error], Res]]]): Future[Response[Either[ResponseException[String, Error], Res]]] = {
+  private def retryHttpCall[Res](
+      f: => Future[Response[Either[ResponseException[String, Error], Res]]]
+  ): Future[Response[Either[ResponseException[String, Error], Res]]] = {
     val successPolicy = (res: Response[Either[ResponseException[String, Error], Res]]) =>
       res.code match
-        case StatusCode.Ok => true
-        case StatusCode.BadRequest => true
+        case StatusCode.Ok           => true
+        case StatusCode.BadRequest   => true
         case StatusCode.Unauthorized => true
-        case StatusCode.Forbidden => true
-        case StatusCode.NotFound => true
-        case _ => false
+        case StatusCode.Forbidden    => true
+        case StatusCode.NotFound     => true
+        case _                       => false
 
-    given retry.Success[Response[Either[ResponseException[String, Error], Res]]] = retry.Success[Response[Either[ResponseException[String, Error], Res]]](successPolicy)
+    given retry.Success[Response[Either[ResponseException[String, Error], Res]]] =
+      retry.Success[Response[Either[ResponseException[String, Error], Res]]](successPolicy)
 
     retry.Backoff(3, 1.second).apply(f)
   }

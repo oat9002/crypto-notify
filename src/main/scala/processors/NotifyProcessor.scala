@@ -6,9 +6,27 @@ import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
 import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
-import services.crypto.{BinanceService, BinanceServiceImpl, BitcoinService, BitcoinServiceImpl, BscScanService, BscScanServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl}
+import services.crypto.{
+  BinanceService,
+  BinanceServiceImpl,
+  BitcoinService,
+  BitcoinServiceImpl,
+  BscScanService,
+  BscScanServiceImpl,
+  SatangService,
+  SatangServiceImpl,
+  TerraService,
+  TerraServiceImpl
+}
 import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.{LineService, LineServiceImpl, NotificationService, NotificationServiceImpl, TelegramService, TelegramServiceImpl}
+import services.notification.{
+  LineService,
+  LineServiceImpl,
+  NotificationService,
+  NotificationServiceImpl,
+  TelegramService,
+  TelegramServiceImpl
+}
 import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,9 +34,10 @@ import scala.concurrent.{ExecutionContext, Future}
 trait NotifyProcessor extends BaseProcessor
 
 class NotifyProcessorImpl(using
-                      system: ActorSystem[Nothing],
-                      context: ExecutionContext
-                     ) extends NotifyProcessor with LazyLogging {
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) extends NotifyProcessor
+    with LazyLogging {
 
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()
@@ -66,10 +85,9 @@ class NotifyProcessorImpl(using
           logger.error(s"$now -> There is some problem about getting message")
           Future.successful(false)
       }
-      .recover {
-        case ex: Throwable =>
-          logger.error(s"$now -> There is some problem with cronjob", ex)
-          false
+      .recover { case ex: Throwable =>
+        logger.error(s"$now -> There is some problem with cronjob", ex)
+        false
       }
   }
 }

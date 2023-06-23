@@ -9,6 +9,7 @@ import models.configuration.{
   BscScanConfig,
   LineConfig,
   MackerelConfig,
+  Mode,
   Quartz,
   SatangConfig,
   Schedule,
@@ -47,7 +48,10 @@ class ConfigurationImpl extends Configuration {
   private val terraSection = conf.getConfig("terra")
   private val telegramSection = conf.getConfig("telegram")
   private val bitcoinSection = conf.getConfig("bitcoin")
-  lazy val appConfig: AppConfig = AppConfig(appSection.getInt("port"))
+  lazy val appConfig: AppConfig = AppConfig(
+    appSection.getInt("port"),
+    if (appSection.getString("mode") == "production") Mode.production else Mode.development
+  )
   lazy val lineConfig: Option[LineConfig] = Try(
     LineConfig(
       lineSection.getString("lineNotifyToken")
