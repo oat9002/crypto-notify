@@ -16,10 +16,10 @@ jobs:
         java-version: '16'
     - name: Format code
       run: | 
-        - sbt scalafmtAll
-        - git add --all
-        - git commit -m ":recycle: format code"
-        - git push
+        sbt scalafmtAll
+        git add --all
+        git commit -m ":recycle: format code"
+        git push
     - name: Clean and Compile
       run: sbt clean compile
 
