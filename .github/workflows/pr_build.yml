@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
     - name: Set up JDK 16
       uses: actions/setup-java@v3
       with:
@@ -22,7 +24,7 @@ jobs:
       run: | 
         sbt scalafmtAll
         git add --all
-        git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push origin HEAD)
+        git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push origin ${{ github.head_ref }})
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Clean and Compile
