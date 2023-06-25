@@ -22,8 +22,8 @@ jobs:
           java-version: '16'
       - name: Set GitHub user
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.comm'
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.comm'
       - name: Release
         run: sbt "release with-defaults"
         env: 
