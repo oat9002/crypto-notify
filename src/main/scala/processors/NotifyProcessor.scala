@@ -33,16 +33,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait NotifyProcessor extends BaseProcessor
 
-class NotifyProcessorImpl(using
-    system: ActorSystem[Nothing],
-    context: ExecutionContext
-) extends NotifyProcessor
+class NotifyProcessorImpl(
+                           using system: ActorSystem[Nothing], context: ExecutionContext)
+    extends NotifyProcessor
     with LazyLogging {
 
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()
   private lazy val terraHelper: TerraHelper = TerraHelperImpl()
-  private lazy val satangService: SatangService = SatangServiceImpl(configuration, httpclient)
+  private lazy val satangService: SatangService =
+    SatangServiceImpl(configuration, httpclient)
   private lazy val bscScanService: BscScanService =
     BscScanServiceImpl(configuration, httpclient)
   private lazy val binanceService: BinanceService =
