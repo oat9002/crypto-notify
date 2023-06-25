@@ -22,14 +22,17 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
     - name: Format code
-      run: | 
-        sbt scalafmtAll
-        git add --all
-        git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push ${{ github.head_ref }})
+      run: sbt scalafmtAll
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Clean and Compile
       run: sbt clean compile
+    - name: Push code if format is needed
+      if: git diff-index --quiet HEAD
+      run: |
+        git add --all
+        git commit -m ":recycle: format code"
+        git push ${{ github.head_ref }}
 
   test:
     needs: build
