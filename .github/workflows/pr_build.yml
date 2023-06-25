@@ -22,7 +22,7 @@ jobs:
       run: | 
         sbt scalafmtAll
         git add --all
-        git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push)
+        git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push origin HEAD)
     - name: Clean and Compile
       run: sbt clean compile
 
