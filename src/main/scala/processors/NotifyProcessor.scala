@@ -42,8 +42,7 @@ class NotifyProcessorImpl(using
   private lazy val configuration: Configuration = ConfigurationImpl()
   private lazy val httpclient: HttpClient = HttpClientImpl()
   private lazy val terraHelper: TerraHelper = TerraHelperImpl()
-  private lazy val satangService: SatangService =
-    SatangServiceImpl(configuration, httpclient)
+  private lazy val satangService: SatangService = SatangServiceImpl(configuration, httpclient)
   private lazy val bscScanService: BscScanService =
     BscScanServiceImpl(configuration, httpclient)
   private lazy val binanceService: BinanceService =
