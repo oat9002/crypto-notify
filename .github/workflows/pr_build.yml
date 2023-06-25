@@ -28,7 +28,7 @@ jobs:
       run: sbt clean compile
     - name: Check for changes
       run: |
-        if [[ -n $(git diff origin/main) ]]; then
+        if [[ -n $(git diff-index --quiet HEAD) ]]; then
           echo "IS_CHANGED=true" >> $GITHUB_ENV
         else
           echo "IS_CHANGED=false" >> $GITHUB_ENV
