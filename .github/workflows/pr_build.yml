@@ -5,14 +5,12 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  formatCode:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'github-actions[bot]' }}
     steps:
     - uses: actions/checkout@v3
       with:
         ref: ${{ github.head_ref }}
-        persist-credentials: false
     - name: Set up JDK 16
       uses: actions/setup-java@v3
       with:
@@ -25,8 +23,6 @@ jobs:
     - name: Format code
       run: |
         sbt scalafmtAll
-    - name: Clean and Compile
-      run: sbt clean compile
     - name: Check for changes
       run: |
         if git diff-index --quiet HEAD; then
@@ -43,10 +39,24 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  build:
+    needs: formatCode
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: ${{ github.head_ref }}
+    - name: Set up JDK 16
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '16'
+    - name: Clean and Compile
+      run: sbt clean compile
+
   test:
     needs: build
     runs-on: ubuntu-latest
-    if: github.actor != 'github-actions[bot]'
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 16
