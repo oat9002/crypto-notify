@@ -20,8 +20,7 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add --all
-        git commit -m ":recycle: format code"
-        git push
+        git diff-index --quiet HEAD || git commit -m ":recycle: format code" || git push
     - name: Clean and Compile
       run: sbt clean compile
 
