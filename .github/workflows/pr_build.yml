@@ -40,6 +40,8 @@ jobs:
         git add --all
         git commit -m ":recycle: format code"
         git push origin ${{ github.head_ref }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   test:
     needs: build
