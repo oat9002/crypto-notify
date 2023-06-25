@@ -34,7 +34,7 @@ jobs:
           echo "IS_CHANGED=false" >> $GITHUB_ENV
         fi
     - name: Push code if format is needed
-      if: ${{ env.IS_CHANGED == "true" }}
+      if: ${{ env.IS_CHANGED == 'true' }}
       run: |
         git add --all
         git commit -m ":recycle: format code"
