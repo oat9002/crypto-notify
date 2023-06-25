@@ -23,6 +23,8 @@ jobs:
         sbt scalafmtAll
         git add --all
         git diff-index --quiet HEAD || (git commit -m ":recycle: format code" | git push origin HEAD)
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: Clean and Compile
       run: sbt clean compile
 
