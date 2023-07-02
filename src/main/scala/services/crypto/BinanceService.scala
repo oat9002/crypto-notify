@@ -98,7 +98,8 @@ class BinanceServiceImpl(configuration: Configuration, httpClient: HttpClient)(u
         )
         .getOrElse(List.empty)
 
-      val binanceMap = (fromSaving ++ fromAccount).groupBy(_._1)
+      val binanceMap = (fromSaving ++ fromAccount)
+        .groupBy(_._1)
         .map { case (k, v) =>
           k -> v.map(_._2).sum
         }

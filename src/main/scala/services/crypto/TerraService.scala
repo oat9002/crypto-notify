@@ -122,11 +122,18 @@ class TerraServiceImpl(
       aUstExchangeRate <- aUstExchangeRateF
       aUstBalance <- aUstBalanceF
     } yield {
-      val newBalances = walletBalance.map(w => w.balances.map {
-        case Balance(symbol, balance) if symbol == "ust" =>
-          Balance(symbol, balance + (aUstBalance.getOrElse(BigDecimal(0)) * aUstExchangeRate.getOrElse(BigDecimal(0))))
-        case x => x
-      })
+      val newBalances = walletBalance.map(w =>
+        w.balances.map {
+          case Balance(symbol, balance) if symbol == "ust" =>
+            Balance(
+              symbol,
+              balance + (aUstBalance.getOrElse(BigDecimal(0)) * aUstExchangeRate.getOrElse(
+                BigDecimal(0)
+              ))
+            )
+          case x => x
+        }
+      )
 
       newBalances.map(b => b.map(x => CryptoBalance(symbol = x.symbol, balance = x.amount)))
     }

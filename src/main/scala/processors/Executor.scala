@@ -4,8 +4,9 @@ import actors.*
 import akka.actor.typed.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
+import models.configuration.Mode
 import services.*
-import services.scheduler.{QuartzService, SchedulerName, QuartzServiceImpl}
+import services.scheduler.{QuartzService, QuartzServiceImpl, SchedulerName}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
@@ -18,11 +19,10 @@ class ExecutorImpl(configuration: Configuration)(using
     context: ExecutionContext
 ) extends Executor
     with LazyLogging {
-  private lazy val quartzService: QuartzService[Command] =
-    QuartzServiceImpl[Command]()
+  private lazy val quartzService: QuartzService[Command] = QuartzServiceImpl[Command]()
 
   def execute(): Unit = {
-    val notifyCron = SchedulerName.Notify
+    val notifyCron = SchedulerName.Every10Seconds
     val healthCheckCron = SchedulerName.HealthCheck
 
     logger.info(

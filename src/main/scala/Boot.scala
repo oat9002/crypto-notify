@@ -21,10 +21,7 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
     system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
   given executionContext: ExecutionContextExecutor =
     system.executionContext
-  lazy val httpClient: HttpClient = HttpClientImpl()
   lazy val configuration: Configuration = ConfigurationImpl()
-  lazy val mackerelService: MackerelService =
-    MackerelServiceImpl(configuration, httpClient)
   lazy val executor: Executor = ExecutorImpl(configuration)
   lazy val healthCheckController: HealthCheckController =
     HealthCheckController()
