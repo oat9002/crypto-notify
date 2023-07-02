@@ -14,7 +14,9 @@ trait Executor {
   def execute(): Unit
 }
 
-class ExecutorImpl(configuration: Configuration)(using
+class ExecutorImpl(
+
+                    configuration: Configuration)(using
     val system: ActorSystem[Command],
     context: ExecutionContext
 ) extends Executor
