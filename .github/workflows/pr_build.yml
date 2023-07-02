@@ -37,7 +37,7 @@ jobs:
         git commit -m ":recycle: format code"
         git push origin ${{ github.head_ref }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
 
   build:
     needs: formatCode
