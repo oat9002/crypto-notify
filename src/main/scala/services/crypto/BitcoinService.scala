@@ -13,7 +13,7 @@ trait BitcoinService {
   def getBitcoinBalance(addresses: List[String]): Future[Option[BigDecimal]]
 }
 
-class BitcoinServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
+class BitcoinServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BitcoinService

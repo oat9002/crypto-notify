@@ -22,7 +22,7 @@ trait UserService {
   ): Future[Option[String]]
 }
 
-class UserServiceImpl(
+class UserServiceImpl(using
     satangService: SatangService,
     bscScanService: BscScanService,
     binanceService: BinanceService,

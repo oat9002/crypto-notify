@@ -8,20 +8,17 @@ import models.configuration.Mode
 import services.*
 import services.scheduler.{QuartzService, QuartzServiceImpl, SchedulerName}
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
-trait Executor {
-  def execute(): Unit
-}
+trait ExecuteProcessor extends BaseProcessor
 
-class ExecutorImpl(configuration: Configuration)(using
-    val system: ActorSystem[Command],
+class ExecutorProcessorImpl(using configuration: Configuration,  quartzService: QuartzService[Command])(using
+    system: ActorSystem[Command],
     context: ExecutionContext
-) extends Executor
+) extends ExecuteProcessor
     with LazyLogging {
-  private lazy val quartzService: QuartzService[Command] = QuartzServiceImpl[Command]()
 
-  def execute(): Unit = {
+  def run(): Future[Boolean] = {
     val notifyCron = SchedulerName.Every10Seconds
     val healthCheckCron = SchedulerName.HealthCheck
 
@@ -36,5 +33,7 @@ class ExecutorImpl(configuration: Configuration)(using
       )
       quartzService.schedule(healthCheckCron, system, HealthCheckTask)
     }
+    
+    Future.successful(true)
   }
 }

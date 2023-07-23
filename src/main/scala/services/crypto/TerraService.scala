@@ -18,7 +18,7 @@ trait TerraService {
   def getaUstExchangeRate(): Future[Option[BigDecimal]]
 }
 
-class TerraServiceImpl(
+class TerraServiceImpl(using
     configuration: Configuration,
     httpClient: HttpClient,
     terraHelper: TerraHelper

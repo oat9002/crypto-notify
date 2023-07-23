@@ -12,7 +12,7 @@ import scala.concurrent.Future
 
 trait TelegramService extends NotificationService
 
-class TelegramServiceImpl(httpClient: HttpClient, configuration: Configuration)(using
+class TelegramServiceImpl(using httpClient: HttpClient, configuration: Configuration)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends TelegramService
