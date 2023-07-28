@@ -4,29 +4,12 @@ import actors.Command
 import akka.actor.typed.ActorSystem
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
+import processors.{ExecuteProcessor, ExecutorProcessorImpl}
 import services.crypto
 import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
-import services.crypto.{
-  BinanceService,
-  BinanceServiceImpl,
-  BitcoinService,
-  BitcoinServiceImpl,
-  BscScanService,
-  BscScanServiceImpl,
-  SatangService,
-  SatangServiceImpl,
-  TerraService,
-  TerraServiceImpl
-}
+import services.crypto.{BinanceService, BinanceServiceImpl, BitcoinService, BitcoinServiceImpl, BscScanService, BscScanServiceImpl, SatangService, SatangServiceImpl, TerraService, TerraServiceImpl}
 import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.{
-  LineService,
-  LineServiceImpl,
-  NotificationService,
-  NotificationServiceImpl,
-  TelegramService,
-  TelegramServiceImpl
-}
+import services.notification.{LineService, LineServiceImpl, NotificationService, NotificationServiceImpl, TelegramService, TelegramServiceImpl}
 import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.ExecutionContext
@@ -52,4 +35,6 @@ class DependencySetup(using system: ActorSystem[Nothing], context: ExecutionCont
   given telegramService: TelegramService = TelegramServiceImpl()
   given notificationService: NotificationService =
     NotificationServiceImpl()
+
+  val executorProcessor: ActorSystem[Command] => ExecuteProcessor = (systemCommand: ActorSystem[Command]) => ExecutorProcessorImpl(systemCommand)
 }

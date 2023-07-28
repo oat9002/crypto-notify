@@ -7,7 +7,7 @@ import akka.http.scaladsl.server.Directives.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
-import processors.{ExecuteProcessor, Executor, ExecutorImpl}
+import processors.ExecuteProcessor
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import akka.http.scaladsl.server.Route
@@ -18,13 +18,14 @@ import services.healthcheck.{MackerelService, MackerelServiceImpl}
 object Boot extends App with LazyLogging with FailFastCirceSupport {
   given nothingActorRef: ActorRef[Nothing] =
     system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
-  given system: ActorSystem[Command] =
-    ActorSystem(Scheduler(), "crypto-notify")
   given executionContext: ExecutionContext = system.executionContext
 
-  val dependencies = DependencySetup()
+  private val dependencies = DependencySetup()
 
-  lazy val executor: ExecuteProcessor =
+  given system: ActorSystem[Command] =
+    ActorSystem(Scheduler(), "crypto-notify")
+
+  lazy val executor: ExecuteProcessor = dependencies.executorProcessor(system)
   lazy val healthCheckController: HealthCheckController =
     HealthCheckController()
 
