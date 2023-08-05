@@ -7,14 +7,7 @@ import akka.http.scaladsl.server.Directives.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
-import processors.{
-  ExecuteProcessor,
-  ExecutorProcessorImpl,
-  HealthCheckProcessor,
-  HealthCheckProcessorImpl,
-  NotifyProcessor,
-  NotifyProcessorImpl
-}
+import processors.{ExecuteProcessor, ExecutorProcessorImpl, HealthCheckProcessor, HealthCheckProcessorImpl, NotifyProcessor, NotifyProcessorImpl}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import akka.http.scaladsl.server.Route
@@ -22,6 +15,7 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import di.DependencySetup
 import services.healthcheck.{MackerelService, MackerelServiceImpl}
 import services.notification.NotificationService
+import services.scheduler.{QuartzService, QuartzServiceImpl}
 import services.user.UserService
 
 object Boot extends App with LazyLogging with FailFastCirceSupport {
@@ -29,19 +23,20 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
     system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
   given executionContext: ExecutionContext = system.executionContext
 
-  private val di = DependencySetup()
-  given configuration: Configuration = di.configuration
-  given HttpClient = di.httpclient
-  given MackerelService = di.mackerelService
-  given NotificationService = di.notificationService
-  given UserService = di.userService
-  given HealthCheckProcessor = HealthCheckProcessorImpl()
-  given NotifyProcessor = NotifyProcessorImpl()
+  val diSetup = DependencySetup()
+  given configuration: Configuration = diSetup.configuration
+  given HttpClient = diSetup.httpclient
+  given MackerelService = diSetup.mackerelService
+  given NotificationService = diSetup.notificationService
+  given UserService = diSetup.userService
+
+  val healthCheckProcessor: HealthCheckProcessor = HealthCheckProcessorImpl()
+  val notifyProcessor: NotifyProcessor = NotifyProcessorImpl()
 
   given system: ActorSystem[Command] =
-    ActorSystem(Scheduler(), "crypto-notify")
+    ActorSystem(Scheduler(notifyProcessor, healthCheckProcessor), "crypto-notify")
 
-  given quartServi
+  given QuartzService[Command] = QuartzServiceImpl[Command]()
 
   val executor: ExecuteProcessor = ExecutorProcessorImpl()
   val healthCheckController: HealthCheckController = HealthCheckController()
@@ -61,7 +56,7 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
       healthCheckController.route
     )
 
-  executor.execute()
+  executor.run()
   Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
 
   logger.info(

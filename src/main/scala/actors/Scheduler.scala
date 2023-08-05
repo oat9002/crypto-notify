@@ -57,9 +57,11 @@ class Scheduler(using notifyProcessor: NotifyProcessor, healthCheckProcessor: He
 }
 
 object Scheduler {
-  def apply(using notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor): Behavior[Command] =
+  def apply(notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor): Behavior[Command] =
     Behaviors.setup(context => {
       given ActorContext[Command] = context
+      given NotifyProcessor = notifyProcessor
+      given HealthCheckProcessor = healthCheckProcessor
 
       new Scheduler()
     })
