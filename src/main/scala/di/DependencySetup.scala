@@ -35,6 +35,4 @@ class DependencySetup(using system: ActorSystem[Nothing], context: ExecutionCont
   given telegramService: TelegramService = TelegramServiceImpl()
   given notificationService: NotificationService =
     NotificationServiceImpl()
-
-  val executorProcessor: ActorSystem[Command] => ExecuteProcessor = (systemCommand: ActorSystem[Command]) => ExecutorProcessorImpl(systemCommand)
 }
