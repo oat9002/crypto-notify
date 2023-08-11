@@ -33,7 +33,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait NotifyProcessor extends BaseProcessor
 
-class NotifyProcessorImpl(using configuration: Configuration, notificationService: NotificationService, userService: UserService)(using system: ActorSystem[Nothing], context: ExecutionContext)
+class NotifyProcessorImpl(using
+    configuration: Configuration,
+    notificationService: NotificationService,
+    userService: UserService
+)(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends NotifyProcessor
     with LazyLogging {
 

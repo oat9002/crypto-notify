@@ -39,8 +39,9 @@ import services.user.{UserService, UserServiceImpl}
 
 import scala.concurrent.Future
 
-class Scheduler(using notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor)(using actorContext: ActorContext[Command])
-    extends AbstractBehavior[Command](actorContext)
+class Scheduler(using notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor)(
+    using actorContext: ActorContext[Command]
+) extends AbstractBehavior[Command](actorContext)
     with LazyLogging {
   import context.executionContext
 
@@ -57,7 +58,10 @@ class Scheduler(using notifyProcessor: NotifyProcessor, healthCheckProcessor: He
 }
 
 object Scheduler {
-  def apply(notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor): Behavior[Command] =
+  def apply(
+      notifyProcessor: NotifyProcessor,
+      healthCheckProcessor: HealthCheckProcessor
+  ): Behavior[Command] =
     Behaviors.setup(context => {
       given ActorContext[Command] = context
       given NotifyProcessor = notifyProcessor

@@ -7,7 +7,14 @@ import akka.http.scaladsl.server.Directives.*
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import controllers.HealthCheckController
-import processors.{ExecuteProcessor, ExecutorProcessorImpl, HealthCheckProcessor, HealthCheckProcessorImpl, NotifyProcessor, NotifyProcessorImpl}
+import processors.{
+  ExecuteProcessor,
+  ExecutorProcessorImpl,
+  HealthCheckProcessor,
+  HealthCheckProcessorImpl,
+  NotifyProcessor,
+  NotifyProcessorImpl
+}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import akka.http.scaladsl.server.Route

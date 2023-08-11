@@ -12,7 +12,10 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
 trait ExecuteProcessor extends BaseProcessor
 
-class ExecutorProcessorImpl(using configuration: Configuration,  quartzService: QuartzService[Command])(using
+class ExecutorProcessorImpl(using
+    configuration: Configuration,
+    quartzService: QuartzService[Command]
+)(using
     system: ActorSystem[Command],
     context: ExecutionContext
 ) extends ExecuteProcessor
@@ -33,7 +36,7 @@ class ExecutorProcessorImpl(using configuration: Configuration,  quartzService: 
       )
       quartzService.schedule(healthCheckCron, system, HealthCheckTask)
     }
-    
+
     Future.successful(true)
   }
 }
