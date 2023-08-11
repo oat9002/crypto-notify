@@ -8,7 +8,7 @@ trait NotificationService {
   def notify(message: String): Future[Boolean]
 }
 
-class NotificationServiceImpl(
+class NotificationServiceImpl(using
     config: Configuration,
     lineService: LineService,
     telegramService: TelegramService

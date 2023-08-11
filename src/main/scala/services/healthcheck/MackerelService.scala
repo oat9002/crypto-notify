@@ -13,7 +13,7 @@ trait MackerelService {
   def sendMeasurement(request: List[MackerelRequest]): Future[Boolean]
 }
 
-class MackerelServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
+class MackerelServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends MackerelService

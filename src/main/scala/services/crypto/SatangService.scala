@@ -15,7 +15,7 @@ trait SatangService {
   def getCryptoPrices: Future[Option[List[Ticker]]]
 }
 
-class SatangServiceImpl(configuration: Configuration, httpClient: HttpClient)(using
+class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends SatangService
