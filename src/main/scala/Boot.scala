@@ -19,25 +19,14 @@ import services.scheduler.{QuartzService, QuartzServiceImpl}
 import services.user.UserService
 
 object Boot extends App with LazyLogging with FailFastCirceSupport {
-  given nothingActorRef: ActorRef[Nothing] =
-    system.systemActorOf(Behaviors.empty, "crypto-notify-nothing")
-  given executionContext: ExecutionContext = system.executionContext
-
+  given nothingSystem: ActorSystem[Nothing] =
+    ActorSystem(Behaviors.empty, "crypto-notify-nothing")
+  given executionContext: ExecutionContext = nothingSystem.executionContext
   val diSetup = DependencySetup()
-  given configuration: Configuration = diSetup.configuration
-  given HttpClient = diSetup.httpclient
-  given MackerelService = diSetup.mackerelService
-  given NotificationService = diSetup.notificationService
-  given UserService = diSetup.userService
-
-  val healthCheckProcessor: HealthCheckProcessor = HealthCheckProcessorImpl()
-  val notifyProcessor: NotifyProcessor = NotifyProcessorImpl()
-
   given system: ActorSystem[Command] =
-    ActorSystem(Scheduler(notifyProcessor, healthCheckProcessor), "crypto-notify")
-
-  given QuartzService[Command] = QuartzServiceImpl[Command]()
-
+    ActorSystem(Scheduler(diSetup.notifyProcessor, diSetup.healthCheckProcessor), "crypto-notify")
+  given quartService: QuartzService[Command] = QuartzServiceImpl[Command]()
+  given configuration: Configuration = diSetup.configuration
   val executor: ExecuteProcessor = ExecutorProcessorImpl()
   val healthCheckController: HealthCheckController = HealthCheckController()
 
