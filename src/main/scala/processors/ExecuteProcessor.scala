@@ -22,7 +22,7 @@ class ExecutorProcessorImpl(using
     with LazyLogging {
 
   def run(): Future[Boolean] = {
-    val notifyCron = SchedulerName.Every10Seconds
+    val notifyCron = SchedulerName.Notify
     val healthCheckCron = SchedulerName.HealthCheck
 
     logger.info(
