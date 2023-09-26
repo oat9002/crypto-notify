@@ -25,7 +25,7 @@ scalacOptions ++= Seq("-Xmax-inlines", "50")
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
 dockerRepository := Some("oat9002")
-dockerBaseImage := "eclipse-temurin:18-jre-focal"
+dockerBaseImage := "eclipse-temurin:17-jre-focal"
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 
