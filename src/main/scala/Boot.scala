@@ -1,29 +1,19 @@
 import actors.{Command, Scheduler}
-import akka.actor.typed.{ActorRef, ActorSystem}
+import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.*
 import akka.http.scaladsl.server.Directives.*
-import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
-import controllers.HealthCheckController
-import processors.{
-  ExecuteProcessor,
-  ExecutorProcessorImpl,
-  HealthCheckProcessor,
-  HealthCheckProcessorImpl,
-  NotifyProcessor,
-  NotifyProcessorImpl
-}
-
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 import akka.http.scaladsl.server.Route
+import com.typesafe.scalalogging.LazyLogging
+import commons.Configuration
+import controllers.HealthCheckController
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import di.DependencySetup
-import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.NotificationService
+import processors.{ExecuteProcessor, ExecutorProcessorImpl}
 import services.scheduler.{QuartzService, QuartzServiceImpl}
-import services.user.UserService
+
+import scala.concurrent.ExecutionContext
 
 object Boot extends App with LazyLogging with FailFastCirceSupport {
   given nothingSystem: ActorSystem[Nothing] =

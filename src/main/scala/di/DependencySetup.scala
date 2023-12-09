@@ -1,6 +1,5 @@
 package di
 
-import actors.Command
 import akka.actor.typed.ActorSystem
 import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
 import helpers.{TerraHelper, TerraHelperImpl}
