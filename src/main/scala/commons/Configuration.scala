@@ -50,7 +50,9 @@ class ConfigurationImpl extends Configuration {
   private val bitcoinSection = conf.getConfig("bitcoin")
   lazy val appConfig: AppConfig = AppConfig(
     appSection.getInt("port"),
-    if (appSection.getString("mode") == "production") Mode.production else Mode.development
+    if (appSection.getString("mode") == "production") Mode.production else Mode.development,
+    appSection.getBoolean("useScheduler"),
+    appSection.getString("apikey")
   )
   lazy val lineConfig: Option[LineConfig] = Try(
     LineConfig(
