@@ -13,9 +13,13 @@ import validators.controllers.ApiKeyValidator
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
-class NotifyController(using notifyProcessor: NotifyProcessor, config: Configuration)(using system: ActorSystem[Nothing], context: ExecutionContext) extends FailFastCirceSupport with ApiKeyValidator {
+class NotifyController(using notifyProcessor: NotifyProcessor, config: Configuration)(using
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
+) extends FailFastCirceSupport
+    with ApiKeyValidator {
   protected val configuration: Configuration = config
-  
+
   val route: Route = {
     path("notify") {
       get {
@@ -24,7 +28,7 @@ class NotifyController(using notifyProcessor: NotifyProcessor, config: Configura
 
           onComplete(result) {
             case Success(value) => complete(OK, value)
-            case Failure(ex) => complete(InternalServerError, ex.getMessage)
+            case Failure(ex)    => complete(InternalServerError, ex.getMessage)
           }
         }
       }

@@ -25,7 +25,7 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
   given quartService: QuartzService[Command] = QuartzServiceImpl[Command]()
   given configuration: Configuration = diSetup.configuration
   given notifyProcessor: NotifyProcessor = diSetup.notifyProcessor
-  
+
   private val executor: ExecuteProcessor = ExecutorProcessorImpl()
   private val healthCheckController: HealthCheckController = HealthCheckController()
   private val notifyController: NotifyController = controllers.NotifyController()
@@ -48,7 +48,7 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
   if (configuration.appConfig.useScheduler) {
     executor.run()
   }
-  
+
   Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
 
   logger.info(
