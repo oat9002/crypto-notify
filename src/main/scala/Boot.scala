@@ -7,10 +7,10 @@ import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
 import com.typesafe.scalalogging.LazyLogging
 import commons.Configuration
-import controllers.HealthCheckController
+import controllers.{HealthCheckController, NotifyController}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import di.DependencySetup
-import processors.{ExecuteProcessor, ExecutorProcessorImpl}
+import processors.{ExecuteProcessor, ExecutorProcessorImpl, NotifyProcessor}
 import services.scheduler.{QuartzService, QuartzServiceImpl}
 
 import scala.concurrent.ExecutionContext
@@ -19,15 +19,17 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
   given nothingSystem: ActorSystem[Nothing] =
     ActorSystem(Behaviors.empty, "crypto-notify-nothing")
   given executionContext: ExecutionContext = nothingSystem.executionContext
-  val diSetup = DependencySetup()
+  private val diSetup = DependencySetup()
   given system: ActorSystem[Command] =
     ActorSystem(Scheduler(diSetup.notifyProcessor, diSetup.healthCheckProcessor), "crypto-notify")
   given quartService: QuartzService[Command] = QuartzServiceImpl[Command]()
   given configuration: Configuration = diSetup.configuration
-  val executor: ExecuteProcessor = ExecutorProcessorImpl()
-  val healthCheckController: HealthCheckController = HealthCheckController()
-
-  val route: Route =
+  given notifyProcessor: NotifyProcessor = diSetup.notifyProcessor
+  
+  private val executor: ExecuteProcessor = ExecutorProcessorImpl()
+  private val healthCheckController: HealthCheckController = HealthCheckController()
+  private val notifyController: NotifyController = controllers.NotifyController()
+  private val route: Route =
     concat(
       pathEndOrSingleSlash {
         get {
@@ -39,10 +41,14 @@ object Boot extends App with LazyLogging with FailFastCirceSupport {
           )
         }
       },
-      healthCheckController.route
+      healthCheckController.route,
+      notifyController.route
     )
 
-  executor.run()
+  if (configuration.appConfig.useScheduler) {
+    executor.run()
+  }
+  
   Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
 
   logger.info(

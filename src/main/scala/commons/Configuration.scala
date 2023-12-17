@@ -52,7 +52,7 @@ class ConfigurationImpl extends Configuration {
     appSection.getInt("port"),
     if (appSection.getString("mode") == "production") Mode.production else Mode.development,
     appSection.getBoolean("useScheduler"),
-    appSection.getString("apikey")
+    appSection.getString("apiKey")
   )
   lazy val lineConfig: Option[LineConfig] = Try(
     LineConfig(
