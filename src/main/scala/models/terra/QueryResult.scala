@@ -5,7 +5,7 @@ import io.circe.generic.semiauto._
 
 case class QueryResult[T](queryResult: T)
 object QueryResult {
-  given [T]: Encoder[QueryResult[T]] = Encoder.forProduct1("query_result")(q => q)
+  given [T: Encoder]: Encoder[QueryResult[T]] = Encoder.forProduct1("query_result")(_.queryResult)
   given [T: Decoder]: Decoder[QueryResult[T]] =
     Decoder.forProduct1("query_result")(QueryResult[T].apply)
 }
