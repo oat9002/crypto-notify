@@ -21,13 +21,11 @@ lazy val root = project
   )
 
 scalacOptions ++= Seq("-Xmax-inlines", "50")
-scalacOptions ++= Seq("-deprecation")
-
 
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
 dockerRepository := Some("oat9002")
-dockerBaseImage := "eclipse-temurin:21-jre-jammy"
+dockerBaseImage := "eclipse-temurin:17-jre-focal"
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 
