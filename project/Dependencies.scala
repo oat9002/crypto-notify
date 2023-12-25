@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 
 object Dependencies {
   val akka = "2.6.20"
@@ -12,7 +12,7 @@ object Dependencies {
   val logback = "1.4.7"
   val scalaTest = "3.2.15"
   val sttp = "3.8.13"
-  val web3j = "5.0.0"
+  val web3j = "4.10.3"
   val circe = "0.14.5"
   val retry = "0.3.6"
 

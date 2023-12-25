@@ -8,4 +8,5 @@ Notify your current cryptocurrency balance from Satang Pro via Line Notify or Te
 - BscScan
 - Terra
 - CakePool
+- VeCakePool
 - Bitcoin mainnet
