@@ -7,6 +7,7 @@ object Constant {
   val anchorMarketContractAddress =
     "terra1sepfj7s0aeg5967uxnfk4thzlerrsktkpelm5s"
   val cakePoolContractAddress = "0x45c54210128a065de780C4B0Df3d16664f7f859e"
+  val veCakePoolContractAddress = "0x5692DB8177a81A6c6afc8084C2976C9933EC1bAB"
 
   val bscRpcUrl = "https://bsc-dataseed.binance.org"
   val satangUrl = "https://satangcorp.com/api/"

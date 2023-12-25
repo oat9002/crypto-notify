@@ -4,6 +4,7 @@ import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant}
 import contracts.pancake.CakePool
+import contracts.pancake.VeCakePool
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.http.HttpService
@@ -23,16 +24,43 @@ class PancakeServiceImpl(using
     context: ExecutionContext
 ) extends PancakeService
     with LazyLogging {
+  private val gasProvider = new DefaultGasProvider()
+  private val defaultCredential = Credentials.create("0")
   private lazy val web3j: Web3j =
     Web3j.build(new HttpService(Constant.bscRpcUrl))
   private lazy val cakePool: CakePool = CakePool.load(
     Constant.cakePoolContractAddress,
     web3j,
-    Credentials.create("0"),
-    new DefaultGasProvider()
+    defaultCredential,
+    gasProvider
+  )
+  private lazy val veCakePool: VeCakePool = VeCakePool.load(
+    Constant.veCakePoolContractAddress,
+    web3j,
+    defaultCredential,
+    gasProvider
   )
 
   def getPancakeStakeBalance(address: String): Future[Option[BigDecimal]] = {
+    val oldCakeF = getCakeBalanceFromOldPool(address)
+    val cakeFromVePoolF = getCakeBalanceFromVeCakePool(address)
+
+    for {
+      oldCakeOpt <- oldCakeF
+      cakeFromVeOpt <- cakeFromVePoolF
+    } yield {
+      if (oldCakeOpt.isEmpty && cakeFromVeOpt.isEmpty) {
+        None
+      } else {
+        val oldCake = oldCakeOpt.getOrElse(BigDecimal(0))
+        val cakeFromVe = cakeFromVeOpt.getOrElse(BigDecimal(0))
+
+        Some(oldCake + cakeFromVe)
+      }
+    }
+  }
+
+  private def getCakeBalanceFromOldPool(address: String): Future[Option[BigDecimal]] = {
     for {
       userInfo <- cakePool.userInfo(address).sendAsync().asScala
       pricePerFullShare <- cakePool.getPricePerFullShare.sendAsync().asScala
@@ -47,7 +75,24 @@ class PancakeServiceImpl(using
       } match {
         case Success(value) => Some(value)
         case Failure(exception) =>
-          logger.error("cannot get package stake balance", exception)
+          logger.error("cannot get pancake stake balance", exception)
+          None
+      }
+    }
+  }
+
+  private def getCakeBalanceFromVeCakePool(address: String): Future[Option[BigDecimal]] = {
+    for {
+      userInfo <- veCakePool.getUserInfo(address).sendAsync().asScala
+    } yield {
+      Try {
+        val balance = BigDecimal(userInfo.component1())
+
+        (balance / Math.pow(10, 18)).setScale(6, RoundingMode.HALF_UP)
+      } match {
+        case Success(value) => Some(value)
+        case Failure(exception) =>
+          logger.equals("cannot get cake from veCakePool", exception)
           None
       }
     }
