@@ -4,13 +4,8 @@ import io.circe._
 import io.circe.generic.semiauto._
 
 case class Saving(
-    totalAmountInBTC: BigDecimal,
-    totalAmountInUSDT: BigDecimal,
-    totalFixedAmountInBTC: BigDecimal,
-    totalFixedAmountInUSDT: BigDecimal,
-    totalFlexibleInBTC: BigDecimal,
-    totalFlexibleInUSDT: BigDecimal,
-    positionAmountVos: List[PositionAmount]
+    rows: List[PositionAmount],
+    total: Int
 )
 object Saving {
   given Encoder[Saving] = deriveEncoder[Saving]
@@ -19,9 +14,8 @@ object Saving {
 
 case class PositionAmount(
     asset: String,
-    amount: BigDecimal,
-    amountInBTC: BigDecimal,
-    amountInUSDT: BigDecimal
+    totalAmount: BigDecimal,
+    collateralAmount: BigDecimal,
 )
 object PositionAmount {
   given Encoder[PositionAmount] = deriveEncoder[PositionAmount]

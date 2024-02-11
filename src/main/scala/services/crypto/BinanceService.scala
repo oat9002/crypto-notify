@@ -38,7 +38,7 @@ class BinanceServiceImpl(using configuration: Configuration, httpClient: HttpCli
       EncryptionAlgorithm.HmacSHA256
     )
     val url =
-      s"$baseUrl/sapi/v1/lending/union/account?$queryString&signature=$signature"
+      s"$baseUrl/sapi/v1/simple-earn/flexible/position?$queryString&signature=$signature"
     val response = httpClient.get[Saving](url, Map("X-MBX-APIKEY" -> apiKey))
 
     response map {
@@ -89,7 +89,7 @@ class BinanceServiceImpl(using configuration: Configuration, httpClient: HttpCli
       accountDetail <- accountDetailF
     } yield {
       val fromSaving = saving
-        .map(_.positionAmountVos.map(x => x.asset.toLowerCase() -> x.amount))
+        .map(_.rows.map(x => x.asset.toLowerCase() -> x.totalAmount))
         .getOrElse(List.empty)
       val fromAccount = accountDetail
         .map(x =>
