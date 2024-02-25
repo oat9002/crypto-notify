@@ -15,7 +15,7 @@ object Saving {
 case class PositionAmount(
     asset: String,
     totalAmount: BigDecimal,
-    collateralAmount: BigDecimal,
+    collateralAmount: BigDecimal
 )
 object PositionAmount {
   given Encoder[PositionAmount] = deriveEncoder[PositionAmount]

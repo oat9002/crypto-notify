@@ -155,12 +155,12 @@ class UserServiceImpl(using
               .find(_.symbol.toLowerCase() == s"${balance.symbol}usdt")
               .map(_.price)
               .map(_ * usdtToThb)
-              .getOrElse{
+              .getOrElse {
                 binancePrices
-                .find(_.symbol.toLowerCase() == s"${balance.symbol}btc")
-                .map(_.price)
-                .map(_ * btcToThb)
-                .getOrElse(BigDecimal(0))
+                  .find(_.symbol.toLowerCase() == s"${balance.symbol}btc")
+                  .map(_.price)
+                  .map(_ * btcToThb)
+                  .getOrElse(BigDecimal(0))
               }
           }
     }
