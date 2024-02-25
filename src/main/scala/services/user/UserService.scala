@@ -121,32 +121,49 @@ class UserServiceImpl(using
       satangPrices: List[SatangTicker],
       binancePrices: List[BinanceTicker]
   ): CryptoBalance = {
-    val lastThbPrice = satangPrices
-      .filter(_.symbol != "luna_thb")
-      .find(_.symbol == s"${balance.symbol}_thb")
+    val btcToThb = satangPrices
+      .find(_.symbol == "btc_thb")
       .map(_.lastPrice)
-      .getOrElse {
-        binancePrices
-          .find(_.symbol.toLowerCase() == s"${balance.symbol}busd")
-          .map(_.price) match {
-          case Some(busd) =>
-            satangPrices
-              .find(_.symbol == "busd_thb")
-              .map(_.lastPrice)
-              .getOrElse(BigDecimal(0)) * busd
-          case None =>
-            binancePrices
-              .find(_.symbol.toLowerCase() == s"${balance.symbol}btc")
-              .map(_.price) match {
-              case Some(btc) =>
-                satangPrices
-                  .find(_.symbol == "btc_thb")
-                  .map(_.lastPrice)
-                  .getOrElse(BigDecimal(0)) * btc
-              case None => BigDecimal(0)
-            }
+      .getOrElse(BigDecimal(0))
+
+    val lastThbPrice = balance.symbol match {
+      case "wbeth" =>
+        val wbethToEth = binancePrices
+          .find(_.symbol.toLowerCase() == "wbetheth")
+          .map(_.price)
+        val ethToBtc = binancePrices
+          .find(_.symbol.toLowerCase() == "ethbtc")
+          .map(_.price)
+
+        (wbethToEth, ethToBtc) match {
+          case (Some(toEth), Some(toBtc)) =>
+            toEth * toBtc * btcToThb
+          case _ => BigDecimal(0)
         }
-      }
+      case _ =>
+        satangPrices
+          .filter(_.symbol != "luna_thb")
+          .find(_.symbol == s"${balance.symbol}_thb")
+          .map(_.lastPrice)
+          .getOrElse {
+            val usdtToThb = satangPrices
+              .find(_.symbol == "usdt_thb")
+              .map(_.lastPrice)
+              .getOrElse(BigDecimal(0))
+
+            binancePrices
+              .find(_.symbol.toLowerCase() == s"${balance.symbol}usdt")
+              .map(_.price)
+              .map(_ * usdtToThb)
+              .getOrElse{
+                binancePrices
+                .find(_.symbol.toLowerCase() == s"${balance.symbol}btc")
+                .map(_.price)
+                .map(_ * btcToThb)
+                .getOrElse(BigDecimal(0))
+              }
+          }
+    }
 
     CryptoBalance(
       balance.symbol,
