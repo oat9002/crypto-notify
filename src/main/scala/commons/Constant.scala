@@ -13,7 +13,7 @@ object Constant {
   val satangUrl = "https://satangcorp.com/api/"
   val bscScanUrl = "https://api.bscscan.com/api"
   val binanceUrl = "https://api.binance.com"
-  val terraUrl = "https://lcd.terra.dev"
+  val terraUrl = "https://terra-classic-lcd.publicnode.com"
   val twoPointOTerraUrl = "https://phoenix-lcd.terra.dev"
   val makerelUrl = "https://api.mackerelio.com"
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
