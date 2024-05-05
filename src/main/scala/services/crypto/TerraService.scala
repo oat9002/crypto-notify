@@ -104,7 +104,7 @@ class TerraServiceImpl(using
 
     response map {
       case Left(err) =>
-        logger.error(s"getsUstExchange failed, err: $err")
+        logger.error(s"getaUstExchange failed, err: $err")
         None
       case Right(v) => Some(v.queryResult.exchangeRate)
     }

@@ -5,9 +5,9 @@ import io.circe.generic.semiauto._
 
 case class QueryResult[T](queryResult: T)
 object QueryResult {
-  given [T: Encoder]: Encoder[QueryResult[T]] = Encoder.forProduct1("query_result")(_.queryResult)
+  given [T: Encoder]: Encoder[QueryResult[T]] = Encoder.forProduct1("data")(_.queryResult)
   given [T: Decoder]: Decoder[QueryResult[T]] =
-    Decoder.forProduct1("query_result")(QueryResult[T].apply)
+    Decoder.forProduct1("data")(QueryResult[T].apply)
 }
 
 case class ExchangeRate(
