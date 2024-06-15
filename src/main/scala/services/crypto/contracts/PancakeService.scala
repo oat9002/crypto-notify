@@ -21,7 +21,7 @@ trait PancakeService {
 class PancakeServiceImpl(using
     system: ActorSystem[Nothing],
     context: ExecutionContext,
-                         logger: Logger
+    logger: Logger
 ) extends PancakeService {
   private val gasProvider = new DefaultGasProvider()
   private val defaultCredential = Credentials.create("0")

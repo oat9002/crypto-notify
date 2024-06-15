@@ -22,7 +22,7 @@ class TerraServiceImpl(using
     configuration: Configuration,
     httpClient: HttpClient,
     terraHelper: TerraHelper,
-                       logger: Logger
+    logger: Logger
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends TerraService {
   val baseOldUrl: String = Constant.terraUrl

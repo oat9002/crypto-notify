@@ -21,16 +21,16 @@ class Logger(using notificationService: NotificationService) extends LazyLogging
 
     notificationService.notify(s"[Debug] - $message")
   }
-  
+
   def info(message: String): Unit = {
     logger.info(message)
-    
+
     notificationService.notify(s"[Info] - $message")
   }
-  
+
   def warn(message: String): Unit = {
     logger.warn(message)
-    
+
     notificationService.notify(s"[Warn] - $message")
   }
 }

@@ -18,7 +18,7 @@ trait SatangService {
 class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext,
-                                                                                    logger: Logger
+    logger: Logger
 ) extends SatangService {
 
   val baseUrl: String = Constant.satangUrl

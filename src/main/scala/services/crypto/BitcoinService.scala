@@ -12,9 +12,13 @@ trait BitcoinService {
   def getBitcoinBalance(addresses: List[String]): Future[Option[BigDecimal]]
 }
 
-class BitcoinServiceImpl(using configuration: Configuration, httpClient: HttpClient, logger: Logger)(using
-                                                                                                     system: ActorSystem[Nothing],
-                                                                                                     context: ExecutionContext
+class BitcoinServiceImpl(using
+    configuration: Configuration,
+    httpClient: HttpClient,
+    logger: Logger
+)(using
+    system: ActorSystem[Nothing],
+    context: ExecutionContext
 ) extends BitcoinService {
   override def getAllUtxo(address: String): Future[Option[List[Utxo]]] = {
     val url = s"${Constant.blockStreamUrl}/address/$address/utxo"

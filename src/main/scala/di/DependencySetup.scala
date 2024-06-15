@@ -3,7 +3,12 @@ package di
 import akka.actor.typed.ActorSystem
 import commons.*
 import helpers.{TerraHelper, TerraHelperImpl}
-import processors.{HealthCheckProcessor, HealthCheckProcessorImpl, NotifyProcessor, NotifyProcessorImpl}
+import processors.{
+  HealthCheckProcessor,
+  HealthCheckProcessorImpl,
+  NotifyProcessor,
+  NotifyProcessorImpl
+}
 import services.crypto
 import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
 import services.crypto.*

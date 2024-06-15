@@ -21,7 +21,7 @@ trait BscScanService {
 class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext,
-                                                                                     logger: Logger
+    logger: Logger
 ) extends BscScanService {
   val baseUrl: String = Constant.bscScanUrl
   val apiKey: String = configuration.bscScanConfig.map(_.apiKey).getOrElse("")

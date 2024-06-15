@@ -16,7 +16,7 @@ trait MackerelService {
 class MackerelServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext,
-                                                                                      logger: Logger
+    logger: Logger
 ) extends MackerelService {
   val baseUrl: String = Constant.makerelUrl
   val serviceName: String =

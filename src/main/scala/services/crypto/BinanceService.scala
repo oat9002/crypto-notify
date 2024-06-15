@@ -16,7 +16,11 @@ trait BinanceService {
   def getAllBalance: Future[Option[List[CryptoBalance]]]
 }
 
-class BinanceServiceImpl(using configuration: Configuration, httpClient: HttpClient, logger: Logger)(using
+class BinanceServiceImpl(using
+    configuration: Configuration,
+    httpClient: HttpClient,
+    logger: Logger
+)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends BinanceService {

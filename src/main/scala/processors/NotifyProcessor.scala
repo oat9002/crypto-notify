@@ -13,8 +13,8 @@ trait NotifyProcessor extends BaseProcessor
 class NotifyProcessorImpl(using
     configuration: Configuration,
     notificationService: NotificationService,
-    userService: UserService, 
-                          logger: Logger
+    userService: UserService,
+    logger: Logger
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends NotifyProcessor {
 
@@ -26,7 +26,7 @@ class NotifyProcessorImpl(using
       configuration.terraConfig.map(_.address),
       configuration.bitcoinConfig.map(_.address)
     )
-    
+
     message
       .flatMap {
         case Some(m) => notificationService.notify(m)

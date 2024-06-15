@@ -16,7 +16,8 @@ class ExecutorProcessorImpl(using
 )(using
     system: ActorSystem[Command],
     context: ExecutionContext
-) extends ExecuteProcessor with LocalLogger {
+) extends ExecuteProcessor
+    with LocalLogger {
 
   def run(): Future[Boolean] = {
     val notifyCron = SchedulerName.Notify
