@@ -2,13 +2,13 @@ package actors
 
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.{AbstractBehavior, ActorContext, Behaviors}
-import com.typesafe.scalalogging.LazyLogging
+import commons.LocalLogger
 import processors.{HealthCheckProcessor, NotifyProcessor}
 
 class Scheduler(using notifyProcessor: NotifyProcessor, healthCheckProcessor: HealthCheckProcessor)(
     using actorContext: ActorContext[Command]
 ) extends AbstractBehavior[Command](actorContext)
-    with LazyLogging {
+    with LocalLogger {
 
   override def onMessage(msg: Command): Behavior[Command] = msg match {
     case NotifyTask =>

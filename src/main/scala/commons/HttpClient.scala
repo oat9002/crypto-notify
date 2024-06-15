@@ -1,22 +1,17 @@
 package commons
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
-import commons._
-import io.circe._
-import io.circe.generic.semiauto._
-import sttp._
+import io.circe.*
+import retry.Success.*
+import sttp.*
 import sttp.capabilities.akka.AkkaStreams
-import sttp.client3._
+import sttp.client3.*
 import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.client3.circe.asJson
-
-import concurrent.duration.DurationInt
-import retry.Success._
 import sttp.model.StatusCode
 
+import scala.concurrent.duration.DurationInt
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 trait HttpClient {
   def get[Res](url: String, header: Map[String, String] = Map())(using
@@ -39,11 +34,10 @@ trait HttpClient {
   ): Future[Either[String, Res]]
 }
 
-class HttpClientImpl(using
+class HttpClientImpl(using logger: Logger)(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
-) extends HttpClient
-    with LazyLogging {
+) extends HttpClient {
   val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] =
     AkkaHttpBackend.usingActorSystem(system.classicSystem)
   override def get[Res](url: String, header: Map[String, String])(using

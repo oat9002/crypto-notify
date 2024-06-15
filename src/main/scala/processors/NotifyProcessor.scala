@@ -1,33 +1,10 @@
 package processors
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.CommonUtil.getFormattedNowDate
-import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
-import helpers.{TerraHelper, TerraHelperImpl}
-import services.crypto.contracts.{PancakeService, PancakeServiceImpl}
-import services.crypto.{
-  BinanceService,
-  BinanceServiceImpl,
-  BitcoinService,
-  BitcoinServiceImpl,
-  BscScanService,
-  BscScanServiceImpl,
-  SatangService,
-  SatangServiceImpl,
-  TerraService,
-  TerraServiceImpl
-}
-import services.healthcheck.{MackerelService, MackerelServiceImpl}
-import services.notification.{
-  LineService,
-  LineServiceImpl,
-  NotificationService,
-  NotificationServiceImpl,
-  TelegramService,
-  TelegramServiceImpl
-}
-import services.user.{UserService, UserServiceImpl}
+import commons.{Configuration, Logger}
+import services.notification.NotificationService
+import services.user.UserService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,10 +13,10 @@ trait NotifyProcessor extends BaseProcessor
 class NotifyProcessorImpl(using
     configuration: Configuration,
     notificationService: NotificationService,
-    userService: UserService
+    userService: UserService, 
+                          logger: Logger
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
-    extends NotifyProcessor
-    with LazyLogging {
+    extends NotifyProcessor {
 
   override def run(): Future[Boolean] = {
     val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
@@ -49,9 +26,7 @@ class NotifyProcessorImpl(using
       configuration.terraConfig.map(_.address),
       configuration.bitcoinConfig.map(_.address)
     )
-
-    logger.info(s"NotifyTask run at $now")
-
+    
     message
       .flatMap {
         case Some(m) => notificationService.notify(m)

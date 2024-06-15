@@ -1,7 +1,7 @@
 package models.bscScan
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class BscScanResponse(status: Int, message: String, result: BigInt)
 object BscScanResponse {

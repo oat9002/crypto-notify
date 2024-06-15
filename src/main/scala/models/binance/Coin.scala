@@ -1,7 +1,7 @@
 package models.binance
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class Coin(
     coin: String,

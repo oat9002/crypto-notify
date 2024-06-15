@@ -1,9 +1,9 @@
-import commons.CommonUtil._
+import commons.CommonUtil.*
 import commons.Constant.EncryptionAlgorithm
 import models.configuration.AppConfig
 import models.terra.QueryResult
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 import scala.util.Success
 

@@ -2,9 +2,8 @@ package services.crypto.contracts
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, Constant}
-import contracts.pancake.CakePool
-import contracts.pancake.VeCakePool
+import commons.{Configuration, Constant, Logger}
+import contracts.pancake.{CakePool, VeCakePool}
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j
 import org.web3j.protocol.http.HttpService
@@ -21,9 +20,9 @@ trait PancakeService {
 
 class PancakeServiceImpl(using
     system: ActorSystem[Nothing],
-    context: ExecutionContext
-) extends PancakeService
-    with LazyLogging {
+    context: ExecutionContext,
+                         logger: Logger
+) extends PancakeService {
   private val gasProvider = new DefaultGasProvider()
   private val defaultCredential = Credentials.create("0")
   private lazy val web3j: Web3j =

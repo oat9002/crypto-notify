@@ -1,15 +1,4 @@
-import sbtrelease.ReleaseStateTransformations.{
-  checkSnapshotDependencies,
-  commitNextVersion,
-  commitReleaseVersion,
-  inquireVersions,
-  pushChanges,
-  runClean,
-  runTest,
-  setNextVersion,
-  setReleaseVersion,
-  tagRelease
-}
+import sbtrelease.ReleaseStateTransformations.*
 
 ThisBuild / scalaVersion := "3.3.1"
 

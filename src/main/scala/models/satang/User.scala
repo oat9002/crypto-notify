@@ -1,7 +1,7 @@
 package models.satang
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class Address(address: String, tag: String, network: String)
 object Address {

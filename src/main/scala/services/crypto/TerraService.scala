@@ -2,7 +2,7 @@ package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{CommonUtil, Configuration, Constant, HttpClient}
+import commons.*
 import helpers.TerraHelper
 import io.circe.syntax.*
 import models.CryptoBalance
@@ -21,10 +21,10 @@ trait TerraService {
 class TerraServiceImpl(using
     configuration: Configuration,
     httpClient: HttpClient,
-    terraHelper: TerraHelper
+    terraHelper: TerraHelper,
+                       logger: Logger
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
-    extends TerraService
-    with LazyLogging {
+    extends TerraService {
   val baseOldUrl: String = Constant.terraUrl
   val baseTwoPointOUrl: String = Constant.twoPointOTerraUrl
 
@@ -71,13 +71,13 @@ class TerraServiceImpl(using
 
         Some(Wallet(balances = allBalance))
       case (Left(classicErr), Left(twoPointOErr)) =>
-        logger.error(s"getBalance failed", classicErr, twoPointOErr)
+        logger.error(s"getBalance failed $classicErr, $twoPointOErr")
         None
       case (Left(err), _) =>
-        logger.error(s"getBalance failed", err)
+        logger.error(s"getBalance failed, $err")
         None
       case (_, Left(err)) =>
-        logger.error(s"getBalance failed", err)
+        logger.error(s"getBalance failed, $err")
         None
     }
   }

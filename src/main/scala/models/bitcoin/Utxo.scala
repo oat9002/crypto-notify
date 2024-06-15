@@ -1,7 +1,7 @@
 package models.bitcoin
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class Utxo(txid: String, vout: Long, status: Status, value: Long)
 object Utxo {

@@ -2,7 +2,7 @@ package services.crypto
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, Constant, HttpClient}
+import commons.{Configuration, Constant, HttpClient, Logger}
 import models.bscScan.BscScanResponse
 import services.crypto.BscScanService
 
@@ -20,9 +20,9 @@ trait BscScanService {
 
 class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
-    context: ExecutionContext
-) extends BscScanService
-    with LazyLogging {
+    context: ExecutionContext,
+                                                                                     logger: Logger
+) extends BscScanService {
   val baseUrl: String = Constant.bscScanUrl
   val apiKey: String = configuration.bscScanConfig.map(_.apiKey).getOrElse("")
 

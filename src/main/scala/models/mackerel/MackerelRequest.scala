@@ -1,8 +1,9 @@
 package models.mackerel
 
+import io.circe.*
+import io.circe.generic.semiauto.*
+
 import java.time.Instant
-import io.circe._
-import io.circe.generic.semiauto._
 
 case class MackerelRequest(name: String, time: Long, value: Int)
 

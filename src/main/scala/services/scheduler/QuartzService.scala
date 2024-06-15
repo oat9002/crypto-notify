@@ -3,6 +3,7 @@ package services.scheduler
 import akka.actor.typed.{ActorRef, ActorSystem}
 import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
 import com.typesafe.scalalogging.LazyLogging
+import commons.LocalLogger
 import services.scheduler.QuartzService
 import services.scheduler.SchedulerName.SchedulerName
 
@@ -16,7 +17,7 @@ class QuartzServiceImpl[T](using
     system: ActorSystem[T],
     context: ExecutionContext
 ) extends QuartzService[T]
-    with LazyLogging {
+    with LocalLogger {
   val scheduler: QuartzSchedulerTypedExtension = QuartzSchedulerTypedExtension(
     system
   )
