@@ -34,7 +34,7 @@ trait HttpClient {
   ): Future[Either[String, Res]]
 }
 
-class HttpClientImpl(using logger: Logger)(using
+class HttpClientImpl(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
 ) extends HttpClient {
