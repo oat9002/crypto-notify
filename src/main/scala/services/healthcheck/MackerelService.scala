@@ -2,7 +2,7 @@ package services.healthcheck
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, Constant, HttpClient}
+import commons.{Configuration, Constant, HttpClient, Logger}
 import io.circe.syntax.*
 import models.mackerel.{MackerelRequest, MackerelResponse}
 import services.healthcheck.MackerelService
@@ -15,9 +15,9 @@ trait MackerelService {
 
 class MackerelServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
-    context: ExecutionContext
-) extends MackerelService
-    with LazyLogging {
+    context: ExecutionContext,
+    logger: Logger
+) extends MackerelService {
   val baseUrl: String = Constant.makerelUrl
   val serviceName: String =
     configuration.mackerelConfig.map(_.serviceName).getOrElse("")

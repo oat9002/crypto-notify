@@ -1,8 +1,7 @@
 package services.crypto
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, Constant, HttpClient}
+import commons.{Configuration, Constant, HttpClient, Logger}
 import helpers.BitcoinHelper
 import models.bitcoin.Utxo
 
@@ -13,11 +12,14 @@ trait BitcoinService {
   def getBitcoinBalance(addresses: List[String]): Future[Option[BigDecimal]]
 }
 
-class BitcoinServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
+class BitcoinServiceImpl(using
+    configuration: Configuration,
+    httpClient: HttpClient,
+    logger: Logger
+)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
-) extends BitcoinService
-    with LazyLogging {
+) extends BitcoinService {
   override def getAllUtxo(address: String): Future[Option[List[Utxo]]] = {
     val url = s"${Constant.blockStreamUrl}/address/$address/utxo"
     val response = httpClient.get[List[Utxo]](url)

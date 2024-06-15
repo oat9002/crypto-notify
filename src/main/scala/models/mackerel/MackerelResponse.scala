@@ -1,7 +1,7 @@
 package models.mackerel
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class MackerelResponse(success: Boolean)
 object MackerelResponse {

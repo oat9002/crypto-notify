@@ -1,10 +1,9 @@
 package processors
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl, HttpClient, HttpClientImpl}
+import commons.{Configuration, HttpClient}
 import models.mackerel.MackerelRequest
-import services.healthcheck.{MackerelService, MackerelServiceImpl}
+import services.healthcheck.MackerelService
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -15,8 +14,7 @@ class HealthCheckProcessorImpl(using
     httpClient: HttpClient,
     mackerelService: MackerelService
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
-    extends HealthCheckProcessor
-    with LazyLogging {
+    extends HealthCheckProcessor {
 
   override def run(): Future[Boolean] = {
     mackerelService.sendMeasurement(List(MackerelRequest("healthCheck", 1)))

@@ -2,7 +2,7 @@ package services.notification
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, ConfigurationImpl, Constant, HttpClient}
+import commons.*
 import models.line.LineResponse
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +15,7 @@ class LineServiceImpl(using httpClient: HttpClient, configuration: Configuration
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends LineService
-    with LazyLogging {
+    with LocalLogger {
   override def notify(message: String): Future[Boolean] = {
     val response = httpClient.postFormData[LineResponse](
       Constant.lineNotifyUrl,

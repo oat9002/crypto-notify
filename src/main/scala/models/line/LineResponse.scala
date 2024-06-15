@@ -1,7 +1,7 @@
 package models.line
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class LineResponse(status: Int, message: String)
 object LineResponse {

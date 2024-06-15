@@ -2,13 +2,11 @@ package services.notification
 
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
-import commons.{Configuration, Constant, HttpClient}
+import commons.{Configuration, Constant, HttpClient, LocalLogger}
 import models.telegram.TelegramResponse
-import org.bouncycastle.util.encoders.UTF8
 
 import java.net.URLEncoder
-import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait TelegramService extends NotificationService
 
@@ -16,7 +14,7 @@ class TelegramServiceImpl(using httpClient: HttpClient, configuration: Configura
     system: ActorSystem[Nothing],
     context: ExecutionContext
 ) extends TelegramService
-    with LazyLogging {
+    with LocalLogger {
   private val charset = "UTF-8"
   override def notify(message: String): Future[Boolean] = {
     val botToken = configuration.telegramConfig.map(_.botToken).getOrElse("")

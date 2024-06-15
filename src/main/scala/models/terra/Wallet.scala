@@ -1,7 +1,7 @@
 package models.terra
 
-import io.circe._
-import io.circe.generic.semiauto._
+import io.circe.*
+import io.circe.generic.semiauto.*
 
 case class Wallet(balances: List[Balance])
 object Wallet {

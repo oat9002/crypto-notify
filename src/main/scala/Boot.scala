@@ -5,8 +5,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.*
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.Route
-import com.typesafe.scalalogging.LazyLogging
-import commons.Configuration
+import commons.{Configuration, LocalLogger}
 import controllers.{HealthCheckController, NotifyController}
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import di.DependencySetup
@@ -15,7 +14,7 @@ import services.scheduler.{QuartzService, QuartzServiceImpl}
 
 import scala.concurrent.ExecutionContext
 
-object Boot extends App with LazyLogging with FailFastCirceSupport {
+object Boot extends App with LocalLogger with FailFastCirceSupport {
   given nothingSystem: ActorSystem[Nothing] =
     ActorSystem(Behaviors.empty, "crypto-notify-nothing")
   given executionContext: ExecutionContext = nothingSystem.executionContext

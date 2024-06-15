@@ -6,8 +6,8 @@ import akka.http.scaladsl.server.Directives.{complete, get, headerValueByName, o
 import akka.http.scaladsl.server.Route
 import commons.Configuration
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
-import processors.NotifyProcessor
 import models.controller.NotifyResponse
+import processors.NotifyProcessor
 import validators.controllers.ApiKeyValidator
 
 import scala.concurrent.ExecutionContext

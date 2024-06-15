@@ -1,21 +1,7 @@
 package commons
 
 import com.typesafe.config.{Config, ConfigFactory}
-import models.configuration.{
-  AkkaConfig,
-  AppConfig,
-  BinanceConfig,
-  BitcoinConfig,
-  BscScanConfig,
-  LineConfig,
-  MackerelConfig,
-  Mode,
-  Quartz,
-  SatangConfig,
-  Schedule,
-  TelegramConfig,
-  TerraConfig
-}
+import models.configuration.*
 
 import scala.util.{Success, Try}
 

@@ -1,8 +1,8 @@
 package helper
 
 import helpers.BitcoinHelper
-import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class BitcoinHelperSpec extends AnyWordSpec with Matchers {
   "fromSatoshiToBitcoin" should {

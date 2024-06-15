@@ -4,13 +4,11 @@ import akka.actor.typed.ActorSystem
 import commons.Constant
 import models.CryptoBalance
 import models.binance.Ticker as BinanceTicker
-import models.satang.{User, Ticker as SatangTicker}
-import services.user.UserService
+import models.satang.Ticker as SatangTicker
 import services.crypto.contracts.PancakeService
-import services.crypto.{BinanceService, BitcoinService, BscScanService, SatangService, TerraService}
+import services.crypto.*
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 
 trait UserService {

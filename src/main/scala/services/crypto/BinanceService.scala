@@ -1,12 +1,10 @@
 package services.crypto
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.Constant.EncryptionAlgorithm
-import commons.{CommonUtil, Configuration, Constant, HttpClient}
+import commons.*
 import models.CryptoBalance
-import models.binance.{Coin, Network, Saving, Ticker}
-import services.crypto.BinanceService
+import models.binance.{Coin, Saving, Ticker}
 
 import scala.concurrent.duration.{DurationInt, FiniteDuration}
 import scala.concurrent.{ExecutionContext, Future}
@@ -18,11 +16,14 @@ trait BinanceService {
   def getAllBalance: Future[Option[List[CryptoBalance]]]
 }
 
-class BinanceServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
+class BinanceServiceImpl(using
+    configuration: Configuration,
+    httpClient: HttpClient,
+    logger: Logger
+)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext
-) extends BinanceService
-    with LazyLogging {
+) extends BinanceService {
   val recvWindow: FiniteDuration = 10.seconds
   val baseUrl: String = Constant.binanceUrl
   val secretKey: String =

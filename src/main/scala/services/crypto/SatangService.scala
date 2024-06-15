@@ -3,7 +3,7 @@ package services.crypto
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.Constant.EncryptionAlgorithm
-import commons.{CommonUtil, Configuration, Constant, HttpClient}
+import commons.*
 import models.satang.{Ticker, User}
 import services.crypto.SatangService
 
@@ -17,9 +17,9 @@ trait SatangService {
 
 class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
-    context: ExecutionContext
-) extends SatangService
-    with LazyLogging {
+    context: ExecutionContext,
+    logger: Logger
+) extends SatangService {
 
   val baseUrl: String = Constant.satangUrl
 

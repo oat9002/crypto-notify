@@ -2,13 +2,11 @@ package processors
 
 import actors.*
 import akka.actor.typed.*
-import com.typesafe.scalalogging.LazyLogging
-import commons.Configuration
-import models.configuration.Mode
+import commons.{Configuration, LocalLogger}
 import services.*
-import services.scheduler.{QuartzService, QuartzServiceImpl, SchedulerName}
+import services.scheduler.{QuartzService, SchedulerName}
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ExecuteProcessor extends BaseProcessor
 
@@ -19,7 +17,7 @@ class ExecutorProcessorImpl(using
     system: ActorSystem[Command],
     context: ExecutionContext
 ) extends ExecuteProcessor
-    with LazyLogging {
+    with LocalLogger {
 
   def run(): Future[Boolean] = {
     val notifyCron = SchedulerName.Notify
