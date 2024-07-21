@@ -3,11 +3,12 @@ package services.notification
 import akka.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.*
+import commons.Constant.MessageProvider.Line
 import models.line.LineResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait LineService {
+trait LineService extends NotificationService {
   def notify(message: String): Future[Boolean]
 }
 
@@ -32,4 +33,6 @@ class LineServiceImpl(using httpClient: HttpClient, configuration: Configuration
       case Right(_) => true
     }
   }
+
+  override def getProvider: Constant.MessageProvider = Line
 }

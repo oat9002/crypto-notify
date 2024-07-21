@@ -22,4 +22,7 @@ object Constant {
 
   enum EncryptionAlgorithm:
     case HmacSHA512, HmacSHA256
+
+  enum MessageProvider:
+    case Line, Telegram
 }
