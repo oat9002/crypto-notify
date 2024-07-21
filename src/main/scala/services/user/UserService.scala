@@ -2,6 +2,7 @@ package services.user
 
 import akka.actor.typed.ActorSystem
 import commons.Constant
+import commons.Constant.MessageProvider
 import models.CryptoBalance
 import models.binance.Ticker as BinanceTicker
 import models.satang.Ticker as SatangTicker
@@ -12,11 +13,12 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 
 trait UserService {
-  def getBalanceMessageForLine(
+  def getBalanceMessage(
       userId: String,
       bscAddress: Option[String],
       terraAddress: Option[String],
-      bitcoinAddress: Option[List[String]]
+      bitcoinAddress: Option[List[String]],
+      messageProvider: MessageProvider
   ): Future[Option[String]]
 }
 
@@ -29,11 +31,14 @@ class UserServiceImpl(using
     bitcoinService: BitcoinService
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends UserService {
-  override def getBalanceMessageForLine(
+  private val moneyEmoji = "\uD83D\uDCB0"
+
+  override def getBalanceMessage(
       userId: String,
       bscAddress: Option[String],
       terraAddress: Option[String],
-      bitcoinAddress: Option[List[String]]
+      bitcoinAddress: Option[List[String]],
+      messageProvider: MessageProvider
   ): Future[Option[String]] = {
     val satangUserF = satangService.getUser(userId)
     val satangCurrentPricesF = satangService.getCryptoPrices
@@ -104,12 +109,12 @@ class UserServiceImpl(using
         )
       val allBalanceIntThb = satangList
         .filter(_.symbol == "thb")
-        .map(x => CryptoBalance("fiat", x.balance))
+        .map(x => CryptoBalance(moneyEmoji, x.balance))
         .concat(cryptoBalanceInThb)
       if (allBalanceIntThb.isEmpty && noneZeroCryptoBalance.isEmpty) {
         None
       } else {
-        Some(generateMessage(allBalanceIntThb, noneZeroCryptoBalance))
+        Some(generateMessage(allBalanceIntThb, noneZeroCryptoBalance, messageProvider))
       }
     }
   }
@@ -171,7 +176,8 @@ class UserServiceImpl(using
 
   private def generateMessage(
       allBalanceInThb: List[CryptoBalance],
-      cryptoBalance: List[CryptoBalance]
+      cryptoBalance: List[CryptoBalance],
+      messageProvider: MessageProvider
   ): String = {
     import commons.CommonUtil.*
     val sortedAllBalanceInThb = allBalanceInThb.sortWith((x, y) => x.balance > y.balance)
@@ -184,31 +190,28 @@ class UserServiceImpl(using
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
       s"จำนวนเงินทั้งหมด: ${sortedAllBalanceInThb.map(_.balance).sum.format} บาท\n"
-    val header = """
-                    ------------------------
-                    | ชื่อ   | ราตา(บาท)     |
-                    ------------------------
-     """
-    val nameCharCount = 5
-    val priceCharCount = 14
-    val balanceThb = sortedAllBalanceInThb
-      .map(x => {
-        val nameSpaceAdded = (1 to nameCharCount - x.symbol.length).map(" ").mkString("")
-        val priceSpaceAdded = (1 to priceCharCount - x.balance.format.length).map(" ").mkString("")
-        val name = s"| ${x.symbol}$nameSpaceAdded|"
-        val price = s"| ${x.balance.format}$priceSpaceAdded|"
+    val balance = sortedAllBalanceInThb
+      .map { x =>
+        val cryptoBalance =
+          sortedCryptoBalance.find(_.symbol == x.symbol).map(_.balance.format).getOrElse("")
 
-        name + price + "\n------------------------"
-      })
+        val symbol = if (messageProvider == MessageProvider.Telegram) {
+          s"<b>${x.symbol}</b>"
+        } else {
+          s"${x.symbol}"
+        }
+
+        if (x.symbol == moneyEmoji) {
+          s"$symbol\n |- ${x.balance.format} บาท "
+        } else {
+          s"$symbol\n |- ${cryptoBalance} \n |- ${x.balance.format} บาท "
+        }
+      }
       .mkString("\n")
-    val balance =
-      sortedCryptoBalance.map(x => s"${x.symbol}: ${x.balance.format}").mkString("\n")
 
     "\n"
       .concat(date)
       .concat(sumCurrentBalanceThb)
-      .concat(balanceThb)
-      .concat("\n\n")
       .concat(balance)
   }
 }
