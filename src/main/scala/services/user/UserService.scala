@@ -190,21 +190,22 @@ class UserServiceImpl(using
     val date = getFormattedNowDate() + "\n"
     val sumCurrentBalanceThb =
       s"จำนวนเงินทั้งหมด: ${sortedAllBalanceInThb.map(_.balance).sum.format} บาท\n"
-    val balance = sortedAllBalanceInThb
-      .map { x =>
+    val balance = sortedAllBalanceInThb.zipWithIndex
+      .map { (x, idx) =>
         val cryptoBalance =
           sortedCryptoBalance.find(_.symbol == x.symbol).map(_.balance.format).getOrElse("")
 
+        val medalEmoji = getMedalEmoji(idx)
         val symbol = if (messageProvider == MessageProvider.Telegram) {
-          s"<b>${x.symbol}</b>"
+          s"$medalEmoji <b>${x.symbol}</b>"
         } else {
-          s"${x.symbol}"
+          s"$medalEmoji ${x.symbol}"
         }
 
         if (x.symbol == moneyEmoji) {
-          s"$symbol\n |- ${x.balance.format} บาท "
+          s"$symbol\n  |- ${x.balance.format} บาท "
         } else {
-          s"$symbol\n |- ${cryptoBalance} \n |- ${x.balance.format} บาท "
+          s"$symbol\n  |- $cryptoBalance \n  |- ${x.balance.format} บาท "
         }
       }
       .mkString("\n")
@@ -213,5 +214,13 @@ class UserServiceImpl(using
       .concat(date)
       .concat(sumCurrentBalanceThb)
       .concat(balance)
+  }
+
+  private def getMedalEmoji(index: Int): String = {
+    index match
+      case 0 => "\uD83E\uDD47"
+      case 1 => "\uD83E\uDD48"
+      case 2 => "\uD83E\uDD49"
+      case _ => ""
   }
 }
