@@ -14,8 +14,6 @@ import scala.concurrent.{ExecutionContext, Future}
 trait TerraService {
   def getWalletBalance(address: String): Future[Option[Wallet]]
   def getAllBalance(address: String): Future[Option[List[CryptoBalance]]]
-  def getaUstBalance(address: String): Future[Option[BigDecimal]]
-  def getaUstExchangeRate(): Future[Option[BigDecimal]]
 }
 
 class TerraServiceImpl(using
@@ -82,60 +80,17 @@ class TerraServiceImpl(using
     }
   }
 
-  override def getaUstBalance(address: String): Future[Option[BigDecimal]] = {
-    val queryMsg =
-      CommonUtil.base64Encode("{\"balance\":{\"address\":\"" + address + "\"}}")
-    val url =
-      s"$baseOldUrl/terra/wasm/v1beta1/contracts/${Constant.aUstContractAddress}/store?query_msg=$queryMsg"
-    val response = httpClient.get[QueryResult[aUstBalance]](url)
-
-    response map {
-      case Left(err) =>
-        logger.error(s"getaUstBalance failed, err: $err")
-        None
-      case Right(v) => Some(terraHelper.convertRawAmount(v.queryResult.balance))
-    }
-  }
-
-  override def getaUstExchangeRate(): Future[Option[BigDecimal]] = {
-    val url =
-      s"$baseOldUrl/terra/wasm/v1beta1/contracts/${Constant.anchorMarketContractAddress}/store?query_msg=eyJlcG9jaF9zdGF0ZSI6e319"
-    val response = httpClient.get[QueryResult[ExchangeRate]](url)
-
-    response map {
-      case Left(err) =>
-        logger.error(s"getaUstExchange failed, err: $err")
-        None
-      case Right(v) => Some(v.queryResult.exchangeRate)
-    }
-  }
-
   override def getAllBalance(
       address: String
   ): Future[Option[List[CryptoBalance]]] = {
     val walletBalanceF = getWalletBalance(address)
-    val aUstExchangeRateF = getaUstExchangeRate()
-    val aUstBalanceF = getaUstBalance(address)
 
     for {
       walletBalance <- walletBalanceF
-      aUstExchangeRate <- aUstExchangeRateF
-      aUstBalance <- aUstBalanceF
     } yield {
-      val newBalances = walletBalance.map(w =>
-        w.balances.map {
-          case Balance(symbol, balance) if symbol == "ust" =>
-            Balance(
-              symbol,
-              balance + (aUstBalance.getOrElse(BigDecimal(0)) * aUstExchangeRate.getOrElse(
-                BigDecimal(0)
-              ))
-            )
-          case x => x
-        }
+      walletBalance.map(w =>
+        w.balances.map(b => CryptoBalance(symbol = b.symbol, balance = b.amount))
       )
-
-      newBalances.map(b => b.map(x => CryptoBalance(symbol = x.symbol, balance = x.amount)))
     }
   }
 }
