@@ -1,6 +1,6 @@
 import sbtrelease.ReleaseStateTransformations.*
 
-ThisBuild / scalaVersion := "3.3.1"
+ThisBuild / scalaVersion := "3.3.4"
 
 lazy val root = project
   .in(file("."))
@@ -11,7 +11,6 @@ lazy val root = project
 
 scalacOptions ++= Seq("-Xmax-inlines", "50")
 scalacOptions ++= Seq("-deprecation")
-
 
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
