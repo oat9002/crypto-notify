@@ -37,6 +37,7 @@ jobs:
           export VERSION=$(cat version.sbt | cut -d '"' -f2 | sed 's/-SNAPSHOT//g')
           echo "version: $VERSION"
           echo "::set-output name=APP_VERSION::$VERSION"
+      - uses: sbt/setup-sbt@v1
       - name: Create Dockerfile
         run: sbt "Docker / stage"
       - name: Publish to Docker Hub

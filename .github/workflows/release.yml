@@ -24,6 +24,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      - uses: sbt/setup-sbt@v1
       - name: Release
         run: sbt "release with-defaults"
         env: 
@@ -50,13 +51,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
-#
-#  deploy:
-#    needs: dockerPublish
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v4
-#      - name: Deploy to server
-#        run: |
-#          curl ${{ secrets.SERVER_URL }} -H "X-Api-Key: ${{ secrets.DEPLOY_API_KEY }}"
 
