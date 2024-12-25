@@ -22,6 +22,7 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+    - uses: sbt/setup-sbt@v1
     - name: Format code
       run: |
         sbt scalafmtAll
@@ -49,6 +50,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '21'
+    - uses: sbt/setup-sbt@v1
     - name: Clean and Compile
       run: sbt clean compile
 
@@ -62,6 +64,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '21'
+    - uses: sbt/setup-sbt@v1
     - name: Test
       run: sbt test
 
