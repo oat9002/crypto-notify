@@ -7,7 +7,7 @@ object Constant {
   val veCakePoolContractAddress = "0x5692DB8177a81A6c6afc8084C2976C9933EC1bAB"
 
   val bscRpcUrl = "https://bsc-dataseed.binance.org"
-  val satangUrl = "https://satangcorp.com/api/"
+  val satangUrl = "https://www.orbixtrade.com/api/"
   val bscScanUrl = "https://api.bscscan.com/api"
   val binanceUrl = "https://api.binance.com"
   val terraUrl = "https://terra-classic-lcd.publicnode.com"
