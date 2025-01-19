@@ -9,6 +9,7 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import models.controller.NotifyResponse
 import processors.NotifyProcessor
 import validators.controllers.ApiKeyValidator
+import scala.concurrent.duration.*
 
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
@@ -22,13 +23,15 @@ class NotifyController(using notifyProcessor: NotifyProcessor, config: Configura
 
   val route: Route = {
     path("notify") {
-      get {
-        validateApiKey {
-          val result = notifyProcessor.run().map(NotifyResponse(_))
+      withRequestTimeout(3.minutes) {
+        get {
+          validateApiKey {
+            val result = notifyProcessor.run().map(NotifyResponse(_))
 
-          onComplete(result) {
-            case Success(value) => complete(OK, value)
-            case Failure(ex)    => complete(InternalServerError, ex.getMessage)
+            onComplete(result) {
+              case Success(value) => complete(OK, value)
+              case Failure(ex)    => complete(InternalServerError, ex.getMessage)
+            }
           }
         }
       }

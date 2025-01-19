@@ -24,7 +24,7 @@ class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClie
   val baseUrl: String = Constant.satangUrl
 
   override def getUser(userId: String): Future[Option[User]] = {
-    val userUrl: String = s"$baseUrl/users/$userId"
+    val userUrl: String = s"$baseUrl/users/me"
     val signature =
       CommonUtil.generateHMAC(
         "",
@@ -48,7 +48,7 @@ class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClie
   }
 
   override def getCryptoPrice(pair: String): Future[Option[Ticker]] = {
-    val tickerUrl = baseUrl + s"v3/ticker/24hr?symbol=$pair"
+    val tickerUrl = s"$baseUrl/v3/ticker/24hr?symbol=$pair"
     val response = httpClient.get[Ticker](tickerUrl)
 
     response.map {
@@ -60,7 +60,7 @@ class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClie
   }
 
   override def getCryptoPrices: Future[Option[List[Ticker]]] = {
-    val tickerUrl = baseUrl + "v3/ticker/24hr"
+    val tickerUrl = s"$baseUrl/v3/ticker/24hr"
     val response = httpClient.get[Array[Ticker]](tickerUrl)
 
     response.map {
