@@ -11,7 +11,7 @@ object Constant {
   val bscScanUrl = "https://api.bscscan.com/api"
   val binanceUrl = "https://api.binance.com"
   val terraUrl = "https://terra-classic-lcd.publicnode.com"
-  val twoPointOTerraUrl = "https://phoenix-lcd.terra.dev"
+  val twoPointOTerraUrl = "https://terra-lcd.publicnode.com"
   val makerelUrl = "https://api.mackerelio.com"
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
   val telegramUrl = "https://api.telegram.org"
