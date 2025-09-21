@@ -23,12 +23,12 @@ trait UserService {
 }
 
 class UserServiceImpl(using
-                      satangService: SatangService,
-                      etherScanService: EtherScanService,
-                      binanceService: BinanceService,
-                      terraService: TerraService,
-                      pancakeService: PancakeService,
-                      bitcoinService: BitcoinService
+    satangService: SatangService,
+    etherScanService: EtherScanService,
+    binanceService: BinanceService,
+    terraService: TerraService,
+    pancakeService: PancakeService,
+    bitcoinService: BitcoinService
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends UserService {
   private val moneyEmoji = "\uD83D\uDCB0"

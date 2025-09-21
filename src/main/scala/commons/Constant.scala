@@ -16,7 +16,7 @@ object Constant {
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
   val telegramUrl = "https://api.telegram.org"
   val blockStreamUrl = "https://blockstream.info/api"
-  
+
   val bnbMainNetChainId = 56
 
   enum EncryptionAlgorithm:
