@@ -8,7 +8,7 @@ object Constant {
 
   val bscRpcUrl = "https://bsc-dataseed.binance.org"
   val satangUrl = "https://www.orbixtrade.com/api"
-  val bscScanUrl = "https://api.bscscan.com/api"
+  val etherScanUrl = "https://api.etherscan.io/v2/api"
   val binanceUrl = "https://api.binance.com"
   val terraUrl = "https://terra-classic-lcd.publicnode.com"
   val twoPointOTerraUrl = "https://terra-lcd.publicnode.com"
@@ -16,6 +16,8 @@ object Constant {
   val lineNotifyUrl = "https://notify-api.line.me/api/notify"
   val telegramUrl = "https://api.telegram.org"
   val blockStreamUrl = "https://blockstream.info/api"
+  
+  val bnbMainNetChainId = 56
 
   enum EncryptionAlgorithm:
     case HmacSHA512, HmacSHA256

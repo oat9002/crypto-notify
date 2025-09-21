@@ -23,12 +23,12 @@ trait UserService {
 }
 
 class UserServiceImpl(using
-    satangService: SatangService,
-    bscScanService: BscScanService,
-    binanceService: BinanceService,
-    terraService: TerraService,
-    pancakeService: PancakeService,
-    bitcoinService: BitcoinService
+                      satangService: SatangService,
+                      etherScanService: EtherScanService,
+                      binanceService: BinanceService,
+                      terraService: TerraService,
+                      pancakeService: PancakeService,
+                      bitcoinService: BitcoinService
 )(using system: ActorSystem[Nothing], context: ExecutionContext)
     extends UserService {
   private val moneyEmoji = "\uD83D\uDCB0"
@@ -44,11 +44,11 @@ class UserServiceImpl(using
     val satangCurrentPricesF = satangService.getCryptoPrices
     val binanceCurrentPricesF = binanceService.getLatestPrice
     val extBnbAmountF = bscAddress
-      .map(bscScanService.getBnbBalance)
+      .map(etherScanService.getBnbBalance)
       .getOrElse(Future.successful(None))
     val extCakeAmountF = bscAddress
       .map(address =>
-        bscScanService.getTokenBalance(
+        etherScanService.getTokenBalance(
           Constant.CakeTokenContractAddress,
           address
         )

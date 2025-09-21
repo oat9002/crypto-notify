@@ -11,7 +11,7 @@ trait Configuration {
   lazy val telegramConfig: Option[TelegramConfig]
   lazy val satangConfig: SatangConfig
   lazy val akkaConfig: AkkaConfig
-  lazy val bscScanConfig: Option[BscScanConfig]
+  lazy val etherScanConfig: Option[EtherScanConfig]
   lazy val mackerelConfig: Option[MackerelConfig]
   lazy val binanceConfig: Option[BinanceConfig]
   lazy val terraConfig: Option[TerraConfig]
@@ -28,7 +28,7 @@ class ConfigurationImpl extends Configuration {
   private val lineSection = conf.getConfig("line")
   private val satangSection = conf.getConfig("satang")
   private val akkaSection = conf.getConfig("akka")
-  private val bscScanSection = conf.getConfig("bscScan")
+  private val etherScanSection = conf.getConfig("etherScan")
   private val mackerelSection = conf.getConfig("mackerel")
   private val binanceSection = conf.getConfig("binance")
   private val terraSection = conf.getConfig("terra")
@@ -53,10 +53,10 @@ class ConfigurationImpl extends Configuration {
     satangSection.getString("apiSecret"),
     satangSection.getString("userId")
   )
-  lazy val bscScanConfig: Option[BscScanConfig] = Try(
-    BscScanConfig(
-      bscScanSection.getString("apiKey"),
-      bscScanSection.getString("address")
+  lazy val etherScanConfig: Option[EtherScanConfig] = Try(
+    EtherScanConfig(
+      etherScanSection.getString("apiKey"),
+      etherScanSection.getString("address")
     )
   ) match {
     case Success(v) => Some(v)
