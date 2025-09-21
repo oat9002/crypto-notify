@@ -22,7 +22,7 @@ class NotifyProcessorImpl(using
     val now = getFormattedNowDate("E dd MMM YYYY HH:mm:ss", isThai = false)
     val message = userService.getBalanceMessage(
       configuration.satangConfig.userId,
-      configuration.bscScanConfig.map(_.address),
+      configuration.etherScanConfig.map(_.address),
       configuration.terraConfig.map(_.address),
       configuration.bitcoinConfig.map(_.address),
       notificationService.getProvider

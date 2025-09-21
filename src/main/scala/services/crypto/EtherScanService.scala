@@ -1,16 +1,14 @@
 package services.crypto
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient, Logger}
-import models.bscScan.BscScanResponse
-import services.crypto.BscScanService
+import models.etherScan.EtherScanResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.math.BigDecimal.RoundingMode
 import scala.math.pow
 
-trait BscScanService {
+trait EtherScanService {
   def getBnbBalance(address: String): Future[Option[BigDecimal]]
   def getTokenBalance(
       contractAddress: String,
@@ -18,18 +16,18 @@ trait BscScanService {
   ): Future[Option[BigDecimal]]
 }
 
-class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
+class EtherScanServiceImpl(using configuration: Configuration, httpClient: HttpClient)(using
     system: ActorSystem[Nothing],
     context: ExecutionContext,
     logger: Logger
-) extends BscScanService {
-  val baseUrl: String = Constant.bscScanUrl
-  val apiKey: String = configuration.bscScanConfig.map(_.apiKey).getOrElse("")
+) extends EtherScanService {
+  val baseUrl: String = Constant.etherScanUrl
+  val apiKey: String = configuration.etherScanConfig.map(_.apiKey).getOrElse("")
 
   override def getBnbBalance(address: String): Future[Option[BigDecimal]] = {
     val url =
-      s"$baseUrl?module=account&action=balance&address=$address&apikey=$apiKey"
-    val response = httpClient.get[BscScanResponse](url)
+      s"$baseUrl?chainId=${Constant.bnbMainNetChainId}&module=account&action=balance&address=$address&apikey=$apiKey"
+    val response = httpClient.get[EtherScanResponse](url)
 
     response.map {
       case Left(err) =>
@@ -37,9 +35,9 @@ class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpCli
         None
       case Right(x) =>
         if (x.message == "OK") {
-          Some(convertFromWei(x.result))
+          Some(convertFromWei(BigInt(x.result)))
         } else {
-          logger.error(s"getBnbBalance failed: ${x.message}")
+          logger.error(s"getBnbBalance failed: ${x.message}, ${x.result}")
           None
         }
     }
@@ -50,8 +48,8 @@ class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpCli
       address: String
   ): Future[Option[BigDecimal]] = {
     val url =
-      s"$baseUrl?module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=$apiKey"
-    val response = httpClient.get[BscScanResponse](url)
+      s"$baseUrl?chainId=${Constant.bnbMainNetChainId}&module=account&action=tokenbalance&contractaddress=$contractAddress&address=$address&tag=latest&apikey=$apiKey"
+    val response = httpClient.get[EtherScanResponse](url)
 
     response.map {
       case Left(err) =>
@@ -59,9 +57,9 @@ class BscScanServiceImpl(using configuration: Configuration, httpClient: HttpCli
         None
       case Right(x) =>
         if (x.message == "OK") {
-          Some(convertFromWei(x.result))
+          Some(convertFromWei(BigInt(x.result)))
         } else {
-          logger.error(s"getTokenBalance failed: ${x.message}")
+          logger.error(s"getTokenBalance failed: ${x.message}, ${x.result}")
           None
         }
     }

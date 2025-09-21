@@ -5,7 +5,7 @@ Notify your current cryptocurrency balance from Satang Pro via Line Notify or Te
 
 - Orbix `// Required to convert to THB`
 - Binance `// Required if there is no listed coin in Satang Pro`
-- BscScan
+- EtherScan
 - Terra
 - CakePool
 - VeCakePool

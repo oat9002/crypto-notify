@@ -24,7 +24,7 @@ trait UserService {
 
 class UserServiceImpl(using
     satangService: SatangService,
-    bscScanService: BscScanService,
+    etherScanService: EtherScanService,
     binanceService: BinanceService,
     terraService: TerraService,
     pancakeService: PancakeService,
@@ -44,11 +44,11 @@ class UserServiceImpl(using
     val satangCurrentPricesF = satangService.getCryptoPrices
     val binanceCurrentPricesF = binanceService.getLatestPrice
     val extBnbAmountF = bscAddress
-      .map(bscScanService.getBnbBalance)
+      .map(etherScanService.getBnbBalance)
       .getOrElse(Future.successful(None))
     val extCakeAmountF = bscAddress
       .map(address =>
-        bscScanService.getTokenBalance(
+        etherScanService.getTokenBalance(
           Constant.CakeTokenContractAddress,
           address
         )

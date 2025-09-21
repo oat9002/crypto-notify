@@ -15,7 +15,7 @@ scalacOptions ++= Seq("-deprecation")
 enablePlugins(JavaAppPackaging, DockerPlugin)
 
 dockerRepository := Some("oat9002")
-dockerBaseImage := "eclipse-temurin:21-jre-jammy"
+dockerBaseImage := "azul/zulu-openjdk:25-jre-latest"
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
 

@@ -1,7 +1,6 @@
 package services.crypto.contracts
 
 import akka.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, Logger}
 import contracts.pancake.{CakePool, VeCakePool}
 import org.web3j.crypto.Credentials

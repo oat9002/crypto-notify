@@ -26,8 +26,8 @@ class DependencySetup(using system: ActorSystem[Nothing], context: ExecutionCont
   given terraHelper: TerraHelper = TerraHelperImpl()
   given satangService: SatangService =
     SatangServiceImpl()
-  given bscScanService: BscScanService =
-    BscScanServiceImpl()
+  given etherScanService: EtherScanService =
+    EtherScanServiceImpl()
   given binanceService: BinanceService =
     BinanceServiceImpl()
   given terraService: TerraService =
