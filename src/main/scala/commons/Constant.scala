@@ -13,7 +13,6 @@ object Constant {
   val terraUrl = "https://terra-classic-lcd.publicnode.com"
   val twoPointOTerraUrl = "https://terra-lcd.publicnode.com"
   val makerelUrl = "https://api.mackerelio.com"
-  val lineNotifyUrl = "https://notify-api.line.me/api/notify"
   val telegramUrl = "https://api.telegram.org"
   val blockStreamUrl = "https://blockstream.info/api"
 
@@ -23,5 +22,5 @@ object Constant {
     case HmacSHA512, HmacSHA256
 
   enum MessageProvider:
-    case Line, Telegram
+    case Telegram
 }

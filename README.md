@@ -1,5 +1,5 @@
 # crypto-notify
-Notify your current cryptocurrency balance from Satang Pro via Line Notify or Telegram. THB currency
+Notify your current cryptocurrency balance from Satang Pro via Telegram. THB currency
 
 ## Supported Source
 
