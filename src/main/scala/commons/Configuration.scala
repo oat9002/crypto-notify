@@ -7,7 +7,6 @@ import scala.util.{Success, Try}
 
 trait Configuration {
   lazy val appConfig: AppConfig
-  lazy val lineConfig: Option[LineConfig]
   lazy val telegramConfig: Option[TelegramConfig]
   lazy val satangConfig: SatangConfig
   lazy val akkaConfig: AkkaConfig
@@ -25,7 +24,6 @@ class ConfigurationImpl extends Configuration {
     ConfigFactory.load("application.local").withFallback(baseConfig)
   }
   private val appSection = conf.getConfig("app")
-  private val lineSection = conf.getConfig("line")
   private val satangSection = conf.getConfig("satang")
   private val akkaSection = conf.getConfig("akka")
   private val etherScanSection = conf.getConfig("etherScan")
@@ -40,14 +38,6 @@ class ConfigurationImpl extends Configuration {
     appSection.getBoolean("useScheduler"),
     appSection.getString("apiKey")
   )
-  lazy val lineConfig: Option[LineConfig] = Try(
-    LineConfig(
-      lineSection.getString("lineNotifyToken")
-    )
-  ) match {
-    case Success(v) => Some(v)
-    case _          => None
-  }
   lazy val satangConfig: SatangConfig = SatangConfig(
     satangSection.getString("apiKey"),
     satangSection.getString("apiSecret"),
