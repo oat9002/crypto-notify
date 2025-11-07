@@ -1,7 +1,7 @@
 package services.scheduler
 
 import akka.actor.typed.{ActorRef, ActorSystem}
-import com.typesafe.akka.extension.quartz.QuartzSchedulerTypedExtension
+import org.apache.pekko.extension.quartz.QuartzSchedulerTypedExtension
 import com.typesafe.scalalogging.LazyLogging
 import commons.LocalLogger
 import services.scheduler.QuartzService
