@@ -3,7 +3,13 @@ package controllers
 import com.github.pjfanning.pekkohttpcirce.FailFastCirceSupport
 import org.apache.pekko.actor.typed.ActorSystem
 import org.apache.pekko.http.scaladsl.model.StatusCodes.{InternalServerError, OK}
-import org.apache.pekko.http.scaladsl.server.Directives.{complete, get, headerValueByName, onComplete, path}
+import org.apache.pekko.http.scaladsl.server.Directives.{
+  complete,
+  get,
+  headerValueByName,
+  onComplete,
+  path
+}
 import org.apache.pekko.http.scaladsl.server.Route
 import commons.Configuration
 import models.controller.NotifyResponse
