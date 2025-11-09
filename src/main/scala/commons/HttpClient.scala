@@ -2,7 +2,6 @@ package commons
 
 import org.apache.pekko.actor.typed.ActorSystem
 import io.circe.*
-import retry.Success.*
 import sttp.*
 import sttp.capabilities.pekko.PekkoStreams
 import sttp.client3.*
