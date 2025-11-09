@@ -1,6 +1,6 @@
 package models.configuration
 
-final case class AkkaConfig(quartz: Quartz)
+final case class PekkoConfig(quartz: Quartz)
 
 final case class Quartz(
     defaultTimezone: String,

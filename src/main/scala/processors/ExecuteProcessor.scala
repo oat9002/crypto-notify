@@ -24,13 +24,13 @@ class ExecutorProcessorImpl(using
     val healthCheckCron = SchedulerName.HealthCheck
 
     logger.info(
-      s"Cron name: ${notifyCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(notifyCron.toString).map(_.expression).getOrElse("")}"
+      s"Cron name: ${notifyCron.toString}, expression: ${configuration.pekkoConfig.quartz.schedules.get(notifyCron.toString).map(_.expression).getOrElse("")}"
     )
     quartzService.schedule(notifyCron, system, NotifyTask)
 
     if (configuration.mackerelConfig.exists(_.enabled)) {
       logger.info(
-        s"Cron name: ${healthCheckCron.toString}, expression: ${configuration.akkaConfig.quartz.schedules.get(healthCheckCron.toString).map(_.expression).getOrElse("")}"
+        s"Cron name: ${healthCheckCron.toString}, expression: ${configuration.pekkoConfig.quartz.schedules.get(healthCheckCron.toString).map(_.expression).getOrElse("")}"
       )
       quartzService.schedule(healthCheckCron, system, HealthCheckTask)
     }

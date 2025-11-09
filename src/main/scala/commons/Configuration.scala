@@ -9,7 +9,7 @@ trait Configuration {
   lazy val appConfig: AppConfig
   lazy val telegramConfig: Option[TelegramConfig]
   lazy val satangConfig: SatangConfig
-  lazy val akkaConfig: AkkaConfig
+  lazy val pekkoConfig: PekkoConfig
   lazy val etherScanConfig: Option[EtherScanConfig]
   lazy val mackerelConfig: Option[MackerelConfig]
   lazy val binanceConfig: Option[BinanceConfig]
@@ -53,7 +53,7 @@ class ConfigurationImpl extends Configuration {
     case _          => None
   }
 
-  lazy val akkaConfig: AkkaConfig = AkkaConfig(
+  lazy val pekkoConfig: PekkoConfig = PekkoConfig(
     Quartz(
       pekkoSection.getConfig("quartz").getString("defaultTimezone"), {
         val sch = pekkoSection.getConfig("quartz").getConfig("schedules")
