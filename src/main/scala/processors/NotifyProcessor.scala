@@ -1,6 +1,6 @@
 package processors
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.CommonUtil.getFormattedNowDate
 import commons.{Configuration, Logger}
 import services.notification.NotificationService

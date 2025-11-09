@@ -1,7 +1,7 @@
 package processors
 
 import actors.Command
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 
 import scala.concurrent.{ExecutionContext, Future}
 

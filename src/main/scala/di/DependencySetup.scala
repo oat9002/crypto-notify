@@ -1,6 +1,6 @@
 package di
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.*
 import helpers.{TerraHelper, TerraHelperImpl}
 import processors.{

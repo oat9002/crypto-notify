@@ -1,6 +1,6 @@
 package services.user
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.Constant
 import commons.Constant.MessageProvider
 import models.CryptoBalance

@@ -1,13 +1,13 @@
 import actors.{Command, Scheduler}
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.*
-import akka.http.scaladsl.server.Directives.*
-import akka.http.scaladsl.server.Route
+import com.github.pjfanning.pekkohttpcirce.FailFastCirceSupport
+import org.apache.pekko.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.scaladsl.Behaviors
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.*
+import org.apache.pekko.http.scaladsl.server.Directives.*
+import org.apache.pekko.http.scaladsl.server.Route
 import commons.{Configuration, LocalLogger}
 import controllers.{HealthCheckController, NotifyController}
-import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport
 import di.DependencySetup
 import processors.{ExecuteProcessor, ExecutorProcessorImpl, NotifyProcessor}
 import services.scheduler.{QuartzService, QuartzServiceImpl}

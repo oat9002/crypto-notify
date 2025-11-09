@@ -1,6 +1,6 @@
 package services.healthcheck
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient, Logger}
 import io.circe.syntax.*
