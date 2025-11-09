@@ -1,6 +1,6 @@
 package processors
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.{Configuration, HttpClient}
 import models.mackerel.MackerelRequest
 import services.healthcheck.MackerelService

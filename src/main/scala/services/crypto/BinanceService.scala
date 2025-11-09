@@ -1,6 +1,6 @@
 package services.crypto
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.Constant.EncryptionAlgorithm
 import commons.*
 import models.CryptoBalance

@@ -1,7 +1,7 @@
 package processors
 
 import actors.*
-import akka.actor.typed.*
+import org.apache.pekko.actor.typed.*
 import commons.{Configuration, LocalLogger}
 import services.*
 import services.scheduler.{QuartzService, SchedulerName}

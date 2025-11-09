@@ -1,7 +1,7 @@
 package commons
 
-import akka.actor.typed.ActorSystem
-import akka.http.scaladsl.model.ResponseEntity
+import org.apache.pekko.actor.typed.ActorSystem
+import org.apache.pekko.http.scaladsl.model.ResponseEntity
 import commons.Constant.EncryptionAlgorithm
 
 import java.nio.charset.StandardCharsets

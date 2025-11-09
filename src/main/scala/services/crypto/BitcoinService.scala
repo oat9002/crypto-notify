@@ -1,6 +1,6 @@
 package services.crypto
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import commons.{Configuration, Constant, HttpClient, Logger}
 import helpers.BitcoinHelper
 import models.bitcoin.Utxo

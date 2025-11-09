@@ -1,13 +1,13 @@
 package commons
 
-import akka.actor.typed.ActorSystem
+import org.apache.pekko.actor.typed.ActorSystem
 import io.circe.*
 import retry.Success.*
 import sttp.*
-import sttp.capabilities.akka.AkkaStreams
+import sttp.capabilities.pekko.PekkoStreams
 import sttp.client3.*
-import sttp.client3.akkahttp.AkkaHttpBackend
 import sttp.client3.circe.asJson
+import sttp.client3.pekkohttp.PekkoHttpBackend
 import sttp.model.StatusCode
 
 import scala.concurrent.duration.DurationInt
@@ -38,8 +38,8 @@ class HttpClientImpl(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
 ) extends HttpClient {
-  val backend: SttpBackend[Future, AkkaStreams with capabilities.WebSockets] =
-    AkkaHttpBackend.usingActorSystem(system.classicSystem)
+  val backend: SttpBackend[Future, PekkoStreams with capabilities.WebSockets] =
+    PekkoHttpBackend.usingActorSystem(system.classicSystem)
   override def get[Res](url: String, header: Map[String, String])(using
       decoder: Decoder[Res]
   ): Future[Either[String, Res]] = {
