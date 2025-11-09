@@ -25,7 +25,7 @@ class ConfigurationImpl extends Configuration {
   }
   private val appSection = conf.getConfig("app")
   private val satangSection = conf.getConfig("satang")
-  private val akkaSection = conf.getConfig("akka")
+  private val pekkoSection = conf.getConfig("pekko")
   private val etherScanSection = conf.getConfig("etherScan")
   private val mackerelSection = conf.getConfig("mackerel")
   private val binanceSection = conf.getConfig("binance")
@@ -55,8 +55,8 @@ class ConfigurationImpl extends Configuration {
 
   lazy val akkaConfig: AkkaConfig = AkkaConfig(
     Quartz(
-      akkaSection.getConfig("quartz").getString("defaultTimezone"), {
-        val sch = akkaSection.getConfig("quartz").getConfig("schedules")
+      pekkoSection.getConfig("quartz").getString("defaultTimezone"), {
+        val sch = pekkoSection.getConfig("quartz").getConfig("schedules")
         val every3hours = sch.getConfig("Every3hours")
         val every1Minute = sch.getConfig("Every1Minute")
         val every10Secs = sch.getConfig("Every10Seconds")
