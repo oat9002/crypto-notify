@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   crypto-notify:
     image: oat9002/crypto-notify:latest

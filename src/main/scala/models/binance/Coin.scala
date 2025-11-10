@@ -27,7 +27,7 @@ object Coin {
 case class Network(
     addressRegex: String,
     coin: String,
-    depositDesc: String,
+    depositDesc: Option[String],
     isDefault: Boolean,
     memoRegex: String,
     minConfirm: Int,
@@ -35,7 +35,7 @@ case class Network(
     network: String,
     resetAddressStatus: Boolean,
     unLockConfirm: Int,
-    withdrawDesc: String,
+    withdrawDesc: Option[String],
     withdrawEnable: Boolean,
     withdrawFee: BigDecimal,
     withdrawIntegerMultiple: BigDecimal,
