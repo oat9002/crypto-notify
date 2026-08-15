@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.actor, 'github-actions[bot]') }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -20,6 +20,7 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: '25'
+        cache: sbt
     - name: Set Git Username
       run: |
         git config --global user.name "github-actions[bot]"
@@ -56,6 +57,7 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: '25'
+        cache: sbt
     - uses: sbt/setup-sbt@v1
     - name: Clean and Compile
       run: sbt clean compile
@@ -74,6 +76,7 @@ jobs:
       with:
         distribution: 'zulu'
         java-version: '25'
+        cache: sbt
     - uses: sbt/setup-sbt@v1
     - name: Test
       run: sbt test

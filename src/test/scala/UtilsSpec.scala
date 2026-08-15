@@ -1,4 +1,4 @@
-import commons.CommonUtil.*
+import commons.Util.*
 import commons.Constant.EncryptionAlgorithm
 import models.configuration.AppConfig
 import models.terra.QueryResult
@@ -8,7 +8,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import scala.util.Success
 
 class UtilsSpec extends AnyWordSpec with Matchers {
-  "CommonUtils" when {
+  "Utils" when {
     "FormatNumberAnyVal" should {
       "should format correctly" in {
         val result = 1.format

@@ -14,12 +14,13 @@ jobs:
     needs: dockerPublish
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - name: Set up JDK 21
+      - uses: actions/checkout@v6
+      - name: Set up JDK
         uses: actions/setup-java@v5
         with:
           distribution: 'zulu'
           java-version: '25'
+          cache: sbt
       - name: Set GitHub user
         run: |
           git config --global user.name 'github-actions[bot]'

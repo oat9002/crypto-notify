@@ -26,7 +26,7 @@ class SatangServiceImpl(using configuration: Configuration, httpClient: HttpClie
   override def getUser(userId: String): Future[Option[User]] = {
     val userUrl: String = s"$baseUrl/users/me"
     val signature =
-      CommonUtil.generateHMAC(
+      Util.generateHMAC(
         "",
         configuration.satangConfig.apiSecret,
         EncryptionAlgorithm.HmacSHA512

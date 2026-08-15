@@ -14,43 +14,51 @@ import services.scheduler.{QuartzService, QuartzServiceImpl}
 
 import scala.concurrent.ExecutionContext
 
-object Boot extends App with LocalLogger with FailFastCirceSupport {
-  given nothingSystem: ActorSystem[Nothing] =
-    ActorSystem(Behaviors.empty, "crypto-notify-nothing")
-  given executionContext: ExecutionContext = nothingSystem.executionContext
-  private val diSetup = DependencySetup()
-  given system: ActorSystem[Command] =
-    ActorSystem(Scheduler(diSetup.notifyProcessor, diSetup.healthCheckProcessor), "crypto-notify")
-  given quartService: QuartzService[Command] = QuartzServiceImpl[Command]()
-  given configuration: Configuration = diSetup.configuration
-  given notifyProcessor: NotifyProcessor = diSetup.notifyProcessor
+object Boot extends LocalLogger with FailFastCirceSupport {
+  @main def run(): Unit = {
+    given nothingSystem: ActorSystem[Nothing] =
+      ActorSystem(Behaviors.empty, "crypto-notify-nothing")
 
-  private val executor: ExecuteProcessor = ExecutorProcessorImpl()
-  private val healthCheckController: HealthCheckController = HealthCheckController()
-  private val notifyController: NotifyController = controllers.NotifyController()
-  private val route: Route =
-    concat(
-      pathEndOrSingleSlash {
-        get {
-          complete(
-            HttpEntity(
-              ContentTypes.`application/json`,
-              "Say hello to crypto-notify"
+    given executionContext: ExecutionContext = nothingSystem.executionContext
+
+    val diSetup = DependencySetup()
+
+    given system: ActorSystem[Command] =
+      ActorSystem(Scheduler(diSetup.notifyProcessor, diSetup.healthCheckProcessor), "crypto-notify")
+
+    given quartService: QuartzService[Command] = QuartzServiceImpl[Command]()
+
+    given configuration: Configuration = diSetup.configuration
+
+    given notifyProcessor: NotifyProcessor = diSetup.notifyProcessor
+
+    val executor: ExecuteProcessor = ExecutorProcessorImpl()
+    val healthCheckController: HealthCheckController = HealthCheckController()
+    val notifyController: NotifyController = controllers.NotifyController()
+    val route: Route =
+      concat(
+        pathEndOrSingleSlash {
+          get {
+            complete(
+              HttpEntity(
+                ContentTypes.`application/json`,
+                "Say hello to crypto-notify"
+              )
             )
-          )
-        }
-      },
-      healthCheckController.route,
-      notifyController.route
+          }
+        },
+        healthCheckController.route,
+        notifyController.route
+      )
+
+    if (configuration.appConfig.useScheduler) {
+      executor.run()
+    }
+
+    Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
+
+    logger.info(
+      s"Server online at http://localhost:${configuration.appConfig.port}/"
     )
-
-  if (configuration.appConfig.useScheduler) {
-    executor.run()
   }
-
-  Http().newServerAt("0.0.0.0", configuration.appConfig.port).bind(route)
-
-  logger.info(
-    s"Server online at http://localhost:${configuration.appConfig.port}/"
-  )
 }
