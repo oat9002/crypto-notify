@@ -20,6 +20,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '25'
+          cache: sbt
       - name: Set GitHub user
         run: |
           git config --global user.name 'github-actions[bot]'
