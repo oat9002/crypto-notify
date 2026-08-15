@@ -1,7 +1,7 @@
 package processors
 
 import org.apache.pekko.actor.typed.ActorSystem
-import commons.CommonUtil.getFormattedNowDate
+import commons.Util.getFormattedNowDate
 import commons.{Configuration, Logger}
 import services.notification.NotificationService
 import services.user.UserService

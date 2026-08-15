@@ -33,7 +33,7 @@ class BinanceServiceImpl(using
   override def getSaving: Future[Option[Saving]] = {
     val timeStamp = System.currentTimeMillis()
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
-    val signature = CommonUtil.generateHMAC(
+    val signature = Util.generateHMAC(
       queryString,
       configuration.binanceConfig.map(_.secretKey).getOrElse(""),
       EncryptionAlgorithm.HmacSHA256
@@ -53,7 +53,7 @@ class BinanceServiceImpl(using
   override def getAccountDetail: Future[Option[List[Coin]]] = {
     val timeStamp = System.currentTimeMillis()
     val queryString = s"timestamp=$timeStamp&recvWindow=${recvWindow.toMillis}"
-    val signature = CommonUtil.generateHMAC(
+    val signature = Util.generateHMAC(
       queryString,
       secretKey,
       EncryptionAlgorithm.HmacSHA256

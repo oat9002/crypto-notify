@@ -1,7 +1,5 @@
 package commons
 
-import org.apache.pekko.actor.typed.ActorSystem
-import org.apache.pekko.http.scaladsl.model.ResponseEntity
 import commons.Constant.EncryptionAlgorithm
 
 import java.nio.charset.StandardCharsets
@@ -12,13 +10,10 @@ import java.time.{LocalDateTime, ZoneId}
 import java.util.{Base64, Locale}
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
-import scala.concurrent.duration.{DurationInt, FiniteDuration}
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
 
-object CommonUtil {
-  val numberFormatter: NumberFormat =
-    NumberFormat.getInstance(new Locale("th", "TH"))
+object Util {
+  private val numberFormatter: NumberFormat =
+    NumberFormat.getInstance(Locale.of("th", "TH"))
   def formatNumber[T](value: T): String = numberFormatter.format(value)
 
   extension (value: AnyVal) {
@@ -58,7 +53,7 @@ object CommonUtil {
   ): String = {
     val localDatetime = LocalDateTime.now(ZoneId.of("Asia/Bangkok"))
     val dateFormatter =
-      if (isThai) DateTimeFormatter.ofPattern(pattern, new Locale("th", "TH"))
+      if (isThai) DateTimeFormatter.ofPattern(pattern, Locale.of("th", "TH"))
       else DateTimeFormatter.ofPattern(pattern)
 
     localDatetime.format(
@@ -67,17 +62,3 @@ object CommonUtil {
     )
   }
 }
-
-//object HttpResponseUtil {
-//  val serializeTimeout: FiniteDuration = 5.seconds
-//
-//  extension (entity: ResponseEntity) {
-//    def toJson(using
-//        context: ExecutionContext,
-//        actor: ActorSystem[Nothing]
-//    ): Future[Option[String]] = entity
-//      .toStrict(serializeTimeout)
-//      .map(e => e.getData())
-//      .map(data => Some(data.utf8String))
-//  }
-//}

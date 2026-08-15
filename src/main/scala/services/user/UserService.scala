@@ -179,7 +179,7 @@ class UserServiceImpl(using
       cryptoBalance: List[CryptoBalance],
       messageProvider: MessageProvider
   ): String = {
-    import commons.CommonUtil.*
+    import commons.Util.*
     val sortedAllBalanceInThb = allBalanceInThb.sortWith((x, y) => x.balance > y.balance)
     val sortedCryptoBalance = sortedAllBalanceInThb
       .map(_.symbol)
