@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.actor, 'github-actions[bot]') }}
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         ref: ${{ github.head_ref }}
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -24,7 +24,6 @@ jobs:
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-    - uses: sbt/setup-sbt@v1
     - name: Format code
       run: |
         sbt scalafmtAll
