@@ -37,7 +37,7 @@ class HttpClientImpl(using
     system: ActorSystem[Nothing],
     ec: ExecutionContext
 ) extends HttpClient {
-  val backend: SttpBackend[Future, PekkoStreams with capabilities.WebSockets] =
+  val backend: SttpBackend[Future, PekkoStreams & capabilities.WebSockets] =
     PekkoHttpBackend.usingActorSystem(system.classicSystem)
   override def get[Res](url: String, header: Map[String, String])(using
       decoder: Decoder[Res]
