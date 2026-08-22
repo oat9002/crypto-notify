@@ -5,8 +5,6 @@ import org.apache.pekko.actor.typed.ActorSystem
 import org.apache.pekko.http.scaladsl.model.{ContentTypes, HttpEntity}
 import org.apache.pekko.http.scaladsl.server.Directives.{complete, get, path}
 import org.apache.pekko.http.scaladsl.server.Route
-import models.mackerel.*
-import services.healthcheck.MackerelService
 
 import scala.concurrent.ExecutionContext
 
