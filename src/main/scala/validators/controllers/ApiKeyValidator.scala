@@ -1,12 +1,9 @@
 package validators.controllers
 
 import org.apache.pekko.http.scaladsl.model.StatusCodes
-import org.apache.pekko.http.scaladsl.server.Directives.headerValueByName
 import org.apache.pekko.http.scaladsl.server.{
-  AuthenticationFailedRejection,
   Directive0,
-  Directives,
-  ValidationRejection
+  Directives
 }
 
 trait ApiKeyValidator extends Directives with BaseValidator {

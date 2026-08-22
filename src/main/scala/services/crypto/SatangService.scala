@@ -1,11 +1,9 @@
 package services.crypto
 
 import org.apache.pekko.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.Constant.EncryptionAlgorithm
 import commons.*
 import models.satang.{Ticker, User}
-import services.crypto.SatangService
 
 import scala.concurrent.{ExecutionContext, Future}
 

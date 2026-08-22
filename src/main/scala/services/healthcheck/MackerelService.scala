@@ -1,11 +1,9 @@
 package services.healthcheck
 
 import org.apache.pekko.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.{Configuration, Constant, HttpClient, Logger}
 import io.circe.syntax.*
 import models.mackerel.{MackerelRequest, MackerelResponse}
-import services.healthcheck.MackerelService
 
 import scala.concurrent.{ExecutionContext, Future}
 

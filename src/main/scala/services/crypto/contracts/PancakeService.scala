@@ -1,7 +1,7 @@
 package services.crypto.contracts
 
 import org.apache.pekko.actor.typed.ActorSystem
-import commons.{Configuration, Constant, Logger}
+import commons.{Constant, Logger}
 import contracts.pancake.{CakePool, VeCakePool}
 import org.web3j.crypto.Credentials
 import org.web3j.protocol.Web3j

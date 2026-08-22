@@ -1,13 +1,11 @@
 package services.crypto
 
 import org.apache.pekko.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.*
 import helpers.TerraHelper
 import io.circe.syntax.*
 import models.CryptoBalance
 import models.terra.*
-import services.crypto.TerraService
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -1,7 +1,6 @@
 package services.notification
 
 import org.apache.pekko.actor.typed.ActorSystem
-import com.typesafe.scalalogging.LazyLogging
 import commons.Constant.MessageProvider.Telegram
 import commons.{Configuration, Constant, HttpClient, LocalLogger}
 import models.telegram.TelegramResponse

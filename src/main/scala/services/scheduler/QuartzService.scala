@@ -2,9 +2,7 @@ package services.scheduler
 
 import org.apache.pekko.actor.typed.{ActorRef, ActorSystem}
 import org.apache.pekko.extension.quartz.QuartzSchedulerTypedExtension
-import com.typesafe.scalalogging.LazyLogging
 import commons.LocalLogger
-import services.scheduler.QuartzService
 import services.scheduler.SchedulerName.SchedulerName
 
 import scala.concurrent.ExecutionContext
