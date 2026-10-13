@@ -6,6 +6,8 @@ on:
 jobs:
   dockerPublish:
     uses: ./.github/workflows/docker.yml
+    with:
+      snapshot_build: false
     secrets:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
       DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -52,4 +54,3 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ steps.get-latest-tag.outputs.LATEST_TAG }}
-
