@@ -19,9 +19,8 @@ dockerRepository := Some("oat9002")
 dockerBaseImage := "azul/zulu-openjdk:25-jre-latest"
 dockerExposedPorts := Seq(8080, 80, 443)
 dockerUpdateLatest := true
-
 dockerCommands := dockerCommands.value.flatMap {
-  case cmd @ Cmd("USER", args @ _*) if args.contains("daemon") =>
+  case cmd @ Cmd("USER", args @ _*) if !args.contains("root") =>
     Seq(
       Cmd("USER", "root"),
       Cmd("RUN", "apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*"),
