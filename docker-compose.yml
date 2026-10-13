@@ -1,13 +1,13 @@
 services:
   crypto-notify:
-    image: oat9002/crypto-notify:latest
+    image: oat9002/crypto-notify:1.67.0-SNAPSHOT
     ports:
       - 8081:8080
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthCheck"]
       interval: 10s
       timeout: 5s
-      start_period: 30s
+      start_period: 10s
       retries: 5
     env_file:
       - .env
