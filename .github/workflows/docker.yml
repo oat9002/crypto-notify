@@ -7,13 +7,13 @@ on:
         description: 'Keep the -SNAPSHOT version and do not publish the latest tag'
         required: false
         type: boolean
-        default: false
+        default: true
   workflow_call:
     inputs:
       snapshot_build:
         required: false
         type: boolean
-        default: false
+        default: true
     secrets:
       DOCKERHUB_USERNAME:
         description: 'docker username'
