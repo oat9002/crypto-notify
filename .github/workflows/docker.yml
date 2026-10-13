@@ -2,7 +2,18 @@ name: docker
 
 on:
   workflow_dispatch:
+    inputs:
+      snapshot_build:
+        description: 'Keep the -SNAPSHOT version and do not publish the latest tag'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      snapshot_build:
+        required: false
+        type: boolean
+        default: false
     secrets:
       DOCKERHUB_USERNAME:
         description: 'docker username'
@@ -36,7 +47,7 @@ jobs:
         id: get-app-version
         run: |
           VERSION=$(cat version.sbt | cut -d '"' -f2)
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
+          if [[ "${{ inputs.snapshot_build }}" != "true" ]]; then
             VERSION="${VERSION%-SNAPSHOT}"
           fi
           echo "version: $VERSION"
@@ -48,7 +59,7 @@ jobs:
         run: |
           cd ./target/docker/stage
           TAGS=(--tag "oat9002/crypto-notify:${{ steps.get-app-version.outputs.APP_VERSION }}")
-          if [[ "$GITHUB_EVENT_NAME" != "pull_request" ]]; then
+          if [[ "${{ inputs.snapshot_build }}" != "true" ]]; then
             TAGS+=(--tag "oat9002/crypto-notify:latest")
           fi
           docker buildx build --platform="linux/amd64,linux/arm64" "${TAGS[@]}" --push .
