@@ -7,7 +7,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8080/healthCheck"]
       interval: 10s
       timeout: 5s
-      start_period: 30s
+      start_period: 10s
       retries: 5
     env_file:
       - .env

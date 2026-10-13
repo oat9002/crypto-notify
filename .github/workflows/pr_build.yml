@@ -80,4 +80,3 @@ jobs:
     - uses: sbt/setup-sbt@v1
     - name: Test
       run: sbt test
-
