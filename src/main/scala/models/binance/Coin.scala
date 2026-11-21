@@ -12,7 +12,7 @@ case class Coin(
     ipoing: BigDecimal,
     isLegalMoney: Boolean,
     locked: BigDecimal,
-    name: String,
+    name: Option[String],
     networkList: List[Network],
     storage: BigDecimal,
     trading: Boolean,
